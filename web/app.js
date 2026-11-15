@@ -1312,15 +1312,23 @@ class FitPulseApp {
     document.getElementById('live-progress-bar').style.width = `${pct}%`;
 
     // Image Resolution (Supports direct path, ID derivation, and clean fallbacks)
+    // Image & Animated GIF Resolution (Prefers looping GIF for active movements)
     const imgEl = document.getElementById('live-exercise-image');
     const placeholderEl = document.getElementById('live-image-placeholder');
+    const gifBadge = document.getElementById('live-gif-badge');
     let imgSource = "";
+    let isGif = false;
+
     if (isRest) {
       if (next && next.exercise) {
         imgSource = next.exercise.image_path || `workout_data/images/${next.exercise.id}.png`;
       }
+      if (gifBadge) gifBadge.classList.add('hidden');
     } else if (step.exercise) {
-      imgSource = step.exercise.image_path || `workout_data/images/${step.exercise.id}.png`;
+      // Prioritize animated demonstration GIF during active exercise
+      imgSource = `/workout_data/images/gifs/${step.exercise.id}.gif`;
+      isGif = true;
+      if (gifBadge) gifBadge.classList.remove('hidden');
     }
 
     if (imgSource) {
@@ -1330,12 +1338,21 @@ class FitPulseApp {
       imgEl.classList.remove('hidden');
       if (placeholderEl) placeholderEl.classList.add('hidden');
     } else {
-      imgEl.src = "/workout_data/images/ex_jumping_jacks.png";
+      imgEl.src = "/workout_data/images/gifs/ex_jumping_jacks.gif";
       imgEl.classList.remove('hidden');
       if (placeholderEl) placeholderEl.classList.add('hidden');
     }
+
+    const fallbackStatic = step.exercise?.image_path 
+      ? (step.exercise.image_path.startsWith('/') ? step.exercise.image_path : '/' + step.exercise.image_path.replace(/\\/g, '/')) 
+      : "/workout_data/images/ex_jumping_jacks.png";
+
     imgEl.onerror = function() {
-      if (this.src && this.src.indexOf('ex_jumping_jacks.png') === -1) {
+      if (this.src && this.src.indexOf('.gif') !== -1) {
+        // Fallback to static PNG if GIF fails to load
+        this.src = fallbackStatic;
+        if (gifBadge) gifBadge.classList.add('hidden');
+      } else if (this.src && this.src.indexOf('ex_jumping_jacks.png') === -1) {
         this.src = "/workout_data/images/ex_jumping_jacks.png";
       } else {
         this.classList.add('hidden');

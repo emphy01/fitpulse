@@ -373,9 +373,16 @@
             <div id="live-progress-bar" class="bg-gradient-to-r from-brand-500 to-blue-500 h-2 rounded-full transition-all duration-300" style="width: 10%;"></div>
           </div>
 
-          <!-- 1:1 IMAGE AREA (Replacing Movement Video) -->
+          <!-- 1:1 IMAGE & ANIMATION AREA (Live Movement Demonstration) -->
           <div class="w-full aspect-square max-w-[320px] sm:max-w-[340px] mx-auto bg-[#020617] rounded-2xl overflow-hidden border border-slate-800 relative flex items-center justify-center shadow-inner group">
-            <img id="live-exercise-image" src="/workout_data/images/ex_jumping_jacks.png" alt="Ilustrasi Gerakan" class="w-full h-full object-contain p-2 transition-transform duration-300 group-hover:scale-105" onerror="this.onerror=null; this.src='/workout_data/images/ex_jumping_jacks.png'" />
+            <img id="live-exercise-image" src="/workout_data/images/gifs/ex_jumping_jacks.gif" alt="Animasi Gerakan" class="w-full h-full object-contain p-2 transition-transform duration-300 group-hover:scale-105" onerror="this.onerror=null; this.src='/workout_data/images/ex_jumping_jacks.png'" />
+            
+            <!-- Live GIF Animation Indicator Badge -->
+            <div id="live-gif-badge" class="absolute top-3 left-3 px-2.5 py-1 rounded-lg bg-slate-900/90 border border-brand-500/30 text-brand-400 text-[10px] font-extrabold flex items-center gap-1.5 backdrop-blur-md shadow-sm">
+              <span class="w-2 h-2 rounded-full bg-emerald-400 animate-pulse"></span>
+              <span>ANIMASI GERAKAN</span>
+            </div>
+
             <div id="live-image-placeholder" class="hidden text-center p-4 text-slate-500 text-xs">
               <span class="text-4xl block mb-2">🏋️</span>
               Ilustrasi Gerakan
@@ -1738,7 +1745,7 @@
   <div id="toast-container" class="fixed bottom-20 md:bottom-6 right-6 z-50 space-y-2 pointer-events-none"></div>
 
   <!-- Application Main JavaScript -->
-  <script src="/static/app.js?v=2.7.0"></script>
+  <script src="/static/app.js?v=2.8.0"></script>
 </body>
 </html>
 
