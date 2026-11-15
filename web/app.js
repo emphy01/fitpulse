@@ -1374,23 +1374,46 @@ class FitPulseApp {
     document.getElementById('live-progress-bar').style.width = `${pct}%`;
 
     // Image Resolution (Supports direct path, ID derivation, and clean fallbacks)
-    // Image & Animated GIF Resolution (Prefers looping GIF for active movements)
+    // Image & Animated GIF Resolution (Prefers looping GIF for dynamic active movements, static PNG for static holds like plank/wall sit)
     const imgEl = document.getElementById('live-exercise-image');
     const placeholderEl = document.getElementById('live-image-placeholder');
     const gifBadge = document.getElementById('live-gif-badge');
     let imgSource = "";
     let isGif = false;
 
+    // Static hold / isometric exercises that do NOT require motion GIF tutorials
+    const STATIC_EXERCISE_IDS = ['ex_plank', 'ex_wall_sit'];
+    const isStatic = !isRest && step.exercise && (STATIC_EXERCISE_IDS.includes(step.exercise.id) || step.exercise.is_static_hold);
+
     if (isRest) {
-      if (next && next.exercise) {
-        imgSource = next.exercise.image_path || `workout_data/images/${next.exercise.id}.png`;
-      }
+      // Dedicated Rest & Hydration illustration (athlete resting and drinking water)
+      imgSource = "/workout_data/images/rest_hydration.png";
       if (gifBadge) gifBadge.classList.add('hidden');
     } else if (step.exercise) {
-      // Prioritize animated demonstration GIF during active exercise
-      imgSource = `/workout_data/images/gifs/${step.exercise.id}.gif`;
-      isGif = true;
-      if (gifBadge) gifBadge.classList.remove('hidden');
+      if (isStatic) {
+        // Static hold movements (e.g. Forearm Plank, Wall Sit) use clean static reference posture instead of motion GIF
+        imgSource = step.exercise.image_path || `/workout_data/images/${step.exercise.id}.png`;
+        if (gifBadge) {
+          gifBadge.innerHTML = `
+            <span class="w-2 h-2 rounded-full bg-amber-400"></span>
+            <span>POSISI STATIS (TAHAN)</span>
+          `;
+          gifBadge.className = "absolute top-3 left-3 px-2.5 py-1 rounded-lg bg-slate-900/90 border border-amber-500/40 text-amber-300 text-[10px] font-extrabold flex items-center gap-1.5 backdrop-blur-md shadow-sm";
+          gifBadge.classList.remove('hidden');
+        }
+      } else {
+        // Dynamic exercise movements use looping animated demonstration GIF
+        imgSource = `/workout_data/images/gifs/${step.exercise.id}.gif`;
+        isGif = true;
+        if (gifBadge) {
+          gifBadge.innerHTML = `
+            <span class="w-2 h-2 rounded-full bg-emerald-400 animate-pulse"></span>
+            <span>ANIMASI GERAKAN</span>
+          `;
+          gifBadge.className = "absolute top-3 left-3 px-2.5 py-1 rounded-lg bg-slate-900/90 border border-brand-500/30 text-brand-400 text-[10px] font-extrabold flex items-center gap-1.5 backdrop-blur-md shadow-sm";
+          gifBadge.classList.remove('hidden');
+        }
+      }
     }
 
     if (imgSource) {
@@ -1400,16 +1423,27 @@ class FitPulseApp {
       imgEl.classList.remove('hidden');
       if (placeholderEl) placeholderEl.classList.add('hidden');
     } else {
-      imgEl.src = "/workout_data/images/gifs/ex_jumping_jacks.gif";
+      imgEl.src = "/workout_data/images/ex_jumping_jacks.png";
       imgEl.classList.remove('hidden');
       if (placeholderEl) placeholderEl.classList.add('hidden');
     }
 
-    const fallbackStatic = step.exercise?.image_path 
-      ? (step.exercise.image_path.startsWith('/') ? step.exercise.image_path : '/' + step.exercise.image_path.replace(/\\/g, '/')) 
-      : "/workout_data/images/ex_jumping_jacks.png";
+    const fallbackStatic = isRest 
+      ? "/workout_data/images/rest_hydration.jpg"
+      : (step.exercise?.image_path 
+          ? (step.exercise.image_path.startsWith('/') ? step.exercise.image_path : '/' + step.exercise.image_path.replace(/\\/g, '/')) 
+          : "/workout_data/images/ex_jumping_jacks.png");
 
     imgEl.onerror = function() {
+      if (isRest) {
+        if (this.src && this.src.indexOf('rest_hydration.jpg') === -1) {
+          this.src = "/workout_data/images/rest_hydration.jpg";
+        } else {
+          this.classList.add('hidden');
+          if (placeholderEl) placeholderEl.classList.remove('hidden');
+        }
+        return;
+      }
       if (this.src && this.src.indexOf('.gif') !== -1) {
         // Fallback to static PNG if GIF fails to load
         this.src = fallbackStatic;
@@ -1421,6 +1455,16 @@ class FitPulseApp {
         if (placeholderEl) placeholderEl.classList.remove('hidden');
       }
     };
+
+    // Guide overlay button text helper
+    const guideBtnText = document.getElementById('live-guide-btn-text');
+    if (guideBtnText) {
+      if (isRest) {
+        guideBtnText.innerText = next && next.exercise ? `Lihat ${next.exercise.name}` : "Panduan Gerakan";
+      } else {
+        guideBtnText.innerText = "Panduan Gerakan";
+      }
+    }
 
     // Exercise Icons: Current active exercise icon & next exercise icon
     const iconEl = document.getElementById('live-exercise-icon');
@@ -1465,8 +1509,12 @@ class FitPulseApp {
 
     if (isRest) {
       nameEl.innerText = "ISTIRAHAT (REST)";
-      pillEl.innerText = "🍃 ISTIRAHAT & PEMULIHAN";
+      pillEl.innerText = "💧 WAKTU ISTIRAHAT & MINUM AIR";
       pillEl.className = "inline-block px-3 py-0.5 rounded-full text-xs font-extrabold uppercase bg-sky-500/20 text-sky-400 border border-sky-500/30";
+    } else if (isStatic) {
+      nameEl.innerText = step.exercise ? step.exercise.name : "Gerakan Statis";
+      pillEl.innerText = "🧘 TAHAN POSISI STATIS";
+      pillEl.className = "inline-block px-3 py-0.5 rounded-full text-xs font-extrabold uppercase bg-amber-500/20 text-amber-300 border border-amber-500/30";
     } else if (isRep) {
       nameEl.innerText = step.exercise ? step.exercise.name : "Gerakan Repetisi";
       pillEl.innerText = "💪 LATIHAN REPETISI";
@@ -1575,7 +1623,9 @@ class FitPulseApp {
       if (cur && cur.exercise) {
         this.audio.speak(cur.exercise.name);
       } else if (cur && cur.step_type === 'Rest') {
-        this.audio.speak("Waktunya istirahat");
+        const nextStep = this.getNextStep();
+        const nextCue = nextStep && nextStep.exercise ? `, siapkan ${nextStep.exercise.name}` : "";
+        this.audio.speak(`Waktunya istirahat dan minum air${nextCue}`);
       }
     }
   }

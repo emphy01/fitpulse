@@ -70,6 +70,7 @@ class Exercise:
     breathing_tips: List[str] = field(default_factory=list)
     is_reps_based: bool = False
     default_reps: int = 12
+    is_static_hold: bool = False
 
     def to_dict(self) -> Dict[str, Any]:
         data = asdict(self)
@@ -103,7 +104,8 @@ class Exercise:
             common_mistakes=data.get('common_mistakes', []),
             breathing_tips=data.get('breathing_tips', []),
             is_reps_based=bool(data.get('is_reps_based', False)),
-            default_reps=int(data.get('default_reps', 12))
+            default_reps=int(data.get('default_reps', 12)),
+            is_static_hold=bool(data.get('is_static_hold', False))
         )
 
 

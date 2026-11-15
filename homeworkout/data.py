@@ -99,6 +99,7 @@ DEFAULT_EXERCISES = [
         difficulty=DifficultyLevel.BEGINNER,
         met_value=4.0,
         equipment_needed="Matras",
+        is_static_hold=True,
         instructions=[
             "Letakkan lengan bawah di lantai dengan siku sejajar tepat di bawah bahu.",
             "Luruskan kaki ke belakang dengan jari-jari kaki bertumpu di lantai.",
@@ -271,6 +272,7 @@ DEFAULT_EXERCISES = [
         difficulty=DifficultyLevel.BEGINNER,
         met_value=4.5,
         equipment_needed="Dinding",
+        is_static_hold=True,
         instructions=[
             "Sandarkan punggung rata pada dinding.",
             "Geser ke bawah hingga paha sejajar dengan lantai (sudut lutut 90 derajat).",

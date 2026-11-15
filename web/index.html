@@ -389,9 +389,9 @@
             </div>
             
             <!-- Quick Guide Overlay Button -->
-            <button onclick="app.openCurrentExerciseGuide()" class="absolute bottom-3 right-3 px-3 py-1.5 rounded-xl bg-slate-900/90 hover:bg-slate-800 text-brand-400 hover:text-white border border-brand-500/30 text-xs font-bold backdrop-blur-md flex items-center gap-1.5 shadow-lg transition-all">
+            <button onclick="app.openCurrentExerciseGuide()" class="absolute bottom-3 right-3 px-3 py-1.5 rounded-xl bg-slate-900/90 hover:bg-slate-800 text-brand-400 hover:text-white border border-brand-500/30 text-xs font-bold backdrop-blur-md flex items-center gap-1.5 shadow-lg transition-all cursor-pointer">
               <i data-lucide="book-open" class="w-3.5 h-3.5"></i>
-              <span>Panduan Gerakan</span>
+              <span id="live-guide-btn-text">Panduan Gerakan</span>
             </button>
           </div>
 
@@ -1755,7 +1755,7 @@
   <div id="toast-container" class="fixed bottom-20 md:bottom-6 right-6 z-50 space-y-2 pointer-events-none"></div>
 
   <!-- Application Main JavaScript -->
-  <script src="/static/app.js?v=3.0.0"></script>
+  <script src="/static/app.js?v=3.1.0"></script>
 </body>
 </html>
 
