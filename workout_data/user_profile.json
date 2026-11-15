@@ -1,0 +1,12 @@
+{
+  "user_id": "default_user",
+  "name": "wowi",
+  "weight_kg": 65.0,
+  "height_cm": 168.0,
+  "fitness_level": "Intermediate",
+  "default_rest_seconds": 15,
+  "sound_enabled": true,
+  "high_contrast_mode": false,
+  "voice_cues_enabled": true,
+  "show_onboarding_guide": true
+}

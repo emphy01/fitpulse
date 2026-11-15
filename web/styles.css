@@ -1,0 +1,104 @@
+/* FitPulse Fit-Tech Custom CSS */
+
+/* Smooth custom scrollbars */
+::-webkit-scrollbar {
+  width: 6px;
+  height: 6px;
+}
+::-webkit-scrollbar-track {
+  background: #020617;
+}
+::-webkit-scrollbar-thumb {
+  background: #334155;
+  border-radius: 9999px;
+}
+::-webkit-scrollbar-thumb:hover {
+  background: #475569;
+}
+
+/* Hide scrollbar for Chrome, Safari and Opera */
+.no-scrollbar::-webkit-scrollbar {
+  display: none;
+}
+/* Hide scrollbar for IE, Edge and Firefox */
+.no-scrollbar {
+  -ms-overflow-style: none;  /* IE and Edge */
+  scrollbar-width: none;  /* Firefox */
+}
+
+/* Active navigation buttons */
+.nav-desktop-tab.active {
+  background-color: #0284c7;
+  color: #ffffff;
+  box-shadow: 0 4px 14px 0 rgba(2, 132, 199, 0.35);
+}
+.nav-desktop-tab:not(.active) {
+  color: #94a3b8;
+}
+.nav-desktop-tab:not(.active):hover {
+  color: #ffffff;
+  background-color: #1e293b;
+}
+
+.mobile-nav-btn.active {
+  color: #38bdf8;
+}
+.mobile-nav-btn.active svg {
+  stroke: #38bdf8;
+  filter: drop-shadow(0 2px 8px rgba(56, 189, 248, 0.4));
+}
+
+/* Device Simulator Modes */
+.device-mode-mobile {
+  max-width: 420px !important;
+  box-shadow: 0 0 50px -10px rgba(0, 0, 0, 0.8), 0 0 0 12px #1e293b, 0 0 0 14px #334155 !important;
+  border-radius: 40px !important;
+  overflow: hidden !important;
+  margin-top: 1.5rem !important;
+  margin-bottom: 2rem !important;
+  background-color: #020617 !important;
+}
+
+.device-mode-tablet {
+  max-width: 768px !important;
+  box-shadow: 0 0 50px -10px rgba(0, 0, 0, 0.8), 0 0 0 14px #1e293b, 0 0 0 16px #334155 !important;
+  border-radius: 32px !important;
+  overflow: hidden !important;
+  margin-top: 1.5rem !important;
+  margin-bottom: 2rem !important;
+  background-color: #020617 !important;
+}
+
+.device-mode-desktop {
+  max-width: 1080px !important;
+  border-radius: 16px !important;
+  margin-top: 1rem !important;
+}
+
+/* Muscle pills */
+.muscle-filter-pill {
+  transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+}
+.muscle-filter-pill.active {
+  background-color: #0284c7;
+  color: #ffffff;
+  border-color: #38bdf8;
+  box-shadow: 0 2px 10px rgba(2, 132, 199, 0.35);
+}
+
+/* Subtle fit-tech glow on 1:1 image */
+#live-exercise-image {
+  filter: drop-shadow(0 4px 16px rgba(56, 189, 248, 0.15));
+}
+
+/* Smooth modal fade */
+.modal-enter {
+  opacity: 0;
+  transform: scale(0.95);
+}
+.modal-enter-active {
+  opacity: 1;
+  transform: scale(1);
+  transition: opacity 200ms ease-out, transform 200ms ease-out;
+}
+

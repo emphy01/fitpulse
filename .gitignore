@@ -1,0 +1,45 @@
+# Byte-compiled / optimized / DLL files
+__pycache__/
+*.py[cod]
+*$py.class
+
+# Virtual environments
+venv/
+.venv/
+env/
+ENV/
+build/
+dist/
+*.egg-info/
+
+# Secret & Environment Files
+.env
+.env.local
+.env.*.local
+
+# Local SQLite Database & Dynamic Cache
+workout_data/fitpulse.db
+*.db
+*.sqlite
+*.sqlite3
+
+# Large Media & Screen Recordings (Prevents GitHub 100MB limit issues)
+*.mp4
+*.mov
+*.avi
+*.wmv
+
+# Backup files
+*.bak
+*.tmp
+*~
+
+# IDE & OS files
+.vscode/
+.idea/
+.DS_Store
+Thumbs.db
+
+# Vercel output
+.vercel
+

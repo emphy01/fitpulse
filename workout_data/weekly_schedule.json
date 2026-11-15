@@ -1,0 +1,61 @@
+{
+  "schedule_id": "user_schedule",
+  "days": {
+    "Senin": {
+      "day": "Senin",
+      "is_rest_day": false,
+      "routine_id": "routine_7min_fullbody",
+      "routine_title": "Scientific 7-Minute HIIT Full Body",
+      "scheduled_time": "07:00",
+      "reminder_enabled": true
+    },
+    "Selasa": {
+      "day": "Selasa",
+      "is_rest_day": true,
+      "routine_id": null,
+      "routine_title": null,
+      "scheduled_time": "07:00",
+      "reminder_enabled": true
+    },
+    "Rabu": {
+      "day": "Rabu",
+      "is_rest_day": false,
+      "routine_id": "routine_core_blast",
+      "routine_title": "Six-Pack Sculptor & Oblique Burn",
+      "scheduled_time": "07:00",
+      "reminder_enabled": true
+    },
+    "Kamis": {
+      "day": "Kamis",
+      "is_rest_day": true,
+      "routine_id": null,
+      "routine_title": null,
+      "scheduled_time": "07:00",
+      "reminder_enabled": true
+    },
+    "Jumat": {
+      "day": "Jumat",
+      "is_rest_day": false,
+      "routine_id": "routine_legs_glutes",
+      "routine_title": "Kaki Kuat & Bokong Kencang (Pemula)",
+      "scheduled_time": "07:00",
+      "reminder_enabled": true
+    },
+    "Sabtu": {
+      "day": "Sabtu",
+      "is_rest_day": false,
+      "routine_id": "routine_fb_beginner",
+      "routine_title": "Full Body Pemula: Pondasi Kebugaran",
+      "scheduled_time": "07:00",
+      "reminder_enabled": true
+    },
+    "Minggu": {
+      "day": "Minggu",
+      "is_rest_day": true,
+      "routine_id": null,
+      "routine_title": null,
+      "scheduled_time": "07:00",
+      "reminder_enabled": true
+    }
+  }
+}

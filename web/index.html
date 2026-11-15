@@ -1,0 +1,1645 @@
+<!DOCTYPE html>
+<html lang="id" class="dark">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+  <title>FitPulse - Home Workout Companion (Web Edition)</title>
+  
+  <!-- Tailwind CSS via CDN -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script>
+    tailwind.config = {
+      darkMode: 'class',
+      theme: {
+        extend: {
+          colors: {
+            brand: {
+              50: '#f0f9ff',
+              100: '#e0f2fe',
+              400: '#38bdf8',
+              500: '#0ea5e9',
+              600: '#0284c7',
+              700: '#0369a1',
+            },
+            dark: {
+              base: '#020617',
+              card: '#0F172A',
+              cardLight: '#1E293B',
+              border: '#334155',
+            }
+          },
+          fontFamily: {
+            sans: ['Inter', 'system-ui', '-apple-system', 'sans-serif'],
+          }
+        }
+      }
+    }
+  </script>
+
+  <!-- Google Fonts: Inter -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
+
+  <!-- Lucide Icons -->
+  <script src="https://unpkg.com/lucide@latest"></script>
+
+  <!-- Canvas Confetti -->
+  <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.9.3/dist/confetti.browser.min.js"></script>
+
+  <!-- Custom CSS for sleek fit-tech styling -->
+  <link rel="stylesheet" href="/static/styles.css" />
+</head>
+<body class="bg-[#020617] text-slate-100 min-h-screen font-sans antialiased selection:bg-brand-500 selection:text-white flex flex-col transition-colors duration-200">
+
+  <!-- ======================================================================= -->
+  <!-- TOP HEADER (Responsive: Desktop Full Bar + Mobile Compact Header) -->
+  <!-- ======================================================================= -->
+  <header class="sticky top-0 z-40 bg-[#0F172A]/90 backdrop-blur-md border-b border-slate-800/80 px-4 py-3 sm:px-6">
+    <div class="max-w-6xl mx-auto flex items-center justify-between gap-3">
+      
+      <!-- Brand & Title -->
+      <div class="flex items-center gap-3 cursor-pointer select-none" onclick="app.navigate('training')">
+        <div class="w-10 h-10 rounded-xl bg-gradient-to-tr from-brand-600 to-sky-400 flex items-center justify-center shadow-lg shadow-sky-500/20 text-white font-black text-xl">
+          ⚡
+        </div>
+        <div>
+          <div class="flex items-center gap-2">
+            <span class="font-extrabold text-lg sm:text-xl tracking-tight bg-gradient-to-r from-white to-slate-300 bg-clip-text text-transparent">FITPULSE</span>
+            <span class="text-[10px] font-bold px-1.5 py-0.5 rounded bg-brand-500/20 text-brand-400 border border-brand-500/30">HCI WEB</span>
+          </div>
+          <p class="text-xs text-slate-400 hidden sm:block">Home Workout Companion</p>
+        </div>
+      </div>
+
+      <!-- Desktop Navigation Tabs (Visible on >=md screens) -->
+      <nav class="hidden md:flex items-center gap-1 bg-slate-900/80 p-1 rounded-xl border border-slate-800">
+        <button id="nav-btn-training" onclick="app.navigate('training')" class="nav-desktop-tab active px-4 py-2 rounded-lg text-sm font-semibold flex items-center gap-2 transition-all">
+          <i data-lucide="dumbbell" class="w-4 h-4"></i>
+          <span>Latihan</span>
+        </button>
+        <button id="nav-btn-report" onclick="app.navigate('report')" class="nav-desktop-tab px-4 py-2 rounded-lg text-sm font-semibold flex items-center gap-2 transition-all">
+          <i data-lucide="bar-chart-2" class="w-4 h-4"></i>
+          <span>Laporan</span>
+        </button>
+        <button id="nav-btn-settings" onclick="app.navigate('settings')" class="nav-desktop-tab px-4 py-2 rounded-lg text-sm font-semibold flex items-center gap-2 transition-all">
+          <i data-lucide="settings" class="w-4 h-4"></i>
+          <span>Pengaturan</span>
+        </button>
+      </nav>
+
+      <!-- Right Header Actions (Streak + Profile + Viewport Simulator) -->
+      <div class="flex items-center gap-2 sm:gap-3">
+        <!-- Streak Badge -->
+        <div class="flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-orange-500/10 border border-orange-500/30 text-orange-400 text-xs sm:text-sm font-bold shadow-sm" title="Streak Latihan Aktif">
+          <span class="text-base animate-pulse">🔥</span>
+          <span id="header-streak-count">0</span>
+        </div>
+
+        <!-- User Profile & Authentication Section -->
+        <div id="header-auth-container" class="flex items-center">
+          <!-- Unauthenticated Button -->
+          <button id="btn-header-login" onclick="app.openAuthModal('login')" class="flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-gradient-to-r from-brand-600 to-blue-600 hover:from-brand-500 hover:to-blue-500 text-white text-xs sm:text-sm font-bold shadow-md shadow-brand-600/30 transition-all">
+            <i data-lucide="log-in" class="w-3.5 h-3.5"></i>
+            <span>Masuk / Daftar</span>
+          </button>
+
+          <!-- Authenticated User Menu Dropdown -->
+          <div id="header-user-menu" class="relative hidden">
+            <button onclick="app.toggleUserMenu(event)" class="flex items-center gap-2 px-3 py-1.5 rounded-xl bg-slate-800/80 hover:bg-slate-700/80 border border-slate-700 text-xs sm:text-sm font-medium transition-colors" title="Menu Akun">
+              <span class="text-sm">👤</span>
+              <span id="header-user-summary" class="hidden sm:inline font-semibold">Teddy (64kg)</span>
+              <i data-lucide="chevron-down" class="w-3 h-3 text-slate-400"></i>
+            </button>
+            <div id="header-user-dropdown" class="absolute right-0 mt-2 w-48 bg-slate-900 border border-slate-700 rounded-xl shadow-2xl p-1.5 hidden z-50">
+              <div class="px-3 py-1.5 border-b border-slate-800 text-[11px] text-slate-400">
+                Masuk sebagai <strong id="dropdown-username" class="text-brand-400 block font-bold truncate">user</strong>
+              </div>
+              <button onclick="app.navigate('settings'); app.hideUserDropdown();" class="w-full text-left px-3 py-2 rounded-lg text-xs hover:bg-slate-800 flex items-center gap-2 text-slate-200 hover:text-white transition-colors">
+                <i data-lucide="user" class="w-3.5 h-3.5 text-slate-400"></i>
+                <span>Profil & Pengaturan</span>
+              </button>
+              <button onclick="app.logout(); app.hideUserDropdown();" class="w-full text-left px-3 py-2 rounded-lg text-xs hover:bg-red-950/40 text-red-400 hover:text-red-300 flex items-center gap-2 transition-colors">
+                <i data-lucide="log-out" class="w-3.5 h-3.5 text-red-400"></i>
+                <span>Keluar (Logout)</span>
+              </button>
+            </div>
+          </div>
+        </div>
+
+        <!-- Device Preview Simulator (HCI Demonstration Feature) -->
+        <div class="relative hidden lg:block" id="device-menu-container">
+          <button id="btn-device-switch" onclick="app.toggleDeviceMenu(event)" class="p-2 rounded-xl bg-slate-800/80 hover:bg-slate-700 text-slate-300 hover:text-white border border-slate-700 text-xs flex items-center gap-1.5 transition-colors" title="Simulasi Ukuran Layar Device (HCI Usability)">
+            <i data-lucide="smartphone" class="w-4 h-4 text-brand-400"></i>
+            <span class="text-[11px] font-semibold" id="device-mode-label">Mode Device</span>
+            <i data-lucide="chevron-down" class="w-3.5 h-3.5 text-slate-400"></i>
+          </button>
+          <div id="device-menu-dropdown" class="absolute right-0 mt-2 w-52 bg-slate-900 border border-slate-700 rounded-xl shadow-2xl p-1.5 hidden z-50">
+            <div class="text-[10px] font-bold text-slate-400 px-3 py-1 uppercase tracking-wider">Pilih Ukuran Layar:</div>
+            <button onclick="app.setDeviceMode('responsive')" class="w-full text-left px-3 py-2 rounded-lg text-xs hover:bg-slate-800 flex items-center justify-between text-slate-200 hover:text-white transition-colors">
+              <span>🖥️ Layar Penuh (Fluid)</span>
+              <span id="check-mode-responsive" class="text-brand-400 font-bold">✓</span>
+            </button>
+            <button onclick="app.setDeviceMode('desktop')" class="w-full text-left px-3 py-2 rounded-lg text-xs hover:bg-slate-800 flex items-center justify-between text-slate-200 hover:text-white transition-colors">
+              <span>💻 Desktop (1080px)</span>
+              <span id="check-mode-desktop" class="text-brand-400 font-bold hidden">✓</span>
+            </button>
+            <button onclick="app.setDeviceMode('tablet')" class="w-full text-left px-3 py-2 rounded-lg text-xs hover:bg-slate-800 flex items-center justify-between text-slate-200 hover:text-white transition-colors">
+              <span>📱 Tablet (768px)</span>
+              <span id="check-mode-tablet" class="text-brand-400 font-bold hidden">✓</span>
+            </button>
+            <button onclick="app.setDeviceMode('mobile')" class="w-full text-left px-3 py-2 rounded-lg text-xs hover:bg-slate-800 flex items-center justify-between text-slate-200 hover:text-white transition-colors">
+              <span>📱 Mobile (420px)</span>
+              <span id="check-mode-mobile" class="text-brand-400 font-bold hidden">✓</span>
+            </button>
+          </div>
+        </div>
+
+      </div>
+    </div>
+  </header>
+
+  <!-- ======================================================================= -->
+  <!-- MAIN APP CONTAINER (With Responsive Frame for Testing Device Modes) -->
+  <!-- ======================================================================= -->
+  <div id="device-wrapper" class="flex-1 w-full mx-auto transition-all duration-300 flex flex-col justify-start pb-24 md:pb-12">
+    <main class="w-full max-w-6xl mx-auto px-4 sm:px-6 py-6 flex-1">
+      
+      <!-- =================================================================== -->
+      <!-- VIEW 1: TRAINING HUB (BERANDA / LATIHAN) -->
+      <!-- =================================================================== -->
+      <section id="view-training" class="app-view space-y-6">
+        
+        <!-- Search and Filter Bar -->
+        <div class="flex flex-col sm:flex-row gap-3 items-stretch sm:items-center justify-between">
+          <div class="relative flex-1">
+            <i data-lucide="search" class="w-4 h-4 absolute left-3.5 top-3.5 text-slate-400"></i>
+            <input 
+              type="text" 
+              id="search-input" 
+              placeholder="Cari program latihan, gerakan, atau otot..." 
+              class="w-full bg-slate-900/90 border border-slate-800 rounded-xl pl-10 pr-10 py-2.5 text-sm placeholder-slate-500 focus:outline-none focus:border-brand-500 focus:ring-1 focus:ring-brand-500 transition-colors"
+              oninput="app.onSearchInput(this.value)"
+            />
+            <button id="search-clear-btn" onclick="app.clearSearch()" class="hidden absolute right-3 top-3 text-slate-400 hover:text-white">
+              <i data-lucide="x" class="w-4 h-4"></i>
+            </button>
+          </div>
+
+          <div class="flex items-center gap-2">
+            <button onclick="app.openScheduleModal()" class="px-3.5 py-2.5 rounded-xl bg-slate-800 hover:bg-slate-700 border border-slate-700 text-xs sm:text-sm font-semibold flex items-center gap-1.5 transition-colors">
+              <i data-lucide="calendar" class="w-4 h-4 text-brand-400"></i>
+              <span>Jadwal Mingguan</span>
+            </button>
+            <button onclick="app.openCustomBuilderModal()" class="px-3.5 py-2.5 rounded-xl bg-brand-600 hover:bg-brand-500 text-white text-xs sm:text-sm font-semibold flex items-center gap-1.5 transition-colors shadow-lg shadow-brand-600/20">
+              <i data-lucide="plus-circle" class="w-4 h-4"></i>
+              <span>Buat Kustom</span>
+            </button>
+          </div>
+        </div>
+
+        <!-- Body Focus Filter Pills (Scrollable on Mobile) -->
+        <div class="overflow-x-auto no-scrollbar py-1 -mx-4 px-4 sm:mx-0 sm:px-0">
+          <div class="flex items-center gap-2 min-w-max" id="muscle-filter-pills">
+            <!-- Populated via JS -->
+          </div>
+        </div>
+
+        <!-- Weekly Goal 7-Day Strip Card -->
+        <div class="bg-gradient-to-br from-slate-900 to-slate-800/80 border border-slate-800 rounded-2xl p-5 shadow-xl">
+          <div class="flex items-center justify-between mb-4">
+            <div class="flex items-center gap-2">
+              <span class="text-xl">🎯</span>
+              <div>
+                <h3 class="font-bold text-sm sm:text-base text-white">Target Latihan Mingguan</h3>
+                <p class="text-xs text-slate-400">Menyesuaikan dengan jadwal mingguan yang Anda pilih</p>
+              </div>
+            </div>
+            <button onclick="app.openScheduleModal()" title="Ubah Jadwal Mingguan" class="flex items-center gap-2 px-3 py-1.5 rounded-full bg-brand-500/10 hover:bg-brand-500/20 text-brand-400 border border-brand-500/30 text-xs font-bold transition-all">
+              <span id="weekly-goal-status">0/0 Hari</span>
+              <span class="text-[11px] text-slate-400 font-normal">✏️ Atur</span>
+            </button>
+          </div>
+
+          <!-- 7-Day Dots Strip -->
+          <div class="grid grid-cols-7 gap-2 text-center" id="weekly-days-strip">
+            <!-- Populated via JS -->
+          </div>
+        </div>
+
+        <!-- 28-Day Challenge Banner -->
+        <div class="relative overflow-hidden rounded-2xl bg-gradient-to-r from-blue-900/60 via-indigo-900/40 to-slate-900 border border-blue-800/40 p-5 sm:p-6 shadow-xl">
+          <div class="relative z-10 max-w-lg">
+            <div class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-md bg-blue-500/20 border border-blue-400/30 text-blue-300 text-xs font-bold mb-2">
+              <span>🔥 TANTANGAN SPESIAL</span>
+            </div>
+            <h2 class="text-lg sm:text-xl font-extrabold text-white mb-1">Tantangan 28 Hari Transformasi Tubuh</h2>
+            <p class="text-xs sm:text-sm text-slate-300 mb-4">Program progresif berbasis sains untuk membakar lemak & membentuk massa otot tanpa alat apapun.</p>
+            <button onclick="app.startQuickStart()" class="px-5 py-2.5 rounded-xl bg-gradient-to-r from-brand-500 to-blue-600 hover:from-brand-400 hover:to-blue-500 text-white font-bold text-xs sm:text-sm shadow-lg shadow-blue-500/30 flex items-center gap-2 transition-all">
+              <i data-lucide="play" class="w-4 h-4 fill-white"></i>
+              <span>Mulai Tantangan Hari Ini</span>
+            </button>
+          </div>
+          <div class="absolute -right-6 -bottom-8 opacity-20 pointer-events-none text-9xl">
+            🏆
+          </div>
+        </div>
+
+        <!-- KEGIATAN HARI INI (TODAY'S ACTIVITY) -->
+        <div id="today-activity-section" class="space-y-3">
+          <!-- Populated dynamically via JS: scheduled routine card OR rest day notice -->
+        </div>
+
+        <!-- SESI LATIHAN TERTUNDA (HOME PENDING WORKOUTS BANNER) -->
+        <div id="home-pending-workouts-container" class="space-y-3">
+          <!-- Populated dynamically via JS if there are incomplete sessions -->
+        </div>
+
+        <!-- Section: Routines List Header -->
+        <div class="flex items-center justify-between pt-2">
+          <div>
+            <h2 class="text-base sm:text-lg font-bold text-white flex items-center gap-2">
+              <span>Program Latihan</span>
+              <span id="routines-count-badge" class="text-xs px-2 py-0.5 rounded-full bg-slate-800 text-slate-400">6</span>
+            </h2>
+            <p class="text-xs text-slate-400">Pilih program yang sesuai dengan target otot Anda</p>
+          </div>
+        </div>
+
+        <!-- Routines Card Grid (Responsive: 1 col on mobile, 2 col on tablet, 3 col on desktop) -->
+        <div id="routines-grid" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+          <!-- Populated via JS -->
+        </div>
+
+      </section>
+
+      <!-- =================================================================== -->
+      <!-- VIEW 2: ROUTINE OVERVIEW / DETAIL SCREEN -->
+      <!-- =================================================================== -->
+      <section id="view-routine-detail" class="app-view hidden space-y-6">
+        
+        <!-- Top Bar Navigation -->
+        <div class="flex items-center justify-between gap-3">
+          <button onclick="app.navigate('training')" class="px-3.5 py-2 rounded-xl bg-slate-800 hover:bg-slate-700 text-slate-300 hover:text-white text-xs sm:text-sm font-semibold flex items-center gap-1.5 transition-colors">
+            <i data-lucide="arrow-left" class="w-4 h-4"></i>
+            <span>Kembali</span>
+          </button>
+          
+          <div class="flex items-center gap-2">
+            <button onclick="app.promptDeleteRoutine()" class="px-3 py-2 rounded-xl bg-red-950/40 hover:bg-red-900/60 text-red-400 hover:text-red-300 border border-red-800/40 text-xs sm:text-sm font-semibold flex items-center gap-1.5 transition-colors" title="Hapus Template Ini">
+              <i data-lucide="trash-2" class="w-4 h-4"></i>
+              <span class="hidden sm:inline">Hapus Template</span>
+            </button>
+            <button onclick="app.openRoutinePlanEditor()" class="px-3.5 py-2 rounded-xl bg-slate-800 hover:bg-slate-700 text-brand-400 hover:text-brand-300 border border-slate-700 text-xs sm:text-sm font-semibold flex items-center gap-1.5 transition-colors">
+              <i data-lucide="edit-3" class="w-4 h-4"></i>
+              <span>Edit Template</span>
+            </button>
+          </div>
+        </div>
+
+        <!-- Routine Title Banner with Cover Image -->
+        <div class="bg-gradient-to-br from-slate-900 to-slate-800 border border-slate-800 rounded-2xl p-4 sm:p-5 shadow-xl space-y-4">
+          <!-- Cover Banner Area -->
+          <div id="detail-cover-container" class="w-full h-44 sm:h-56 rounded-xl overflow-hidden border border-slate-700/60 relative shadow-lg bg-slate-950 flex items-center justify-center">
+            <img id="detail-cover-img" src="" alt="Cover Program Latihan" class="w-full h-full object-cover" onerror="this.onerror=null; this.src='/images/covers/cover_default_custom.png'" />
+          </div>
+
+          <div>
+            <div class="flex flex-wrap items-center gap-2 mb-2">
+              <span id="detail-target-muscle" class="px-2.5 py-1 rounded-md bg-brand-500/20 text-brand-400 text-xs font-bold border border-brand-500/30">FULL BODY</span>
+              <span id="detail-difficulty-badge" class="px-2.5 py-1 rounded-md bg-amber-500/20 text-amber-300 text-xs font-bold border border-amber-500/30">⚡ Beginner</span>
+            </div>
+            <h1 id="detail-routine-title" class="text-xl sm:text-2xl font-black text-white mb-2">Scientific 7-Minute Full Body</h1>
+            <p id="detail-routine-desc" class="text-xs sm:text-sm text-slate-300 mb-5">Program kebugaran ilmiah terbukti membakar lemak dan meningkatkan VO2 max.</p>
+          </div>
+
+          <!-- Summary Strip -->
+          <div class="grid grid-cols-2 sm:grid-cols-4 gap-3 bg-slate-950/60 p-3.5 rounded-xl border border-slate-800/80">
+            <div class="text-center sm:text-left">
+              <span class="text-[11px] text-slate-400 block">⏱️ Estimasi Durasi</span>
+              <span id="detail-duration" class="text-sm sm:text-base font-bold text-white">7 Menit</span>
+            </div>
+            <div class="text-center sm:text-left">
+              <span class="text-[11px] text-slate-400 block">🎯 Total Gerakan</span>
+              <span id="detail-exercise-count" class="text-sm sm:text-base font-bold text-white">12 Gerakan</span>
+            </div>
+            <div class="text-center sm:text-left">
+              <span class="text-[11px] text-slate-400 block">⚡ Tingkat</span>
+              <span id="detail-difficulty-text" class="text-sm sm:text-base font-bold text-white">Beginner</span>
+            </div>
+            <div class="text-center sm:text-left">
+              <span class="text-[11px] text-slate-400 block">💪 Fokus Otot</span>
+              <span id="detail-muscle-text" class="text-sm sm:text-base font-bold text-white">Full Body</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- Info Tip -->
+        <div class="flex items-center gap-2.5 px-4 py-3 rounded-xl bg-brand-500/10 border border-brand-500/20 text-brand-300 text-xs">
+          <i data-lucide="info" class="w-4 h-4 flex-shrink-0 text-brand-400"></i>
+          <span>Tips: Klik pada kartu gerakan manapun untuk melihat <strong>panduan foto 1:1, diagram anatomi otot</strong>, dan <strong>kesalahan umum</strong>!</span>
+        </div>
+
+        <!-- Exercise Step List -->
+        <div class="space-y-2.5">
+          <h3 class="text-sm font-bold text-slate-300 px-1">Daftar Urutan Gerakan</h3>
+          <div id="detail-exercise-list" class="space-y-2">
+            <!-- Populated via JS -->
+          </div>
+        </div>
+
+        <!-- Big Start Button -->
+        <div class="pt-4 sticky bottom-20 md:bottom-4 z-20">
+          <button id="btn-start-workout-session" onclick="app.startActiveWorkout()" class="w-full py-4 rounded-2xl bg-gradient-to-r from-brand-500 to-blue-600 hover:from-brand-400 hover:to-blue-500 text-white font-extrabold text-base sm:text-lg shadow-2xl shadow-brand-500/40 flex items-center justify-center gap-2 transition-all transform hover:-translate-y-0.5 active:translate-y-0">
+            <i data-lucide="play" class="w-5 h-5 fill-white"></i>
+            <span>MULAI LATIHAN SEKARANG (START)</span>
+          </button>
+        </div>
+
+      </section>
+
+      <!-- =================================================================== -->
+      <!-- VIEW 3: ACTIVE WORKOUT SESSION (FULL-SCREEN RESPONSIVE RUNNER) -->
+      <!-- =================================================================== -->
+      <section id="view-active-workout" class="app-view hidden">
+        <div class="max-w-xl mx-auto bg-slate-900 border border-slate-800 rounded-3xl p-4 sm:p-6 shadow-2xl space-y-4">
+          
+          <!-- Session Header Bar -->
+          <div class="flex items-center justify-between gap-2">
+            <button onclick="app.promptAbortWorkout()" class="px-3 py-1.5 rounded-xl bg-slate-800 hover:bg-red-950/50 hover:text-red-400 text-slate-300 text-xs font-semibold flex items-center gap-1.5 transition-colors">
+              <i data-lucide="x" class="w-4 h-4"></i>
+              <span>Keluar</span>
+            </button>
+
+            <span id="live-routine-title" class="text-xs sm:text-sm font-extrabold tracking-wide uppercase text-slate-300 truncate max-w-[200px]">
+              SCIENTIFIC 7-MINUTE
+            </span>
+
+            <span id="live-step-badge" class="px-2.5 py-1 rounded-lg bg-slate-800 border border-slate-700 text-xs font-bold text-slate-300">
+              Langkah 1/12
+            </span>
+          </div>
+
+          <!-- Progress Bar -->
+          <div class="w-full bg-slate-800 rounded-full h-2 overflow-hidden">
+            <div id="live-progress-bar" class="bg-gradient-to-r from-brand-500 to-blue-500 h-2 rounded-full transition-all duration-300" style="width: 10%;"></div>
+          </div>
+
+          <!-- 1:1 IMAGE AREA (Replacing Movement Video) -->
+          <div class="w-full aspect-square max-w-[320px] sm:max-w-[340px] mx-auto bg-[#020617] rounded-2xl overflow-hidden border border-slate-800 relative flex items-center justify-center shadow-inner group">
+            <img id="live-exercise-image" src="/workout_data/images/ex_jumping_jacks.png" alt="Ilustrasi Gerakan" class="w-full h-full object-contain p-2 transition-transform duration-300 group-hover:scale-105" onerror="this.onerror=null; this.src='/workout_data/images/ex_jumping_jacks.png'" />
+            <div id="live-image-placeholder" class="hidden text-center p-4 text-slate-500 text-xs">
+              <span class="text-4xl block mb-2">🏋️</span>
+              Ilustrasi Gerakan
+            </div>
+            
+            <!-- Quick Guide Overlay Button -->
+            <button onclick="app.openCurrentExerciseGuide()" class="absolute bottom-3 right-3 px-3 py-1.5 rounded-xl bg-slate-900/90 hover:bg-slate-800 text-brand-400 hover:text-white border border-brand-500/30 text-xs font-bold backdrop-blur-md flex items-center gap-1.5 shadow-lg transition-all">
+              <i data-lucide="book-open" class="w-3.5 h-3.5"></i>
+              <span>Panduan Gerakan</span>
+            </button>
+          </div>
+
+          <!-- Title, Icon & Panduan Row -->
+          <div class="text-center space-y-1.5">
+            <div class="flex items-center justify-center gap-2.5 flex-wrap">
+              <!-- Live Exercise Icon -->
+              <div class="w-10 h-10 sm:w-11 sm:h-11 rounded-xl bg-slate-900 border border-slate-700/80 shadow-md p-1 flex items-center justify-center flex-shrink-0">
+                <img id="live-exercise-icon" src="/images/icons/icon_ex_jumping_jacks.png" alt="Icon Gerakan" class="w-full h-full object-contain" onerror="this.onerror=null; this.src='/images/icons/icon_ex_jumping_jacks.png'" />
+              </div>
+              <h2 id="live-exercise-name" class="text-xl sm:text-2xl font-black text-white">Jumping Jacks</h2>
+              <button onclick="app.openCurrentExerciseGuide()" class="inline-flex items-center gap-1 text-xs font-semibold px-2.5 py-1 rounded-full bg-brand-500/10 hover:bg-brand-500/20 text-brand-400 border border-brand-500/30 transition-colors">
+                <i data-lucide="info" class="w-3.5 h-3.5"></i>
+                <span>Panduan</span>
+              </button>
+            </div>
+            
+            <!-- Status Pill -->
+            <div>
+              <span id="live-status-pill" class="inline-block px-3 py-0.5 rounded-full text-xs font-extrabold uppercase bg-emerald-500/20 text-emerald-400 border border-emerald-500/30">
+                💪 LATIHAN AKTIF
+              </span>
+            </div>
+          </div>
+
+          <!-- Large Timer / Reps Display -->
+          <div class="text-center py-1">
+            <div id="live-timer-display" class="text-5xl sm:text-6xl font-black tracking-tight text-brand-400 font-mono">
+              30s
+            </div>
+          </div>
+
+          <!-- Real-Time Metrics (Calories shown on Pause/Finish, Next Exercise) -->
+          <div class="flex items-center justify-between text-xs px-3 py-2.5 rounded-xl bg-slate-950/60 border border-slate-800/80">
+            <div class="flex items-center gap-1.5 text-amber-400 font-bold" id="live-calories-container">
+              <span>🔥</span>
+              <span id="live-calories-burned">Kalori dihitung saat jeda/selesai</span>
+            </div>
+            <div class="flex items-center gap-1.5 text-slate-400 truncate max-w-[240px]">
+              <img id="live-next-icon" src="" alt="Icon Selanjutnya" class="w-5 h-5 rounded-md object-contain bg-slate-900 border border-slate-800 flex-shrink-0" onerror="this.onerror=null; this.src='/images/icons/icon_ex_jumping_jacks.png'" />
+              <span class="text-slate-400 text-[11px]">👉 Selanjutnya:</span>
+              <span id="live-next-exercise-name" class="text-slate-200 font-semibold truncate">Wall Sit</span>
+            </div>
+          </div>
+
+          <!-- Dynamic Controls Box (Always pinned & visible on any screen) -->
+          <div id="live-controls-container" class="pt-2">
+            <!-- Time-Based Controls Container -->
+            <div id="controls-time-based" class="flex items-center justify-center gap-2">
+              <button onclick="app.prevStep()" class="p-3.5 rounded-2xl bg-slate-800 hover:bg-slate-700 text-slate-300 hover:text-white transition-colors" title="Langkah Sebelumnya">
+                <i data-lucide="skip-back" class="w-5 h-5"></i>
+              </button>
+
+              <button id="btn-pause-resume" onclick="app.togglePauseResume()" class="flex-1 max-w-[160px] py-3.5 rounded-2xl bg-brand-600 hover:bg-brand-500 text-white font-bold text-sm sm:text-base flex items-center justify-center gap-2 shadow-lg shadow-brand-600/30 transition-all">
+                <i id="pause-icon" data-lucide="pause" class="w-5 h-5"></i>
+                <span id="pause-text">Pause</span>
+              </button>
+
+              <button onclick="app.skipStep()" class="p-3.5 rounded-2xl bg-slate-800 hover:bg-slate-700 text-slate-300 hover:text-white transition-colors" title="Lewati / Langkah Berikutnya">
+                <i data-lucide="skip-forward" class="w-5 h-5"></i>
+              </button>
+
+              <button onclick="app.adjustTime(10)" class="px-3.5 py-3.5 rounded-2xl bg-slate-800 hover:bg-slate-700 text-slate-300 hover:text-white text-xs font-bold transition-colors" title="Tambah 10 Detik">
+                +10s
+              </button>
+            </div>
+
+            <!-- Rep-Based Controls Container -->
+            <div id="controls-rep-based" class="hidden flex items-center justify-center gap-2">
+              <button onclick="app.prevStep()" class="p-3.5 rounded-2xl bg-slate-800 hover:bg-slate-700 text-slate-300 hover:text-white transition-colors" title="Langkah Sebelumnya">
+                <i data-lucide="skip-back" class="w-5 h-5"></i>
+              </button>
+
+              <button onclick="app.skipStep()" class="flex-1 py-3.5 rounded-2xl bg-emerald-600 hover:bg-emerald-500 text-white font-black text-sm sm:text-base flex items-center justify-center gap-2 shadow-lg shadow-emerald-600/30 transition-all">
+                <i data-lucide="check-circle-2" class="w-5 h-5"></i>
+                <span>✓ SELESAI REPETISI</span>
+              </button>
+
+              <button onclick="app.skipStep()" class="p-3.5 rounded-2xl bg-slate-800 hover:bg-slate-700 text-slate-300 hover:text-white transition-colors" title="Lewati">
+                <i data-lucide="skip-forward" class="w-5 h-5"></i>
+              </button>
+            </div>
+
+            <!-- Rest Controls Container -->
+            <div id="controls-rest" class="hidden flex items-center justify-center gap-3">
+              <button onclick="app.adjustTime(20)" class="px-5 py-3.5 rounded-2xl bg-slate-800 hover:bg-slate-700 text-slate-200 text-xs sm:text-sm font-bold border border-slate-700 transition-colors">
+                +20 Detik
+              </button>
+
+              <button onclick="app.skipStep()" class="flex-1 max-w-[220px] py-3.5 rounded-2xl bg-brand-600 hover:bg-brand-500 text-white font-black text-xs sm:text-sm flex items-center justify-center gap-2 shadow-lg shadow-brand-600/30 transition-all">
+                <span>LEWATI ISTIRAHAT</span>
+                <i data-lucide="play" class="w-4 h-4 fill-white"></i>
+              </button>
+            </div>
+
+            <!-- Paused Session Helper Actions (Visible only when workout is paused) -->
+            <div id="live-paused-banner" class="hidden mt-4 p-3.5 rounded-2xl bg-amber-500/10 border border-amber-500/30 text-center space-y-2">
+              <div class="text-xs font-semibold text-amber-300 flex items-center justify-center gap-1.5">
+                <i data-lucide="pause-circle" class="w-4 h-4 text-amber-400"></i>
+                <span id="paused-status-banner-text">Sesi Latihan Terjeda</span>
+              </div>
+              <div class="grid grid-cols-2 gap-2 pt-1">
+                <button type="button" onclick="app.togglePauseResume()" class="py-2.5 px-3 rounded-xl bg-emerald-600 hover:bg-emerald-500 text-white text-xs font-bold flex items-center justify-center gap-1.5 shadow transition-all">
+                  <i data-lucide="play" class="w-3.5 h-3.5 fill-white"></i>
+                  <span>Lanjutkan Latihan</span>
+                </button>
+                <button type="button" onclick="app.executeSavePendingWorkout()" class="py-2.5 px-3 rounded-xl bg-amber-600 hover:bg-amber-500 text-white text-xs font-bold flex items-center justify-center gap-1.5 shadow transition-all">
+                  <i data-lucide="bookmark" class="w-3.5 h-3.5"></i>
+                  <span>Simpan & Lanjut Nanti</span>
+                </button>
+              </div>
+            </div>
+          </div>
+
+        </div>
+      </section>
+
+      <!-- =================================================================== -->
+      <!-- VIEW 4: CELEBRATION & ADAPTIVE FEEDBACK (POST-WORKOUT) -->
+      <!-- =================================================================== -->
+      <section id="view-celebration" class="app-view hidden space-y-6 max-w-xl mx-auto">
+        <div class="bg-gradient-to-b from-slate-900 to-slate-950 border border-slate-800 rounded-3xl p-6 sm:p-8 text-center space-y-5 shadow-2xl">
+          
+          <div class="w-20 h-20 mx-auto rounded-3xl bg-gradient-to-tr from-amber-500 to-yellow-300 flex items-center justify-center text-4xl shadow-2xl shadow-yellow-500/30 animate-bounce">
+            🏆
+          </div>
+
+          <div>
+            <span class="text-xs font-bold px-3 py-1 rounded-full bg-emerald-500/20 text-emerald-400 border border-emerald-500/30">
+              SESI LATIHAN TUNTAS
+            </span>
+            <h1 class="text-2xl sm:text-3xl font-black text-white mt-2">KERJA BAGUS!</h1>
+            <p id="celeb-routine-name" class="text-sm text-slate-300 mt-1">Scientific 7-Minute Full Body</p>
+          </div>
+
+          <!-- Lifetime Record / Milestone Alert -->
+          <div class="grid grid-cols-3 gap-2.5 bg-slate-900/90 p-4 rounded-2xl border border-slate-800">
+            <div>
+              <span class="text-[11px] text-slate-400 block">⏱️ Durasi</span>
+              <span id="celeb-duration" class="text-base sm:text-lg font-black text-brand-400">7:14</span>
+            </div>
+            <div>
+              <span class="text-[11px] text-slate-400 block">🔥 Kalori</span>
+              <span id="celeb-calories" class="text-base sm:text-lg font-black text-amber-400">45.2 kkal</span>
+            </div>
+            <div>
+              <span class="text-[11px] text-slate-400 block">🎯 Tuntas</span>
+              <span id="celeb-completion" class="text-base sm:text-lg font-black text-emerald-400">100%</span>
+            </div>
+          </div>
+
+          <!-- Adaptive Feeling Feedback (HCI Evaluative Feedback) -->
+          <div class="space-y-3 pt-2 text-left">
+            <h3 class="text-xs font-bold uppercase tracking-wider text-slate-400">Bagaimana perasaan fisik Anda?</h3>
+            <div class="grid grid-cols-2 gap-2" id="feedback-options-grid">
+              <button onclick="app.submitFeedback('TOO_EASY')" class="feedback-btn p-3 rounded-xl bg-slate-800/80 hover:bg-slate-700 border border-slate-700 text-xs font-semibold text-slate-300 hover:text-white text-left transition-all">
+                <span class="text-base block mb-0.5">😌 Terlalu Mudah</span>
+                <span class="text-[10px] text-slate-400">Tingkatkan beban/reps</span>
+              </button>
+              <button onclick="app.submitFeedback('JUST_RIGHT')" class="feedback-btn p-3 rounded-xl bg-slate-800/80 hover:bg-slate-700 border border-slate-700 text-xs font-semibold text-slate-300 hover:text-white text-left transition-all">
+                <span class="text-base block mb-0.5">💪 Pas & Optimal</span>
+                <span class="text-[10px] text-slate-400">Pertahankan intensitas</span>
+              </button>
+              <button onclick="app.submitFeedback('CHALLENGING')" class="feedback-btn p-3 rounded-xl bg-slate-800/80 hover:bg-slate-700 border border-slate-700 text-xs font-semibold text-slate-300 hover:text-white text-left transition-all">
+                <span class="text-base block mb-0.5">🔥 Cukup Menantang</span>
+                <span class="text-[10px] text-slate-400">Stimulasi maksimal</span>
+              </button>
+              <button onclick="app.submitFeedback('EXHAUSTING')" class="feedback-btn p-3 rounded-xl bg-slate-800/80 hover:bg-slate-700 border border-slate-700 text-xs font-semibold text-slate-300 hover:text-white text-left transition-all">
+                <span class="text-base block mb-0.5">😮‍💨 Terlalu Berat</span>
+                <span class="text-[10px] text-slate-400">Perlu istirahat lebih</span>
+              </button>
+            </div>
+          </div>
+
+          <!-- Adaptive Recommendation Card -->
+          <div id="adaptive-advice-card" class="hidden text-left p-4 rounded-xl bg-brand-500/10 border border-brand-500/20 text-xs text-brand-300 space-y-1">
+            <span class="font-bold flex items-center gap-1.5 text-brand-400">
+              <i data-lucide="sparkles" class="w-4 h-4"></i>
+              <span>Saran Adaptif FitPulse:</span>
+            </span>
+            <p id="adaptive-advice-text" class="text-slate-300 text-xs leading-relaxed"></p>
+          </div>
+
+          <button onclick="app.navigate('training')" class="w-full py-3.5 rounded-xl bg-brand-600 hover:bg-brand-500 text-white font-bold text-sm shadow-lg shadow-brand-600/30 transition-all">
+            Kembali ke Beranda Latihan
+          </button>
+
+        </div>
+      </section>
+
+      <!-- =================================================================== -->
+      <!-- VIEW 5: LAPORAN (REPORTS, METRICS, BMI & WORKOUT HISTORY) -->
+      <!-- =================================================================== -->
+      <section id="view-report" class="app-view hidden space-y-6">
+        
+        <div>
+          <h1 class="text-xl sm:text-2xl font-black text-white">LAPORAN KEBUGARAN (REPORT)</h1>
+          <p class="text-xs sm:text-sm text-slate-400">Pantau progres konsistensi, berat badan, dan riwayat latihan Anda.</p>
+        </div>
+
+        <!-- 1. Day Streak Card -->
+        <div class="bg-gradient-to-br from-slate-900 to-slate-800/80 border border-slate-800 rounded-2xl p-5 shadow-xl">
+          <div class="grid grid-cols-2 gap-4">
+            <div>
+              <span class="text-xs text-slate-400 block mb-1">Day Streak (Aktif)</span>
+              <div class="flex items-center gap-2">
+                <span class="text-3xl font-black text-orange-400" id="report-streak">🔥 0</span>
+                <span class="text-xs text-slate-400">Hari Berturut</span>
+              </div>
+            </div>
+            <div class="text-right">
+              <span class="text-xs text-slate-400 block mb-1">Personal Best</span>
+              <div class="flex items-center justify-end gap-2">
+                <span class="text-3xl font-black text-amber-300" id="report-pb">🏆 0</span>
+                <span class="text-xs text-slate-400">Hari</span>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- 2. Weight Tracker Card -->
+        <div class="bg-slate-900 border border-slate-800 rounded-2xl p-5 shadow-xl space-y-3">
+          <div class="flex items-center justify-between">
+            <div>
+              <h3 class="font-bold text-white text-base">Berat Badan (Weight)</h3>
+              <p class="text-xs text-slate-400">Biometrik untuk kalori akurat</p>
+            </div>
+            <button onclick="app.openWeightLoggerModal()" class="px-3.5 py-1.5 rounded-xl bg-brand-600 hover:bg-brand-500 text-white text-xs font-bold transition-colors">
+              Catat (Log)
+            </button>
+          </div>
+          
+          <div class="flex items-baseline gap-2">
+            <span id="report-weight" class="text-3xl sm:text-4xl font-black text-brand-400">65.0</span>
+            <span class="text-sm font-semibold text-slate-400">kg</span>
+          </div>
+        </div>
+
+        <!-- 3. BMI (Body Mass Index) Gauge Card -->
+        <div class="bg-slate-900 border border-slate-800 rounded-2xl p-5 shadow-xl space-y-4">
+          <div class="flex items-center justify-between">
+            <div>
+              <h3 class="font-bold text-white text-base">BMI (Body Mass Index)</h3>
+              <p class="text-xs text-slate-400">Klasifikasi standar WHO</p>
+            </div>
+            <button onclick="app.openHeightLoggerModal()" class="px-3 py-1.5 rounded-xl bg-slate-800 hover:bg-slate-700 text-slate-300 text-xs font-semibold border border-slate-700 transition-colors">
+              Ubah Tinggi
+            </button>
+          </div>
+
+          <div class="flex items-center gap-3">
+            <span id="report-bmi-val" class="text-3xl sm:text-4xl font-black text-emerald-400">22.5</span>
+            <div>
+              <span id="report-bmi-cat" class="text-xs sm:text-sm font-bold text-emerald-400 block">● Berat Badan Sehat / Ideal</span>
+              <span id="report-height-info" class="text-xs text-slate-400">Tinggi: 170 cm</span>
+            </div>
+          </div>
+
+          <!-- Color-coded Bar Gauge -->
+          <div class="space-y-1">
+            <div class="grid grid-cols-4 gap-1.5 h-3">
+              <div class="rounded-full bg-blue-500" title="< 18.5 (Underweight)"></div>
+              <div class="rounded-full bg-emerald-500" title="18.5 - 24.9 (Ideal)"></div>
+              <div class="rounded-full bg-amber-500" title="25.0 - 29.9 (Overweight)"></div>
+              <div class="rounded-full bg-red-500" title=">= 30 (Obese)"></div>
+            </div>
+            <div class="grid grid-cols-4 text-[10px] text-slate-500 text-center">
+              <span>&lt; 18.5</span>
+              <span>18.5 - 24.9</span>
+              <span>25 - 29.9</span>
+              <span>≥ 30</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- 4. Lifetime Stats Summary -->
+        <div class="bg-slate-900 border border-slate-800 rounded-2xl p-5 shadow-xl space-y-3">
+          <h3 class="font-bold text-white text-base">Statistik Menyeluruh (Lifetime Records)</h3>
+          <div class="grid grid-cols-3 gap-3">
+            <div class="bg-slate-950/60 p-3 rounded-xl border border-slate-800/80 text-center">
+              <span class="text-[11px] text-slate-400 block mb-0.5">✅ Sesi Tuntas</span>
+              <span id="report-total-workouts" class="text-base sm:text-lg font-bold text-white">0 Sesi</span>
+            </div>
+            <div class="bg-slate-950/60 p-3 rounded-xl border border-slate-800/80 text-center">
+              <span class="text-[11px] text-slate-400 block mb-0.5">🔥 Total Kalori</span>
+              <span id="report-total-calories" class="text-base sm:text-lg font-bold text-amber-400">0 kkal</span>
+            </div>
+            <div class="bg-slate-950/60 p-3 rounded-xl border border-slate-800/80 text-center">
+              <span class="text-[11px] text-slate-400 block mb-0.5">⏱️ Total Menit</span>
+              <span id="report-total-minutes" class="text-base sm:text-lg font-bold text-brand-400">0 Menit</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- 5. Konsistensi Penyelesaian Latihan -->
+        <div class="bg-gradient-to-br from-slate-900 to-slate-850 border border-slate-800 rounded-2xl p-5 shadow-xl space-y-3">
+          <div class="flex items-center justify-between">
+            <div class="flex items-center gap-2">
+              <span class="text-xl">📊</span>
+              <h3 class="font-bold text-white text-base">Konsistensi Penyelesaian Latihan</h3>
+            </div>
+            <span id="report-consistency-pct" class="text-xl sm:text-2xl font-black text-emerald-400">85%</span>
+          </div>
+
+          <!-- Consistency Bar -->
+          <div class="w-full bg-slate-800 rounded-full h-3 overflow-hidden">
+            <div id="report-consistency-bar" class="bg-emerald-500 h-3 rounded-full transition-all duration-500" style="width: 85%;"></div>
+          </div>
+
+          <div class="flex items-center justify-between text-xs text-slate-400 pt-1">
+            <span id="report-consistency-completed">✅ 0/0 Jadwal Selesai</span>
+            <span id="report-consistency-missed">⚠️ 0 Terlewat</span>
+            <span id="report-consistency-total">🎯 Jadwal Mingguan</span>
+          </div>
+        </div>
+
+        <!-- 6. Pelatihan Tertunda (Incomplete Workouts - Tidak Mempengaruhi Performa) -->
+        <div id="pending-workouts-card" class="bg-gradient-to-br from-slate-900 via-slate-900 to-amber-950/20 border border-amber-800/40 rounded-2xl p-5 shadow-xl space-y-3">
+          <div class="flex items-center justify-between">
+            <div class="flex items-center gap-2">
+              <span class="text-xl">⏸️</span>
+              <div>
+                <h3 class="font-bold text-white text-base">Pelatihan Tertunda</h3>
+                <p class="text-xs text-amber-300/80">Latihan yang terhenti dapat dilanjutkan kapan saja (tidak mempengaruhi performa konsistensi)</p>
+              </div>
+            </div>
+            <span id="pending-count-badge" class="text-xs font-bold px-2.5 py-1 rounded-full bg-amber-500/20 text-amber-400 border border-amber-500/30">0</span>
+          </div>
+
+          <div id="pending-workouts-list" class="space-y-2.5">
+            <!-- Populated via JS -->
+          </div>
+        </div>
+
+        <!-- 7. History Log List -->
+        <div class="bg-slate-900 border border-slate-800 rounded-2xl p-5 shadow-xl space-y-4">
+          <div class="flex items-center justify-between">
+            <h3 class="font-bold text-white text-base flex items-center gap-2">
+              <span>🗓️ Riwayat Latihan</span>
+              <span id="report-history-count" class="text-xs px-2 py-0.5 rounded-full bg-slate-800 text-slate-400">0</span>
+            </h3>
+          </div>
+
+          <div id="history-log-list" class="space-y-2.5">
+            <!-- Populated via JS -->
+          </div>
+        </div>
+
+      </section>
+
+      <!-- =================================================================== -->
+      <!-- VIEW 6: PENGATURAN & PROFIL (SETTINGS) -->
+      <!-- =================================================================== -->
+      <section id="view-settings" class="app-view hidden space-y-6 max-w-2xl mx-auto">
+        
+        <div>
+          <h1 class="text-xl sm:text-2xl font-black text-white">PENGATURAN & PROFIL</h1>
+          <p class="text-xs sm:text-sm text-slate-400">Personalisasi aplikasi sesuai kenyamanan dan preferensi Anda.</p>
+        </div>
+
+        <!-- Account & Cloud Database Card -->
+        <div class="bg-slate-900 border border-slate-800 rounded-2xl p-5 sm:p-6 shadow-xl space-y-4">
+          <div class="flex items-center justify-between border-b border-slate-800 pb-2.5">
+            <div>
+              <h3 class="font-bold text-white text-base flex items-center gap-2">
+                <span>🔐 Akun Pengguna & TiDB Cloud</span>
+              </h3>
+              <p class="text-xs text-slate-400">Sinkronisasi aktivitas latihan, profil, dan jadwal ke database cloud.</p>
+            </div>
+            <span id="account-status-badge" class="text-xs font-semibold px-2.5 py-0.5 rounded-full bg-slate-800 text-slate-400 border border-slate-700">
+              Mode Tamu
+            </span>
+          </div>
+
+          <div id="account-status-info" class="p-3.5 rounded-xl bg-slate-950 border border-slate-800/80 flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+            <div>
+              <span id="account-status-title" class="text-sm font-bold text-white block">Belum Masuk</span>
+              <span id="account-status-desc" class="text-xs text-slate-400 block mt-0.5">Masuk atau daftar untuk menyimpan riwayat latihan Anda secara online.</span>
+            </div>
+            <button id="btn-account-action" onclick="app.openAuthModal('login')" class="px-4 py-2 rounded-xl bg-brand-600 hover:bg-brand-500 text-white font-bold text-xs transition-all shadow-md flex items-center justify-center gap-1.5 whitespace-nowrap">
+              <i data-lucide="log-in" class="w-3.5 h-3.5"></i>
+              <span>Masuk / Daftar</span>
+            </button>
+          </div>
+        </div>
+
+        <!-- Profile Form Card -->
+        <div class="bg-slate-900 border border-slate-800 rounded-2xl p-5 sm:p-6 shadow-xl space-y-4">
+          <h3 class="font-bold text-white text-base border-b border-slate-800 pb-2">Profil Pengguna</h3>
+          
+          <div class="space-y-3">
+            <div>
+              <label class="block text-xs font-semibold text-slate-300 mb-1">Nama Lengkap</label>
+              <input type="text" id="setting-name" class="w-full bg-slate-950 border border-slate-800 rounded-xl px-3.5 py-2.5 text-sm text-white focus:outline-none focus:border-brand-500" />
+            </div>
+
+            <div class="grid grid-cols-2 gap-3">
+              <div>
+                <label class="block text-xs font-semibold text-slate-300 mb-1">Berat Badan (kg)</label>
+                <input type="number" step="0.5" id="setting-weight" class="w-full bg-slate-950 border border-slate-800 rounded-xl px-3.5 py-2.5 text-sm text-white focus:outline-none focus:border-brand-500" />
+              </div>
+              <div>
+                <label class="block text-xs font-semibold text-slate-300 mb-1">Tinggi Badan (cm)</label>
+                <input type="number" step="1" id="setting-height" class="w-full bg-slate-950 border border-slate-800 rounded-xl px-3.5 py-2.5 text-sm text-white focus:outline-none focus:border-brand-500" />
+              </div>
+            </div>
+
+            <div>
+              <label class="block text-xs font-semibold text-slate-300 mb-1">Tingkat Kebugaran</label>
+              <select id="setting-fitness-level" class="w-full bg-slate-950 border border-slate-800 rounded-xl px-3.5 py-2.5 text-sm text-white focus:outline-none focus:border-brand-500">
+                <option value="Beginner">Beginner (Pemula)</option>
+                <option value="Intermediate">Intermediate (Menengah)</option>
+                <option value="Advanced">Advanced (Mahir)</option>
+              </select>
+            </div>
+
+            <button onclick="app.saveProfileSettings()" class="w-full py-2.5 rounded-xl bg-brand-600 hover:bg-brand-500 text-white font-bold text-xs sm:text-sm transition-all shadow-md">
+              Simpan Perubahan Profil
+            </button>
+          </div>
+        </div>
+
+        <!-- Workout Preferences Card -->
+        <div class="bg-slate-900 border border-slate-800 rounded-2xl p-5 sm:p-6 shadow-xl space-y-4">
+          <h3 class="font-bold text-white text-base border-b border-slate-800 pb-2">Preferensi Latihan & Aksesibilitas</h3>
+
+          <!-- Default Rest Slider -->
+          <div class="space-y-1.5">
+            <div class="flex items-center justify-between text-xs font-semibold">
+              <span class="text-slate-300">Durasi Istirahat Standar (Rest Interval)</span>
+              <span id="setting-rest-val" class="text-brand-400 font-bold">15 Detik</span>
+            </div>
+            <input 
+              type="range" 
+              id="setting-rest-slider" 
+              min="5" 
+              max="90" 
+              step="5" 
+              value="15" 
+              class="w-full accent-brand-500" 
+              oninput="document.getElementById('setting-rest-val').innerText = this.value + ' Detik'"
+            />
+            <span class="text-[11px] text-slate-500 block">Digunakan saat transisi antar gerakan latihan.</span>
+          </div>
+
+          <!-- Sound Effects Toggle -->
+          <div class="flex items-center justify-between pt-2">
+            <div>
+              <span class="text-sm font-semibold text-white block">Efek Suara Hitung Mundur (Audio Beeps)</span>
+              <span class="text-xs text-slate-400">Bunyi 'Beep' 3-2-1 dan lonceng tanda selesai</span>
+            </div>
+            <label class="relative inline-flex items-center cursor-pointer">
+              <input type="checkbox" id="setting-sound-toggle" class="sr-only peer" checked />
+              <div class="w-11 h-6 bg-slate-800 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-slate-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-brand-500"></div>
+            </label>
+          </div>
+
+          <!-- Voice Cues Toggle -->
+          <div class="flex items-center justify-between pt-2">
+            <div>
+              <span class="text-sm font-semibold text-white block">Panduan Suara / Voice Cues (TTS)</span>
+              <span class="text-xs text-slate-400">Pengucapan nama gerakan dan instruksi awal</span>
+            </div>
+            <label class="relative inline-flex items-center cursor-pointer">
+              <input type="checkbox" id="setting-voice-toggle" class="sr-only peer" checked />
+              <div class="w-11 h-6 bg-slate-800 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-slate-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-brand-500"></div>
+            </label>
+          </div>
+
+          <button onclick="app.saveWorkoutPreferences()" class="w-full py-2.5 rounded-xl bg-slate-800 hover:bg-slate-700 text-white font-bold text-xs sm:text-sm border border-slate-700 transition-all">
+            Simpan Preferensi
+          </button>
+        </div>
+
+        <!-- Audio & Voice Customization Card -->
+        <div class="bg-slate-900 border border-slate-800 rounded-2xl p-5 sm:p-6 shadow-xl space-y-4">
+          <div class="flex items-center justify-between border-b border-slate-800 pb-2">
+            <div>
+              <h3 class="font-bold text-white text-base flex items-center gap-2">
+                <span>🔊 Kustomisasi Suara & Pemandu Audio</span>
+              </h3>
+              <p class="text-xs text-slate-400">Pilih mode nada non-Google, pilih karakter suara OS, atau atur tempo & nada.</p>
+            </div>
+            <span class="text-xs text-brand-400 font-semibold px-2 py-0.5 rounded-full bg-brand-500/10 border border-brand-500/30">Custom Audio</span>
+          </div>
+
+          <!-- Mode Pemandu: Chime (Tanpa Suara Google) vs TTS (Suara Robot/OS) -->
+          <div class="space-y-2">
+            <label class="block text-xs font-semibold text-slate-300">Pilihan Tipe Pemandu Audio</label>
+            <div class="grid grid-cols-1 sm:grid-cols-2 gap-2.5">
+              <button 
+                type="button" 
+                id="voice-mode-chime-btn" 
+                onclick="app.setVoiceMode('chime')" 
+                class="p-3.5 rounded-xl border text-left transition-all bg-slate-950 border-slate-800 hover:border-brand-500"
+              >
+                <div class="font-bold text-xs text-white flex items-center gap-1.5">
+                  <span>🎵 Mode Nada Akustik / Chime</span>
+                </div>
+                <div class="text-[11px] text-slate-400 mt-1 leading-relaxed">
+                  <span class="text-emerald-400 font-semibold">100% Tanpa Suara Google:</span> Melodi instrumen sintetis dinamis (aba-aba mulai, istirahat, & selesai).
+                </div>
+              </button>
+
+              <button 
+                type="button" 
+                id="voice-mode-voice-btn" 
+                onclick="app.setVoiceMode('voice')" 
+                class="p-3.5 rounded-xl border text-left transition-all bg-slate-950 border-slate-800 hover:border-brand-500"
+              >
+                <div class="font-bold text-xs text-white flex items-center gap-1.5">
+                  <span>🗣️ Suara Vokal (TTS)</span>
+                </div>
+                <div class="text-[11px] text-slate-400 mt-1 leading-relaxed">
+                  Menyebutkan nama gerakan. Anda dapat memilih suara lokal Windows/Edge non-Google di bawah.
+                </div>
+              </button>
+            </div>
+          </div>
+
+          <!-- Voice Selection Dropdown (Only for TTS mode) -->
+          <div id="voice-dropdown-container" class="space-y-1.5">
+            <div class="flex items-center justify-between">
+              <label class="block text-xs font-semibold text-slate-300">Daftar Karakter Suara Terpasang di Browser/OS</label>
+              <span class="text-[10px] text-slate-400" id="voice-count-hint">Memuat suara...</span>
+            </div>
+            <select 
+              id="setting-voice-select" 
+              class="w-full bg-slate-950 border border-slate-800 rounded-xl px-3.5 py-2.5 text-xs text-white focus:outline-none focus:border-brand-500" 
+              onchange="app.onVoiceSelectChanged(this.value)"
+            >
+              <option value="">-- Suara Bawaan Sistem --</option>
+            </select>
+            <span class="text-[11px] text-slate-400 block">
+              💡 <i>Tips: Pilih karakter <b>Microsoft Natural</b> (misal Gadis/Ardi) atau suara OS lokal untuk menggantikan suara Google.</i>
+            </span>
+          </div>
+
+          <!-- Pitch & Speed Sliders -->
+          <div id="voice-sliders-container" class="grid grid-cols-1 sm:grid-cols-2 gap-3 pt-1">
+            <div class="space-y-1 bg-slate-950/60 p-3 rounded-xl border border-slate-800/80">
+              <div class="flex items-center justify-between text-xs font-semibold">
+                <span class="text-slate-300">Tinggi Nada (Pitch)</span>
+                <span id="setting-pitch-val" class="text-brand-400 font-bold">1.0x</span>
+              </div>
+              <input 
+                type="range" 
+                id="setting-pitch-slider" 
+                min="0.5" 
+                max="1.5" 
+                step="0.1" 
+                value="1.0" 
+                class="w-full accent-brand-500" 
+                oninput="app.onPitchChanged(this.value)"
+              />
+              <div class="flex justify-between text-[10px] text-slate-500">
+                <span>Bass (0.5x)</span>
+                <span>Normal (1.0x)</span>
+                <span>Tinggi (1.5x)</span>
+              </div>
+            </div>
+
+            <div class="space-y-1 bg-slate-950/60 p-3 rounded-xl border border-slate-800/80">
+              <div class="flex items-center justify-between text-xs font-semibold">
+                <span class="text-slate-300">Kecepatan Bicara (Speed)</span>
+                <span id="setting-rate-val" class="text-brand-400 font-bold">1.0x</span>
+              </div>
+              <input 
+                type="range" 
+                id="setting-rate-slider" 
+                min="0.7" 
+                max="1.4" 
+                step="0.1" 
+                value="1.0" 
+                class="w-full accent-brand-500" 
+                oninput="app.onRateChanged(this.value)"
+              />
+              <div class="flex justify-between text-[10px] text-slate-500">
+                <span>Santai (0.7x)</span>
+                <span>Normal (1.0x)</span>
+                <span>Cepat (1.4x)</span>
+              </div>
+            </div>
+          </div>
+
+          <!-- Test Voice Button -->
+          <div class="pt-1">
+            <button 
+              type="button" 
+              onclick="app.testAudioPreview()" 
+              class="w-full py-2.5 rounded-xl bg-slate-800 hover:bg-slate-700 text-white font-bold text-xs sm:text-sm border border-slate-700 transition-all flex items-center justify-center gap-2 shadow-sm"
+            >
+              <i data-lucide="volume-2" class="w-4 h-4 text-brand-400"></i>
+              <span>🔊 Uji Karakter Suara / Audio Sekarang</span>
+            </button>
+          </div>
+        </div>
+
+        <!-- User Guide (Panduan Pengguna) Settings Card -->
+        <div class="bg-slate-900 border border-slate-800 rounded-2xl p-5 sm:p-6 shadow-xl space-y-4">
+          <div class="flex items-center justify-between border-b border-slate-800 pb-2">
+            <div>
+              <h3 class="font-bold text-white text-base flex items-center gap-2">
+                <span>📖 Panduan Pengguna (User Guide)</span>
+              </h3>
+              <p class="text-xs text-slate-400">Panduan visual cara menggunakan aplikasi, memilih program latihan, dan memantau progres.</p>
+            </div>
+            <span class="text-xs text-brand-400 font-semibold px-2 py-0.5 rounded-full bg-brand-500/10 border border-brand-500/30">Panduan 1 & 2</span>
+          </div>
+
+          <!-- Toggle: Tampilkan Panduan Saat Aplikasi Dibuka -->
+          <div class="flex items-center justify-between pt-1">
+            <div>
+              <span class="text-sm font-semibold text-white block">Tampilkan Panduan Saat Aplikasi Dibuka</span>
+              <span class="text-xs text-slate-400">Munculkan pop-up panduan visual otomatis setiap kali aplikasi dibuka</span>
+            </div>
+            <label class="relative inline-flex items-center cursor-pointer">
+              <input type="checkbox" id="setting-guide-startup-toggle" class="sr-only peer" onchange="app.toggleGuideStartupFromSettings(this.checked)" checked />
+              <div class="w-11 h-6 bg-slate-800 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-slate-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-brand-500"></div>
+            </label>
+          </div>
+
+          <!-- Button: Buka Panduan Sekarang -->
+          <div class="pt-1">
+            <button 
+              type="button" 
+              onclick="app.openUserGuideOverlay(1)" 
+              class="w-full py-2.5 rounded-xl bg-gradient-to-r from-brand-600 to-blue-600 hover:from-brand-500 hover:to-blue-500 text-white font-bold text-xs sm:text-sm transition-all shadow-lg shadow-brand-600/20 flex items-center justify-center gap-2"
+            >
+              <i data-lucide="book-open" class="w-4 h-4"></i>
+              <span>Buka Panduan Pengguna Sekarang</span>
+            </button>
+          </div>
+        </div>
+
+        <!-- Quick Access Shortcuts -->
+        <div class="grid grid-cols-2 gap-3">
+          <button onclick="app.openScheduleModal()" class="p-4 rounded-2xl bg-slate-900 border border-slate-800 hover:border-slate-700 text-left transition-all">
+            <span class="text-xl block mb-1">📅</span>
+            <span class="font-bold text-sm text-white block">Jadwal Mingguan</span>
+            <span class="text-xs text-slate-400">Atur rutinitas Senin - Minggu</span>
+          </button>
+          <button onclick="app.openCustomBuilderModal()" class="p-4 rounded-2xl bg-slate-900 border border-slate-800 hover:border-slate-700 text-left transition-all">
+            <span class="text-xl block mb-1">🛠️</span>
+            <span class="font-bold text-sm text-white block">Pembuat Template</span>
+            <span class="text-xs text-slate-400">Rakit kombinasi gerakan sendiri</span>
+          </button>
+        </div>
+
+        <!-- Danger Zone: Reset Data -->
+        <div class="bg-red-950/20 border border-red-900/40 rounded-2xl p-5 sm:p-6 shadow-xl space-y-3">
+          <div class="flex items-center gap-2 text-red-400">
+            <i data-lucide="alert-triangle" class="w-5 h-5"></i>
+            <h3 class="font-bold text-base">Zona Bahaya (Danger Zone)</h3>
+          </div>
+          <p class="text-xs text-slate-400 leading-relaxed">
+            Mereset seluruh riwayat latihan, catatan berat badan, pengaturan profil, dan jadwal mingguan kembali ke setelan awal. Tindakan ini memerlukan konfirmasi pengetikan teks dan tidak dapat dibatalkan.
+          </p>
+          <button onclick="app.openResetModal()" class="w-full py-2.5 rounded-xl bg-red-600/80 hover:bg-red-600 text-white font-bold text-xs sm:text-sm border border-red-500 transition-all shadow-lg shadow-red-900/30 flex items-center justify-center gap-2">
+            <span>🗑️ Reset Seluruh Data Pengguna</span>
+          </button>
+        </div>
+
+      </section>
+
+    </main>
+  </div>
+
+  <!-- ======================================================================= -->
+  <!-- MOBILE BOTTOM NAVIGATION BAR (Fixed on Mobile Screens < md) -->
+  <!-- ======================================================================= -->
+  <nav class="md:hidden fixed bottom-0 left-0 right-0 z-40 bg-[#0F172A]/95 backdrop-blur-lg border-t border-slate-800/80 px-2 py-2 flex items-center justify-around">
+    <button id="mobile-nav-training" onclick="app.navigate('training')" class="mobile-nav-btn active flex-1 py-1 flex flex-col items-center gap-1 text-xs font-semibold text-slate-400 transition-colors">
+      <i data-lucide="dumbbell" class="w-5 h-5"></i>
+      <span>Latihan</span>
+    </button>
+    <button id="mobile-nav-report" onclick="app.navigate('report')" class="mobile-nav-btn flex-1 py-1 flex flex-col items-center gap-1 text-xs font-semibold text-slate-400 transition-colors">
+      <i data-lucide="bar-chart-2" class="w-5 h-5"></i>
+      <span>Laporan</span>
+    </button>
+    <button id="mobile-nav-settings" onclick="app.navigate('settings')" class="mobile-nav-btn flex-1 py-1 flex flex-col items-center gap-1 text-xs font-semibold text-slate-400 transition-colors">
+      <i data-lucide="settings" class="w-5 h-5"></i>
+      <span>Pengaturan</span>
+    </button>
+  </nav>
+
+  <!-- ======================================================================= -->
+  <!-- MODAL: EXERCISE DETAIL & ANATOMY GUIDE ("📖 Panduan Gerakan") -->
+  <!-- ======================================================================= -->
+  <div id="modal-exercise-guide" class="fixed inset-0 z-50 bg-black/80 backdrop-blur-sm hidden flex items-center justify-center p-4 overflow-y-auto">
+    <div class="bg-slate-900 border border-slate-800 rounded-3xl w-full max-w-xl max-h-[90vh] overflow-y-auto p-5 sm:p-6 space-y-5 shadow-2xl relative">
+      
+      <!-- Close button -->
+      <button onclick="app.closeModal('modal-exercise-guide')" class="absolute top-4 right-4 p-2 rounded-full bg-slate-800 hover:bg-slate-700 text-slate-400 hover:text-white transition-colors">
+        <i data-lucide="x" class="w-5 h-5"></i>
+      </button>
+
+      <!-- Modal Header -->
+      <div>
+        <div class="flex items-center gap-2 mb-1">
+          <span id="guide-muscle-badge" class="px-2.5 py-0.5 rounded-md bg-brand-500/20 text-brand-400 text-xs font-bold border border-brand-500/30">LEGS</span>
+          <span id="guide-diff-badge" class="px-2.5 py-0.5 rounded-md bg-amber-500/20 text-amber-300 text-xs font-bold border border-amber-500/30">Beginner</span>
+        </div>
+        <h2 id="guide-title" class="text-xl sm:text-2xl font-black text-white">Wall Sit</h2>
+        <p id="guide-desc" class="text-xs text-slate-400 mt-1"></p>
+      </div>
+
+      <!-- 1:1 Image Preview Area -->
+      <div class="w-full aspect-square max-w-[280px] mx-auto bg-[#020617] rounded-2xl overflow-hidden border border-slate-800 flex items-center justify-center shadow-inner">
+        <img id="guide-image" src="" alt="1:1 Exercise Image" class="w-full h-full object-contain p-2" />
+      </div>
+
+      <!-- Dual Anatomy Diagram (Front & Back Muscle Highlight in Electric Blue) -->
+      <div class="space-y-1.5">
+        <div class="flex items-center justify-between text-xs font-bold text-slate-300">
+          <span class="flex items-center gap-1.5">
+            <span class="w-2.5 h-2.5 rounded-full bg-[#38BDF8]"></span>
+            <span>Diagram Anatomi Otot Target (Aktif)</span>
+          </span>
+          <span id="guide-focus-areas" class="text-[11px] text-brand-400 font-medium">Quadriceps, Glutes</span>
+        </div>
+        <div class="w-full bg-[#0F172A] rounded-2xl border border-slate-800 p-2 flex items-center justify-center overflow-hidden">
+          <img id="guide-anatomy-img" src="" alt="Diagram Anatomi Otot" class="w-full max-h-[200px] object-contain rounded-xl" />
+        </div>
+      </div>
+
+      <!-- Numbered Common Mistakes (Kesalahan Umum) -->
+      <div class="space-y-2">
+        <h3 class="text-sm font-bold text-white flex items-center gap-2">
+          <span>⚠️ Kesalahan Umum & Biomekanika</span>
+        </h3>
+        <div id="guide-mistakes-list" class="space-y-2 text-xs">
+          <!-- Populated via JS -->
+        </div>
+      </div>
+
+      <!-- Breathing Tips (Teknik Pernapasan) -->
+      <div class="p-3.5 rounded-2xl bg-sky-950/40 border border-sky-800/40 space-y-1">
+        <h4 class="text-xs font-bold text-sky-400 flex items-center gap-1.5">
+          <span>🫁 Teknik Pernapasan yang Benar</span>
+        </h4>
+        <div id="guide-breathing-tips" class="text-xs text-slate-300 space-y-1">
+          <!-- Populated via JS -->
+        </div>
+      </div>
+
+      <!-- Step-by-Step Instructions -->
+      <div class="space-y-2">
+        <h3 class="text-sm font-bold text-white">Instruksi Langkah demi Langkah</h3>
+        <ol id="guide-instructions-list" class="space-y-1.5 text-xs text-slate-300 list-decimal list-inside bg-slate-950/60 p-3.5 rounded-2xl border border-slate-800">
+          <!-- Populated via JS -->
+        </ol>
+      </div>
+
+      <button onclick="app.closeModal('modal-exercise-guide')" class="w-full py-3 rounded-xl bg-slate-800 hover:bg-slate-700 text-white font-bold text-xs sm:text-sm transition-colors">
+        Tutup Panduan Gerakan
+      </button>
+
+    </div>
+  </div>
+
+  <!-- ======================================================================= -->
+  <!-- MODAL: ROUTINE PLAN EDITOR (Adjust Reps / Duration / Add / Remove Steps) -->
+  <!-- ======================================================================= -->
+  <div id="modal-plan-editor" class="fixed inset-0 z-50 bg-black/80 backdrop-blur-sm hidden flex items-center justify-center p-4 overflow-y-auto">
+    <div class="bg-slate-900 border border-slate-800 rounded-3xl w-full max-w-xl max-h-[92vh] overflow-y-auto p-5 sm:p-6 space-y-4 shadow-2xl relative">
+      <button onclick="app.closeModal('modal-plan-editor')" class="absolute top-4 right-4 p-2 rounded-full bg-slate-800 hover:bg-slate-700 text-slate-400 hover:text-white transition-colors">
+        <i data-lucide="x" class="w-5 h-5"></i>
+      </button>
+
+      <div>
+        <h2 class="text-lg sm:text-xl font-black text-white">Edit Program Template</h2>
+        <p class="text-xs text-slate-400 mt-1">Ubah judul, durasi/repetisi, tambah gerakan baru, atau hapus gerakan dari template ini.</p>
+      </div>
+
+      <!-- Routine Name & Description -->
+      <div class="space-y-2 bg-slate-950/60 p-3.5 rounded-2xl border border-slate-800/80">
+        <div>
+          <label class="block text-[11px] font-bold text-slate-400 uppercase tracking-wider mb-1">Nama Program Template</label>
+          <input 
+            type="text" 
+            id="plan-editor-title-input" 
+            class="w-full bg-slate-900 border border-slate-800 rounded-xl px-3 py-2 text-xs sm:text-sm text-white font-bold focus:outline-none focus:border-brand-500" 
+            placeholder="Judul Routine"
+          />
+        </div>
+      </div>
+
+      <!-- Steps Header & Add Exercise Button -->
+      <div class="flex items-center justify-between pt-1">
+        <h3 class="text-xs font-bold uppercase tracking-wider text-slate-300 flex items-center gap-1.5">
+          <span>Daftar Urutan Gerakan</span>
+          <span id="plan-editor-count-badge" class="px-2 py-0.5 rounded-full bg-slate-800 text-brand-400 text-[10px] font-mono">0</span>
+        </h3>
+        <div class="flex items-center gap-1.5">
+          <button 
+            type="button" 
+            onclick="app.planEditorAddRestStep()" 
+            class="px-2.5 py-1.5 rounded-xl bg-slate-800 hover:bg-slate-700 text-sky-400 border border-slate-700 text-[11px] font-bold flex items-center gap-1 transition-all"
+          >
+            <span>+ Istirahat</span>
+          </button>
+          <button 
+            type="button" 
+            onclick="app.planEditorOpenAddExerciseDialog()" 
+            class="px-3 py-1.5 rounded-xl bg-brand-600 hover:bg-brand-500 text-white text-[11px] font-bold flex items-center gap-1 shadow transition-all"
+          >
+            <i data-lucide="plus" class="w-3.5 h-3.5"></i>
+            <span>Tambah Gerakan</span>
+          </button>
+        </div>
+      </div>
+
+      <!-- Steps List Container -->
+      <div id="plan-editor-steps-list" class="space-y-2 max-h-[46vh] overflow-y-auto pr-1">
+        <!-- Populated via JS -->
+      </div>
+
+      <!-- Add Exercise Dropdown / Selection Drawer (Hidden by default) -->
+      <div id="plan-editor-add-drawer" class="hidden p-3.5 rounded-2xl bg-slate-950 border border-brand-500/40 space-y-2.5">
+        <div class="flex items-center justify-between">
+          <span class="text-xs font-bold text-white flex items-center gap-1.5">
+            <i data-lucide="dumbbell" class="w-3.5 h-3.5 text-brand-400"></i>
+            <span>Pilih Gerakan untuk Ditambahkan:</span>
+          </span>
+          <button type="button" onclick="document.getElementById('plan-editor-add-drawer').classList.add('hidden')" class="text-slate-400 hover:text-white text-xs">
+            ✕ Batal
+          </button>
+        </div>
+        <select id="plan-editor-exercise-picker" class="w-full bg-slate-900 border border-slate-800 rounded-xl px-3 py-2 text-xs text-white focus:outline-none focus:border-brand-500">
+          <!-- Populated via JS -->
+        </select>
+        <button 
+          type="button" 
+          onclick="app.planEditorConfirmAddExercise()" 
+          class="w-full py-2 rounded-xl bg-brand-600 hover:bg-brand-500 text-white font-bold text-xs flex items-center justify-center gap-1.5 shadow"
+        >
+          <span>Masukkan ke Template</span>
+        </button>
+      </div>
+
+      <!-- Action Buttons -->
+      <div class="flex items-center gap-3 pt-2">
+        <button onclick="app.closeModal('modal-plan-editor')" class="flex-1 py-3 rounded-xl bg-slate-800 hover:bg-slate-700 text-slate-300 font-bold text-xs sm:text-sm">
+          Batal
+        </button>
+        <button onclick="app.savePlanEditorChanges()" class="flex-1 py-3 rounded-xl bg-brand-600 hover:bg-brand-500 text-white font-bold text-xs sm:text-sm shadow-lg shadow-brand-600/30">
+          Simpan Perubahan
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ======================================================================= -->
+  <!-- MODAL: CONFIRM DELETE ROUTINE TEMPLATE -->
+  <!-- ======================================================================= -->
+  <div id="modal-delete-routine" class="fixed inset-0 z-50 bg-black/80 backdrop-blur-sm hidden flex items-center justify-center p-4">
+    <div class="bg-slate-900 border border-red-900/60 rounded-3xl w-full max-w-sm p-6 text-center space-y-4 shadow-2xl">
+      <div class="w-12 h-12 mx-auto rounded-full bg-red-500/20 text-red-400 flex items-center justify-center text-2xl">
+        🗑️
+      </div>
+      <div>
+        <h3 class="text-lg font-bold text-white">Hapus Template Latihan?</h3>
+        <p id="delete-routine-confirm-text" class="text-xs text-slate-400 mt-1 leading-relaxed">
+          Apakah Anda yakin ingin menghapus template ini? Tindakan ini tidak dapat dibatalkan.
+        </p>
+      </div>
+      <div class="flex items-center gap-2 pt-2">
+        <button onclick="app.closeModal('modal-delete-routine')" class="flex-1 py-2.5 rounded-xl bg-slate-800 hover:bg-slate-700 text-slate-300 text-xs font-bold">
+          Batal
+        </button>
+        <button id="btn-confirm-delete-routine" onclick="app.executeDeleteRoutine()" class="flex-1 py-2.5 rounded-xl bg-red-600 hover:bg-red-500 text-white text-xs font-bold transition-all shadow-lg shadow-red-600/30">
+          Ya, Hapus Template
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ======================================================================= -->
+  <!-- MODAL: WEEKLY SCHEDULE PLANNER (7-Day Assignment) -->
+  <!-- ======================================================================= -->
+  <div id="modal-schedule-planner" class="fixed inset-0 z-50 bg-black/80 backdrop-blur-sm hidden flex items-center justify-center p-4 overflow-y-auto">
+    <div class="bg-slate-900 border border-slate-800 rounded-3xl w-full max-w-xl max-h-[90vh] overflow-y-auto p-5 sm:p-6 space-y-5 shadow-2xl relative">
+      <button onclick="app.closeModal('modal-schedule-planner')" class="absolute top-4 right-4 p-2 rounded-full bg-slate-800 hover:bg-slate-700 text-slate-400 hover:text-white transition-colors">
+        <i data-lucide="x" class="w-5 h-5"></i>
+      </button>
+
+      <div>
+        <h2 class="text-lg sm:text-xl font-black text-white">Jadwal Rutin Mingguan</h2>
+        <p class="text-xs text-slate-400 mt-1">Tentukan program latihan untuk setiap hari dalam seminggu atau centang Hari Istirahat.</p>
+      </div>
+
+      <!-- Live summary of target days -->
+      <div class="px-3.5 py-2.5 rounded-2xl bg-slate-950 border border-slate-800 flex items-center justify-between text-xs">
+        <span class="text-slate-400">Target Mingguan Saat Ini:</span>
+        <span id="schedule-target-count-badge" class="font-bold text-brand-400">0 Hari Latihan • 0 Hari Istirahat</span>
+      </div>
+
+      <div id="schedule-days-container" class="space-y-3">
+        <!-- Populated via JS -->
+      </div>
+
+      <div class="flex items-center gap-3 pt-3 border-t border-slate-800 sticky bottom-0 bg-slate-900/95 backdrop-blur-md py-2 -mx-1 px-1 z-10">
+        <button type="button" onclick="app.closeModal('modal-schedule-planner')" class="flex-1 py-3 rounded-xl bg-slate-800 hover:bg-slate-700 text-slate-300 font-bold text-xs sm:text-sm transition-colors cursor-pointer">
+          Batal
+        </button>
+        <button type="button" id="btn-save-all-schedule" onclick="app.saveAllScheduleDays()" class="flex-2 py-3 px-5 rounded-xl bg-brand-600 hover:bg-brand-500 text-white font-bold text-xs sm:text-sm shadow-lg shadow-brand-600/30 flex items-center justify-center gap-2 transition-all cursor-pointer">
+          <span>💾 Simpan Semua Jadwal</span>
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ======================================================================= -->
+  <!-- MODAL: CUSTOM ROUTINE TEMPLATE BUILDER -->
+  <!-- ======================================================================= -->
+  <div id="modal-custom-builder" class="fixed inset-0 z-50 bg-black/80 backdrop-blur-sm hidden flex items-center justify-center p-4 overflow-y-auto">
+    <div class="bg-slate-900 border border-slate-800 rounded-3xl w-full max-w-xl max-h-[90vh] overflow-y-auto p-5 sm:p-6 space-y-5 shadow-2xl relative">
+      <button onclick="app.closeModal('modal-custom-builder')" class="absolute top-4 right-4 p-2 rounded-full bg-slate-800 hover:bg-slate-700 text-slate-400 hover:text-white transition-colors">
+        <i data-lucide="x" class="w-5 h-5"></i>
+      </button>
+
+      <div>
+        <h2 class="text-lg sm:text-xl font-black text-white">Buat Custom Workout Sendiri</h2>
+        <p class="text-xs text-slate-400 mt-1">Pilih kombinasi gerakan latihan favorit Anda.</p>
+      </div>
+
+      <div class="space-y-3">
+        <div>
+          <label class="block text-xs font-semibold text-slate-300 mb-1">Judul Rutinitas Kustom</label>
+          <input type="text" id="builder-title" placeholder="Contoh: Morning HIIT Workout" class="w-full bg-slate-950 border border-slate-800 rounded-xl px-3.5 py-2 text-sm text-white" />
+        </div>
+
+        <div>
+          <label class="block text-xs font-semibold text-slate-300 mb-1">Deskripsi Singkat</label>
+          <input type="text" id="builder-desc" placeholder="Contoh: Latihan kardio cepat 10 menit" class="w-full bg-slate-950 border border-slate-800 rounded-xl px-3.5 py-2 text-sm text-white" />
+        </div>
+
+        <div class="grid grid-cols-2 gap-3">
+          <div>
+            <label class="block text-xs font-semibold text-slate-300 mb-1">Target Otot</label>
+            <select id="builder-muscle" class="w-full bg-slate-950 border border-slate-800 rounded-xl px-3.5 py-2 text-sm text-white">
+              <option value="Full Body">Full Body</option>
+              <option value="Chest">Chest</option>
+              <option value="Abs & Core">Abs & Core</option>
+              <option value="Arms">Arms</option>
+              <option value="Legs">Legs</option>
+            </select>
+          </div>
+          <div>
+            <label class="block text-xs font-semibold text-slate-300 mb-1">Tingkat Kesulitan</label>
+            <select id="builder-diff" class="w-full bg-slate-950 border border-slate-800 rounded-xl px-3.5 py-2 text-sm text-white">
+              <option value="Beginner">Beginner</option>
+              <option value="Intermediate">Intermediate</option>
+              <option value="Advanced">Advanced</option>
+            </select>
+          </div>
+        </div>
+
+        <div>
+          <label class="block text-xs font-semibold text-slate-300 mb-1">Pilih Gerakan Latihan (Centang yang diinginkan)</label>
+          <div id="builder-exercises-list" class="space-y-2 max-h-60 overflow-y-auto pr-1 bg-slate-950/60 p-3 rounded-2xl border border-slate-800">
+            <!-- Populated via JS -->
+          </div>
+        </div>
+      </div>
+
+      <div class="flex items-center gap-3 pt-2">
+        <button onclick="app.closeModal('modal-custom-builder')" class="flex-1 py-3 rounded-xl bg-slate-800 hover:bg-slate-700 text-slate-300 font-bold text-xs sm:text-sm">
+          Batal
+        </button>
+        <button onclick="app.saveCustomRoutine()" class="flex-1 py-3 rounded-xl bg-brand-600 hover:bg-brand-500 text-white font-bold text-xs sm:text-sm shadow-lg shadow-brand-600/30">
+          Simpan Rutinitas
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ======================================================================= -->
+  <!-- MODAL: CONFIRM ABORT WORKOUT (Accidental Cancellation Protection) -->
+  <!-- ======================================================================= -->
+  <div id="modal-confirm-abort" class="fixed inset-0 z-50 bg-black/80 backdrop-blur-sm hidden flex items-center justify-center p-4">
+    <div class="bg-slate-900 border border-slate-800 rounded-3xl w-full max-w-md p-6 text-center space-y-4 shadow-2xl">
+      <div class="w-12 h-12 mx-auto rounded-full bg-amber-500/20 text-amber-400 flex items-center justify-center text-2xl">
+        ⏸️
+      </div>
+      <div>
+        <h3 class="text-lg font-bold text-white">Sesi Latihan Belum Selesai</h3>
+        <p class="text-xs text-slate-300 mt-1 leading-relaxed">
+          Pilih tindakan yang ingin Anda ambil: simpan sesi ini untuk dilanjutkan nanti, atau batalkan sepenuhnya.
+        </p>
+      </div>
+      <div class="space-y-2 pt-2">
+        <button onclick="app.executeSavePendingWorkout()" class="w-full py-3 rounded-xl bg-gradient-to-r from-amber-600 to-yellow-600 hover:from-amber-500 hover:to-yellow-500 text-white text-xs font-bold shadow-lg shadow-amber-600/30 flex items-center justify-center gap-2 transition-all">
+          <span>⏸️ Simpan ke Pelatihan Tertunda (Lanjut Nanti)</span>
+        </button>
+        <button onclick="app.executeAbortWorkout()" class="w-full py-2.5 rounded-xl bg-red-600/80 hover:bg-red-600 text-white text-xs font-bold border border-red-500 transition-all">
+          <span>❌ Batalkan Sepenuhnya</span>
+        </button>
+        <button onclick="app.closeModal('modal-confirm-abort')" class="w-full py-2.5 rounded-xl bg-slate-800 hover:bg-slate-700 text-slate-300 text-xs font-semibold">
+          <span>▶ Kembali Lanjutkan Latihan Sekarang</span>
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ======================================================================= -->
+  <!-- MODAL: RESET DATA CONFIRMATION ("confirm" required) -->
+  <!-- ======================================================================= -->
+  <div id="modal-reset-confirm" class="fixed inset-0 z-50 bg-black/80 backdrop-blur-sm hidden flex items-center justify-center p-4">
+    <div class="bg-slate-900 border border-red-900/60 rounded-3xl w-full max-w-sm p-6 space-y-4 shadow-2xl text-center">
+      <div class="w-12 h-12 mx-auto rounded-full bg-red-500/20 text-red-400 flex items-center justify-center text-2xl">
+        ⚠️
+      </div>
+      <div>
+        <h3 class="text-lg font-bold text-white">Reset Seluruh Data Pengguna?</h3>
+        <p class="text-xs text-slate-400 mt-1.5 leading-relaxed">
+          Tindakan ini akan menghapus riwayat latihan, mereset profil, dan mengosongkan jadwal. Ketik kata <span class="text-red-400 font-mono font-bold bg-red-950/40 px-1.5 py-0.5 rounded border border-red-900/50">confirm</span> untuk mengonfirmasi:
+        </p>
+      </div>
+      <input 
+        type="text" 
+        id="reset-confirm-input" 
+        placeholder="Ketik: confirm" 
+        class="w-full bg-slate-950 border border-slate-800 rounded-xl px-4 py-2.5 text-center text-sm text-white font-mono focus:outline-none focus:border-red-500" 
+        oninput="app.onResetInputChanged(this.value)"
+        onkeydown="if(event.key === 'Enter' && this.value.trim().toLowerCase() === 'confirm') { app.executeResetData(); }"
+      />
+      <div class="flex items-center gap-2 pt-1">
+        <button onclick="app.closeModal('modal-reset-confirm')" class="flex-1 py-2.5 rounded-xl bg-slate-800 hover:bg-slate-700 text-slate-300 text-xs font-bold">
+          Batal
+        </button>
+        <button id="btn-do-reset" onclick="app.executeResetData()" disabled class="flex-1 py-2.5 rounded-xl bg-red-600 disabled:opacity-40 disabled:cursor-not-allowed hover:bg-red-500 text-white text-xs font-bold transition-all shadow-lg shadow-red-600/30">
+          Ya, Hapus Data
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ======================================================================= -->
+  <!-- MODAL: LOG WEIGHT / HEIGHT QUICK DIALOG -->
+  <!-- ======================================================================= -->
+  <div id="modal-quick-prompt" class="fixed inset-0 z-50 bg-black/80 backdrop-blur-sm hidden flex items-center justify-center p-4">
+    <div class="bg-slate-900 border border-slate-800 rounded-3xl w-full max-w-sm p-6 space-y-4 shadow-2xl">
+      <h3 id="prompt-modal-title" class="text-base font-bold text-white">Catat Nilai Baru</h3>
+      <p id="prompt-modal-desc" class="text-xs text-slate-400"></p>
+      <input type="number" step="0.5" id="prompt-modal-input" class="w-full bg-slate-950 border border-slate-800 rounded-xl px-4 py-2.5 text-base text-white focus:outline-none focus:border-brand-500 font-bold" />
+      <div class="flex items-center gap-2 pt-2">
+        <button onclick="app.closeModal('modal-quick-prompt')" class="flex-1 py-2.5 rounded-xl bg-slate-800 hover:bg-slate-700 text-slate-300 text-xs font-bold">
+          Batal
+        </button>
+        <button id="btn-prompt-confirm" class="flex-1 py-2.5 rounded-xl bg-brand-600 hover:bg-brand-500 text-white text-xs font-bold shadow-lg">
+          Simpan
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ======================================================================= -->
+  <!-- MODAL: ONBOARDING USER GUIDE OVERLAY (PANDUAN PENGGUNA) -->
+  <!-- ======================================================================= -->
+  <div id="modal-user-guide" class="fixed inset-0 z-50 bg-slate-950/95 backdrop-blur-md hidden flex flex-col justify-between items-center p-3 sm:p-6 select-none cursor-pointer transition-all duration-300" onclick="app.advanceUserGuide()">
+    
+    <!-- Top Bar: Step Indicator & Close/Skip Button -->
+    <div class="w-full max-w-5xl flex items-center justify-between z-10" onclick="event.stopPropagation()">
+      <div class="flex items-center gap-2">
+        <span class="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-brand-500/20 text-brand-400 border border-brand-500/40 text-xs font-bold">
+          <i data-lucide="book-open" class="w-3.5 h-3.5"></i>
+          <span>Panduan Pengguna FitPulse</span>
+        </span>
+        <span id="guide-step-badge" class="px-2.5 py-0.5 rounded-full bg-slate-800 text-slate-300 border border-slate-700 text-xs font-mono font-bold">
+          Langkah 1/2
+        </span>
+      </div>
+
+      <button onclick="app.closeUserGuideOverlay()" class="px-3.5 py-1.5 rounded-xl bg-slate-900/90 hover:bg-slate-800 text-slate-300 hover:text-white border border-slate-800 text-xs font-semibold flex items-center gap-1.5 transition-all shadow-md">
+        <span>Tutup / Lewati</span>
+        <i data-lucide="x" class="w-4 h-4"></i>
+      </button>
+    </div>
+
+    <!-- Center Slide Area -->
+    <div class="flex-1 flex flex-col items-center justify-center w-full max-w-5xl my-auto py-2 pointer-events-none">
+      <div class="relative rounded-2xl overflow-hidden border border-slate-700/80 shadow-2xl bg-black/50 max-h-[68vh] sm:max-h-[74vh]">
+        <img id="guide-overlay-img" src="/workout_data/images/panduan1.png" alt="Panduan Pengguna FitPulse" class="max-w-full max-h-[66vh] sm:max-h-[72vh] w-auto h-auto object-contain transition-all duration-200" />
+      </div>
+
+      <!-- Pulsing Instruction Text: "tap anywhere to continue" -->
+      <div class="mt-3.5 inline-flex items-center gap-2 px-4 py-2 rounded-full bg-slate-900/90 text-brand-300 border border-brand-500/40 text-xs sm:text-sm font-bold shadow-xl animate-pulse">
+        <span class="text-base sm:text-lg">👆</span>
+        <span>Ketuk di mana saja untuk lanjut • Tap anywhere to continue</span>
+      </div>
+    </div>
+
+    <!-- Bottom Control Bar (Checkbox & Next/Prev Controls) -->
+    <div class="w-full max-w-2xl bg-slate-900/95 border border-slate-800 rounded-2xl p-3 sm:px-6 sm:py-3.5 backdrop-blur-md flex flex-wrap items-center justify-between gap-3 shadow-2xl z-10 cursor-default" onclick="event.stopPropagation()">
+      <!-- Checkbox "Jangan tampilkan lagi" -->
+      <label class="flex items-center gap-2.5 cursor-pointer select-none">
+        <input 
+          type="checkbox" 
+          id="guide-checkbox-dont-show" 
+          class="w-4 h-4 rounded border-slate-700 bg-slate-950 text-brand-500 focus:ring-brand-500 cursor-pointer accent-brand-500" 
+          onchange="app.onGuideDontShowAgainChanged(this.checked)" 
+        />
+        <span class="text-xs text-slate-300 font-medium hover:text-white transition-colors">
+          Jangan tampilkan panduan ini lagi saat dibuka
+        </span>
+      </label>
+
+      <!-- Step dots & Action Button -->
+      <div class="flex items-center gap-2 sm:gap-3">
+        <div class="flex items-center gap-1.5 mr-1">
+          <span id="guide-dot-1" class="w-2.5 h-2.5 rounded-full bg-brand-500 transition-all"></span>
+          <span id="guide-dot-2" class="w-2.5 h-2.5 rounded-full bg-slate-700 transition-all"></span>
+        </div>
+        <button id="guide-btn-action" onclick="app.advanceUserGuide()" class="px-4 py-1.5 rounded-xl bg-brand-600 hover:bg-brand-500 text-white text-xs font-bold transition-all shadow-md flex items-center gap-1.5">
+          <span>Lanjut</span>
+          <i data-lucide="chevron-right" class="w-3.5 h-3.5"></i>
+        </button>
+      </div>
+    </div>
+
+  </div>
+
+  <!-- ======================================================================= -->
+  <!-- MODAL: USER AUTHENTICATION (LOGIN / REGISTER) -->
+  <!-- ======================================================================= -->
+  <div id="modal-auth" class="fixed inset-0 z-50 bg-black/80 backdrop-blur-sm hidden flex items-center justify-center p-4">
+    <div class="bg-slate-900 border border-slate-800 rounded-3xl w-full max-w-md p-6 sm:p-7 space-y-5 shadow-2xl relative" onclick="event.stopPropagation()">
+      
+      <!-- Close button -->
+      <button onclick="app.closeAuthModal()" class="absolute top-5 right-5 p-2 rounded-xl text-slate-400 hover:text-white hover:bg-slate-800 transition-colors">
+        <i data-lucide="x" class="w-5 h-5"></i>
+      </button>
+
+      <!-- Header Icon & Title -->
+      <div class="text-center space-y-1.5">
+        <div class="w-12 h-12 mx-auto rounded-2xl bg-gradient-to-tr from-brand-600 to-blue-500 flex items-center justify-center shadow-lg shadow-brand-600/30">
+          <i data-lucide="dumbbell" class="w-6 h-6 text-white"></i>
+        </div>
+        <h3 id="auth-modal-title" class="text-xl font-black text-white tracking-tight">Akun FitPulse</h3>
+        <p class="text-xs text-slate-400">Simpan riwayat latihan, streak, dan jadwal Anda di cloud.</p>
+      </div>
+
+      <!-- Auth Tabs: Masuk / Daftar -->
+      <div class="flex bg-slate-950 p-1 rounded-xl border border-slate-800/80">
+        <button id="auth-tab-login" onclick="app.switchAuthTab('login')" class="flex-1 py-2 rounded-lg text-xs font-bold transition-all bg-brand-600 text-white shadow-sm">
+          Masuk (Login)
+        </button>
+        <button id="auth-tab-register" onclick="app.switchAuthTab('register')" class="flex-1 py-2 rounded-lg text-xs font-bold transition-all text-slate-400 hover:text-white">
+          Daftar Akun Baru
+        </button>
+      </div>
+
+      <!-- FORM: LOGIN -->
+      <form id="form-login" onsubmit="app.submitLogin(event)" class="space-y-3.5">
+        <div>
+          <label class="block text-xs font-semibold text-slate-300 mb-1">Email atau Username</label>
+          <div class="relative">
+            <i data-lucide="user" class="w-4 h-4 absolute left-3.5 top-3 text-slate-500"></i>
+            <input type="text" id="login-identifier" required placeholder="Masukkan email atau username" class="w-full bg-slate-950 border border-slate-800 rounded-xl pl-10 pr-3.5 py-2.5 text-xs sm:text-sm text-white focus:outline-none focus:border-brand-500" />
+          </div>
+        </div>
+
+        <div>
+          <label class="block text-xs font-semibold text-slate-300 mb-1">Kata Sandi (Password)</label>
+          <div class="relative">
+            <i data-lucide="lock" class="w-4 h-4 absolute left-3.5 top-3 text-slate-500"></i>
+            <input type="password" id="login-password" required placeholder="••••••••" class="w-full bg-slate-950 border border-slate-800 rounded-xl pl-10 pr-10 py-2.5 text-xs sm:text-sm text-white focus:outline-none focus:border-brand-500" />
+            <button type="button" onclick="app.togglePasswordVisibility('login-password')" class="absolute right-3.5 top-3 text-slate-500 hover:text-white">
+              <i data-lucide="eye" class="w-4 h-4"></i>
+            </button>
+          </div>
+        </div>
+
+        <div id="login-error-msg" class="hidden text-xs text-red-400 bg-red-950/40 border border-red-900/50 p-2.5 rounded-xl"></div>
+
+        <button type="submit" id="btn-submit-login" class="w-full py-3 rounded-xl bg-gradient-to-r from-brand-600 to-blue-600 hover:from-brand-500 hover:to-blue-500 text-white font-bold text-xs sm:text-sm transition-all shadow-lg shadow-brand-600/30 flex items-center justify-center gap-2">
+          <span>Masuk Sekarang</span>
+          <i data-lucide="arrow-right" class="w-4 h-4"></i>
+        </button>
+      </form>
+
+      <!-- FORM: REGISTER -->
+      <form id="form-register" onsubmit="app.submitRegister(event)" class="space-y-3 hidden">
+        <div>
+          <label class="block text-xs font-semibold text-slate-300 mb-1">Nama Lengkap / Panggilan</label>
+          <div class="relative">
+            <i data-lucide="smile" class="w-4 h-4 absolute left-3.5 top-3 text-slate-500"></i>
+            <input type="text" id="reg-name" placeholder="Misal: Teddy Prasetyo" class="w-full bg-slate-950 border border-slate-800 rounded-xl pl-10 pr-3.5 py-2.5 text-xs sm:text-sm text-white focus:outline-none focus:border-brand-500" />
+          </div>
+        </div>
+
+        <div>
+          <label class="block text-xs font-semibold text-slate-300 mb-1">Username (unik)</label>
+          <div class="relative">
+            <i data-lucide="at-sign" class="w-4 h-4 absolute left-3.5 top-3 text-slate-500"></i>
+            <input type="text" id="reg-username" required placeholder="teddy123" class="w-full bg-slate-950 border border-slate-800 rounded-xl pl-10 pr-3.5 py-2.5 text-xs sm:text-sm text-white focus:outline-none focus:border-brand-500" />
+          </div>
+        </div>
+
+        <div>
+          <label class="block text-xs font-semibold text-slate-300 mb-1">Alamat Email</label>
+          <div class="relative">
+            <i data-lucide="mail" class="w-4 h-4 absolute left-3.5 top-3 text-slate-500"></i>
+            <input type="email" id="reg-email" required placeholder="teddy@gmail.com" class="w-full bg-slate-950 border border-slate-800 rounded-xl pl-10 pr-3.5 py-2.5 text-xs sm:text-sm text-white focus:outline-none focus:border-brand-500" />
+          </div>
+        </div>
+
+        <div>
+          <label class="block text-xs font-semibold text-slate-300 mb-1">Kata Sandi (minimal 6 karakter)</label>
+          <div class="relative">
+            <i data-lucide="lock" class="w-4 h-4 absolute left-3.5 top-3 text-slate-500"></i>
+            <input type="password" id="reg-password" required minlength="6" placeholder="••••••••" class="w-full bg-slate-950 border border-slate-800 rounded-xl pl-10 pr-10 py-2.5 text-xs sm:text-sm text-white focus:outline-none focus:border-brand-500" />
+            <button type="button" onclick="app.togglePasswordVisibility('reg-password')" class="absolute right-3.5 top-3 text-slate-500 hover:text-white">
+              <i data-lucide="eye" class="w-4 h-4"></i>
+            </button>
+          </div>
+        </div>
+
+        <div id="register-error-msg" class="hidden text-xs text-red-400 bg-red-950/40 border border-red-900/50 p-2.5 rounded-xl"></div>
+
+        <button type="submit" id="btn-submit-register" class="w-full py-3 rounded-xl bg-gradient-to-r from-emerald-600 to-teal-600 hover:from-emerald-500 hover:to-teal-500 text-white font-bold text-xs sm:text-sm transition-all shadow-lg shadow-emerald-600/30 flex items-center justify-center gap-2">
+          <span>Daftar Akun Baru</span>
+          <i data-lucide="check" class="w-4 h-4"></i>
+        </button>
+      </form>
+
+      <!-- Guest / Offline Option -->
+      <div class="text-center pt-1 border-t border-slate-800/80">
+        <button type="button" onclick="app.closeAuthModal()" class="text-xs text-slate-400 hover:text-slate-200 transition-colors">
+          Tetap gunakan mode Tamu / Offline →
+        </button>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- TOAST NOTIFICATION CONTAINER -->
+  <div id="toast-container" class="fixed bottom-20 md:bottom-6 right-6 z-50 space-y-2 pointer-events-none"></div>
+
+  <!-- Application Main JavaScript -->
+  <script src="/static/app.js?v=2.3"></script>
+</body>
+</html>
+

@@ -1,0 +1,909 @@
+[
+  {
+    "id": "ex_jumping_jacks",
+    "name": "Jumping Jacks",
+    "target_muscle": "Full Body",
+    "difficulty": "Beginner",
+    "instructions": [
+      "Stand upright with legs together, arms at your sides.",
+      "Bend your knees slightly, and jump into the air.",
+      "As you jump, spread your legs shoulder-width apart and extend arms overhead.",
+      "Jump back to starting position and repeat."
+    ],
+    "accessible_description": "Rhythmic full body jump starting with hands at sides and legs together, opening both outwards simultaneously.",
+    "met_value": 8.0,
+    "equipment_needed": "None",
+    "audio_cue": "Keep a steady rhythmic pace and land softly on the balls of your feet.",
+    "image_path": "workout_data/images/ex_jumping_jacks.png",
+    "focus_areas": [
+      "Calves (Betis)",
+      "Quadriceps (Paha Depan)",
+      "Deltoids (Bahu)",
+      "Cardiovascular"
+    ],
+    "common_mistakes": [
+      {
+        "title": "Mendarat Dengan Tumit Datar (Heel-first Landing)",
+        "desc": "Mendarat langsung pada tumit memberi tekanan kejut berlebih pada sendi lutut dan tulang kering. Selalu mendarat empuk pada bantalan bola kaki."
+      },
+      {
+        "title": "Lengan Tidak Terangkat Penuh",
+        "desc": "Hanya mengayun setengah lengan mengurangi rentang gerak deltoid dan efisiensi pembakaran kalori. Rentangkan lengan hingga hampir bertemu di atas kepala."
+      },
+      {
+        "title": "Postur Tubuh Membungkuk",
+        "desc": "Condong ke depan membatasi ekspansi dada dan pernapasan. Pertahankan punggung tegak dan pandangan lurus ke depan."
+      }
+    ],
+    "breathing_tips": [
+      "Tarik napas secara berirama saat melompat membuka kaki dan merentangkan lengan ke atas.",
+      "Buang napas saat melompat kembali merapatkan kaki dan menurunkan lengan.",
+      "Pertahankan pola nafas teratur dan hindari menahan napas."
+    ],
+    "is_reps_based": false,
+    "default_reps": 30,
+    "icon_path": "workout_data/images/icons/icon_ex_jumping_jacks.png"
+  },
+  {
+    "id": "ex_wall_sit",
+    "name": "Wall Sit",
+    "target_muscle": "Legs",
+    "difficulty": "Beginner",
+    "instructions": [
+      "Lean your back flat against a wall.",
+      "Slide down until your thighs are parallel to the floor (90-degree knee bend).",
+      "Keep knees directly above ankles.",
+      "Hold position, breathing steadily."
+    ],
+    "accessible_description": "Static squat posture resting your entire back against a flat wall, forming a right angle at your knees.",
+    "met_value": 4.5,
+    "equipment_needed": "Wall or flat vertical surface",
+    "audio_cue": "Breathe slowly and keep your core engaged. Press your back firmly into the wall.",
+    "image_path": "workout_data/images/ex_wall_sit.png",
+    "focus_areas": [
+      "Quadriceps (Paha Depan)",
+      "Glutes (Bokong)",
+      "Hamstrings",
+      "Calves"
+    ],
+    "common_mistakes": [
+      {
+        "title": "Lutut Melampaui Jari Kaki (Knees Past Toes)",
+        "desc": "Kaki terlalu dekat ke dinding memaksa lutut menahan beban tubuh secara tidak aman. Pastikan lutut membentuk sudut siku-siku 90 derajat tepat di atas pergelangan kaki."
+      },
+      {
+        "title": "Punggung Bawah Melengkung Lepas dari Dinding",
+        "desc": "Punggung tidak menempel rata mengurangi aktivasi core. Tekan punggung bawah, bahu, dan kepala datar ke dinding."
+      },
+      {
+        "title": "Tangan Menopang Paha",
+        "desc": "Meletakkan tangan di atas paha memindahkan beban dari paha ke lengan. Letakkan tangan lurus ke depan atau di samping tubuh."
+      }
+    ],
+    "breathing_tips": [
+      "Tarik napas dalam melalui hidung selama 4 hitungan.",
+      "Buang napas perlahan melalui mulut secara stabil.",
+      "Gunakan ritme pernapasan yang rileks untuk menahan kontraksi isometrik paha."
+    ],
+    "is_reps_based": false,
+    "default_reps": 30,
+    "icon_path": "workout_data/images/icons/icon_ex_wall_sit.png"
+  },
+  {
+    "id": "ex_pushups",
+    "name": "Standard Push-ups",
+    "target_muscle": "Chest",
+    "difficulty": "Intermediate",
+    "instructions": [
+      "Start in high plank position, hands slightly wider than shoulder-width.",
+      "Lower chest until almost touching the ground, elbows at 45 degrees.",
+      "Push through palms back to starting position.",
+      "Keep core rigid and hips level."
+    ],
+    "accessible_description": "Plank lower and lift movement supporting body weight on hands and toes with a straight spine.",
+    "met_value": 7.0,
+    "equipment_needed": "None (Mat optional)",
+    "audio_cue": "Don't let your lower back sag. Keep your neck neutral.",
+    "image_path": "workout_data/images/ex_pushups.png",
+    "focus_areas": [
+      "Pectoralis Major (Dada)",
+      "Triceps (Lengan Belakang)",
+      "Anterior Deltoids (Bahu Depan)",
+      "Core"
+    ],
+    "common_mistakes": [
+      {
+        "title": "Pinggul Turun / Melengkung (Sagging Hips)",
+        "desc": "Membiarkan pinggul melorot ke bawah memberi tekanan kompresi pada tulang pinggang. Kencangkan otot perut dan glutes agar tubuh lurus sempurna dari kepala hingga tumit."
+      },
+      {
+        "title": "Siku Terbuka Terlalu Lebar (Flaring Elbows 90°)",
+        "desc": "Membuka siku tegak lurus membentuk huruf 'T' meningkatkan risiko cedera rotator cuff bahu. Posisikan siku membentuk sudut sekitar 45 derajat ke arah tubuh (seperti panah)."
+      },
+      {
+        "title": "Leher Menunduk / Mendongak (Neck Dropping)",
+        "desc": "Menjatuhkan kepala mendekati lantai memberi ilusi rentang gerak penuh. Pertahankan leher netral sejajar tulang belakang."
+      }
+    ],
+    "breathing_tips": [
+      "Tarik napas saat menurunkan tubuh ke arah lantai.",
+      "Buang napas secara kuat saat mendorong tubuh kembali ke atas.",
+      "Kunci dinding perut di posisi atas."
+    ],
+    "is_reps_based": true,
+    "default_reps": 12,
+    "icon_path": "workout_data/images/icons/icon_ex_pushups.png"
+  },
+  {
+    "id": "ex_plank",
+    "name": "Forearm Plank",
+    "target_muscle": "Abs & Core",
+    "difficulty": "Beginner",
+    "instructions": [
+      "Place forearms on floor with elbows aligned below shoulders.",
+      "Extend legs straight behind you, toes tucked.",
+      "Tighten abdominal muscles, squeeze glutes, and hold."
+    ],
+    "accessible_description": "Isometric core hold balancing on forearms and toes while maintaining a straight line from head to heels.",
+    "met_value": 4.0,
+    "equipment_needed": "Mat optional",
+    "audio_cue": "Pull your navel toward your spine and remember to keep breathing.",
+    "image_path": "workout_data/images/ex_plank.png",
+    "focus_areas": [
+      "Rectus Abdominis (Perut Depan)",
+      "Transverse Abdominis (Core Dalam)",
+      "Shoulders (Bahu)",
+      "Glutes"
+    ],
+    "common_mistakes": [
+      {
+        "title": "Pinggul Terlalu Tinggi / Terlalu Rendah",
+        "desc": "Mengangkat bokong tinggi memindahkan beban dari perut, sedangkan menjatuhkan pinggul membebani lumbal. Sejajarkan bahu, pinggul, dan tumit dalam satu garis lurus."
+      },
+      {
+        "title": "Menahan Napas (Breath Holding)",
+        "desc": "Menahan napas meningkatkan tekanan darah intra-toraks secara drastis. Jaga aliran napas ritmis dan terkontrol."
+      },
+      {
+        "title": "Bahu Tegang Mencapai Telinga",
+        "desc": "Tarik bahu menjauh dari telinga dan tekan lengan bawah dengan mantap ke lantai."
+      }
+    ],
+    "breathing_tips": [
+      "Tarik napas teratur melalui hidung.",
+      "Hembuskan napas panjang melalui mulut sembari menarik pusar ke arah tulang punggung.",
+      "Hindari kepanikan pernapasan saat otot mulai bergetar."
+    ],
+    "is_reps_based": false,
+    "default_reps": 30,
+    "icon_path": "workout_data/images/icons/icon_ex_plank.png"
+  },
+  {
+    "id": "ex_crunches",
+    "name": "Abdominal Crunches",
+    "target_muscle": "Abs & Core",
+    "difficulty": "Beginner",
+    "instructions": [
+      "Lie on your back with knees bent and feet flat on floor.",
+      "Place hands gently behind ears without pulling on neck.",
+      "Contract abdominals to curl shoulders off floor.",
+      "Slowly lower back down with control."
+    ],
+    "accessible_description": "Lying on your back, curling your upper torso upward towards your knees using abdominal strength.",
+    "met_value": 5.0,
+    "equipment_needed": "Mat optional",
+    "audio_cue": "Exhale on the way up, inhale on the way down. Don't pull your neck.",
+    "image_path": "workout_data/images/ex_crunches.png",
+    "focus_areas": [
+      "Rectus Abdominis (Perut Bagian Atas)",
+      "Obliques (Samping Perut)"
+    ],
+    "common_mistakes": [
+      {
+        "title": "Menarik Leher dengan Tangan (Neck Pulling)",
+        "desc": "Menarik kepala dengan kedua tangan memberi tekanan bahaya pada serviks. Sentuh ringan pelipis atau silangkan tangan di dada, gerakkan dada ke arah lutut bukan leher."
+      },
+      {
+        "title": "Mengangkat Seluruh Punggung (Sit-up bukan Crunch)",
+        "desc": "Mengangkat punggung bawah melibatkan hip flexors berlebih. Hanya angkat tulang belikat (scapula) dari matras sambil menekan pinggang ke bawah."
+      },
+      {
+        "title": "Mengandalkan Momentum Cepat",
+        "desc": "Mengayun badan mengurangi kontraksi isolasi perut. Lakukan dengan tempo lambat dan tahan 1 detik di puncak kontraksi."
+      }
+    ],
+    "breathing_tips": [
+      "Tarik napas saat menurunkan punggung ke matras.",
+      "Buang napas penuh saat mengangkat tulang belikat dan meremas otot perut.",
+      "Kunci kontraksi perut saat membuang napas."
+    ],
+    "is_reps_based": true,
+    "default_reps": 16,
+    "icon_path": "workout_data/images/icons/icon_ex_crunches.png"
+  },
+  {
+    "id": "ex_bodyweight_squats",
+    "name": "Bodyweight Squats",
+    "target_muscle": "Legs",
+    "difficulty": "Beginner",
+    "instructions": [
+      "Stand feet shoulder-width apart, toes pointing slightly outward.",
+      "Send hips back and bend knees as if sitting back into a chair.",
+      "Lower until thighs are at least parallel to floor.",
+      "Press through heels to stand upright."
+    ],
+    "accessible_description": "Deep knee bend sitting back onto heels while keeping chest upright and arms extended forward for balance.",
+    "met_value": 5.5,
+    "equipment_needed": "None",
+    "audio_cue": "Keep your weight in your heels and your chest tall.",
+    "image_path": "workout_data/images/ex_bodyweight_squats.png",
+    "focus_areas": [
+      "Quadriceps (Paha Depan)",
+      "Gluteus Maximus (Bokong)",
+      "Hamstrings",
+      "Core"
+    ],
+    "common_mistakes": [
+      {
+        "title": "Lutut Menekuk ke Dalam (Knee Valgus / Caving)",
+        "desc": "Membiarkan lutut kolaps ke arah dalam memicu tekanan patellofemoral. Dorong lutut ke luar sejajar dengan arah jari-jari kaki Anda."
+      },
+      {
+        "title": "Punggung Membungkuk (Hunching Back)",
+        "desc": "Kehilangan lengkungan netral tulang belakang saat turun membebani lumbal. Buka dada, tarik bahu ke belakang, dan tatap lurus ke depan."
+      },
+      {
+        "title": "Tumit Terangkat dari Lantai",
+        "desc": "Mengangkat tumit memindahkan beban hanya ke sendi lutut. Tumpukan berat badan pada tumit dan pertengahan telapak kaki."
+      },
+      {
+        "title": "Kedalaman Jongkok Kurang (Not Going Low Enough)",
+        "desc": "Turun setengah jalan tidak mengaktifkan glutes maksimal. Usahakan paha sejajar lantai (90 derajat)."
+      }
+    ],
+    "breathing_tips": [
+      "Tarik napas saat menurunkan pinggul ke posisi jongkok.",
+      "Buang napas secara bertenaga saat mendorong melalui tumit untuk berdiri tegak.",
+      "Jaga core tetap kencang sepanjang rentang gerakan."
+    ],
+    "is_reps_based": true,
+    "default_reps": 15,
+    "icon_path": "workout_data/images/icons/icon_ex_bodyweight_squats.png"
+  },
+  {
+    "id": "ex_lunges",
+    "name": "Alternating Walking Lunges",
+    "target_muscle": "Legs",
+    "difficulty": "Intermediate",
+    "instructions": [
+      "Step forward with right leg, lowering hips until both knees are bent at 90 degrees.",
+      "Keep front knee tracking over ankle, back knee hovering just off floor.",
+      "Push off right foot to return, then alternate with left leg."
+    ],
+    "accessible_description": "Large step forward lowering hips until both knees are at right angles, alternating left and right legs.",
+    "met_value": 6.0,
+    "equipment_needed": "None",
+    "audio_cue": "Stay tall through your torso and maintain control on the landing.",
+    "image_path": "workout_data/images/ex_lunges.png",
+    "focus_areas": [
+      "Quadriceps (Paha Depan)",
+      "Glutes (Bokong)",
+      "Hamstrings",
+      "Calves"
+    ],
+    "common_mistakes": [
+      {
+        "title": "Langkah Terlalu Pendek atau Terlalu Lebar",
+        "desc": "Langkah terlalu pendek membuat lutut depan maju melampaui jari kaki. Ambil langkah cukup hingga kedua lutut membentuk sudut 90 derajat."
+      },
+      {
+        "title": "Badan Condong Terlalu Jauh ke Depan",
+        "desc": "Tubuh bagian atas condong mengurangi keterlibatan glutes. Jaga torso tetap tegak tegak lurus lantai."
+      },
+      {
+        "title": "Lutut Belakang Membentur Lantai Keras",
+        "desc": "Turun tanpa kendali bisa mencederai tempurung lutut. Turunkan lutut belakang perlahan hingga 2-3 cm dari lantai."
+      }
+    ],
+    "breathing_tips": [
+      "Tarik napas saat melangkah maju dan menurunkan pinggul.",
+      "Buang napas saat mendorong kaki depan kembali ke posisi awal berdiri.",
+      "Pertahankan keseimbangan dengan tatapan fokus ke satu titik."
+    ],
+    "is_reps_based": true,
+    "default_reps": 14,
+    "icon_path": "workout_data/images/icons/icon_ex_lunges.png"
+  },
+  {
+    "id": "ex_mountain_climbers",
+    "name": "Mountain Climbers",
+    "target_muscle": "Full Body",
+    "difficulty": "Intermediate",
+    "instructions": [
+      "Begin in high plank position.",
+      "Drive right knee towards chest, then switch rapidly to left knee.",
+      "Alternate legs in a running motion while holding stable plank."
+    ],
+    "accessible_description": "Dynamic running motion while held in pushup plank position driving alternating knees toward chest.",
+    "met_value": 9.0,
+    "equipment_needed": "None",
+    "audio_cue": "Maintain flat hips and pick up a smooth cadence.",
+    "image_path": "workout_data/images/ex_mountain_climbers.png",
+    "focus_areas": [
+      "Rectus Abdominis",
+      "Hip Flexors",
+      "Shoulders",
+      "Cardiovascular"
+    ],
+    "common_mistakes": [
+      {
+        "title": "Pinggul Memantul Tinggi ke Atas (Bouncing Hips)",
+        "desc": "Mengangkat pinggul tinggi mengurangi beban kerja perut. Pertahankan tubuh dalam garis horizontal setinggi posisi plank."
+      },
+      {
+        "title": "Berat Badan Bergeser Mundur dari Bahu",
+        "desc": "Tangan harus berada tepat di bawah sendi bahu. Jangan biarkan bahu menjauh ke belakang tangan."
+      },
+      {
+        "title": "Kaki Menendang Kasar ke Lantai",
+        "desc": "Hentakkan kasar mengurangi kontrol ritmis. Sentuh lantai dengan lembut menggunakan bola kaki."
+      }
+    ],
+    "breathing_tips": [
+      "Gunakan pernapasan ritmis: tarik napas untuk 2 langkah kaki, buang napas untuk 2 langkah berikutnya.",
+      "Jangan menahan napas selama tempo cardio tinggi."
+    ],
+    "is_reps_based": false,
+    "default_reps": 30,
+    "icon_path": "workout_data/images/icons/icon_ex_mountain_climbers.png"
+  },
+  {
+    "id": "ex_tricep_dips",
+    "name": "Chair Tricep Dips",
+    "target_muscle": "Arms",
+    "difficulty": "Beginner",
+    "instructions": [
+      "Sit on edge of chair, hands gripping edge beside hips.",
+      "Slide hips off chair, supporting weight with straight arms.",
+      "Bend elbows back to lower body until upper arms are parallel to floor.",
+      "Push back up to starting position."
+    ],
+    "accessible_description": "Lowering and raising torso using arm strength supported on edge of stable chair or step.",
+    "met_value": 5.0,
+    "equipment_needed": "Sturdy Chair or Bench",
+    "audio_cue": "Keep your back close to the chair edge and elbows pointing directly backward.",
+    "image_path": "workout_data/images/ex_tricep_dips.png",
+    "focus_areas": [
+      "Triceps Brachii (Lengan Belakang)",
+      "Anterior Deltoids (Bahu)",
+      "Upper Chest"
+    ],
+    "common_mistakes": [
+      {
+        "title": "Pinggul Terlalu Jauh dari Kursi / Tepi",
+        "desc": "Menjauhkan pinggul memberi tegangan rotasi berlebih pada sendi bahu depan. Jaga punggung dan pinggul sedekat mungkin dengan tepi tumpuan."
+      },
+      {
+        "title": "Bahu Naik Mencekik Leher (Shoulder Shrug)",
+        "desc": "Biarkan bahu rileks ke bawah dan kencangkan belikat, hindari bahu terdorong ke atas telinga."
+      },
+      {
+        "title": "Turun Terlalu Dalam Melebihi 90 Derajat",
+        "desc": "Menekuk siku lebih dari 90 derajat memindahkan tekanan berbahaya ke tendon bahu."
+      }
+    ],
+    "breathing_tips": [
+      "Tarik napas saat menekuk siku dan menurunkan tubuh ke bawah.",
+      "Buang napas saat meluruskan siku kembali ke posisi atas.",
+      "Jangan mengunci siku (lockout) secara kasar di puncak gerakan."
+    ],
+    "is_reps_based": true,
+    "default_reps": 12,
+    "icon_path": "workout_data/images/icons/icon_ex_tricep_dips.png"
+  },
+  {
+    "id": "ex_high_knees",
+    "name": "High Knees Cardio",
+    "target_muscle": "Full Body",
+    "difficulty": "Intermediate",
+    "instructions": [
+      "Jog in place while lifting knees as high as possible (aim for hip height).",
+      "Pump arms in rhythm with opposite legs.",
+      "Land lightly on balls of feet."
+    ],
+    "accessible_description": "Vigorous running in place bringing knees up high to waist level while pumping arms.",
+    "met_value": 8.5,
+    "equipment_needed": "None",
+    "audio_cue": "Stay light on your feet and keep your rhythm fast.",
+    "image_path": "workout_data/images/ex_high_knees.png",
+    "focus_areas": [
+      "Quadriceps",
+      "Hip Flexors",
+      "Calves",
+      "Cardiovascular"
+    ],
+    "common_mistakes": [
+      {
+        "title": "Lutut Diangkat Terlalu Rendah",
+        "desc": "Hanya jogging kecil tidak memberikan stimulasi metabolik penuh. Targetkan lutut setinggi pinggang secara konsisten."
+      },
+      {
+        "title": "Tubuh Condong Mundur ke Belakang",
+        "desc": "Bersandar ke belakang mengurangi keseimbangan dan membebani punggung bawah. Condongkan tubuh sedikit ke depan dari pergelangan kaki."
+      }
+    ],
+    "breathing_tips": [
+      "Pernapasan berirama selaras dengan ayunan kaki.",
+      "Tarik napas pendek-pendek melalui hidung dan buang melalui mulut."
+    ],
+    "is_reps_based": false,
+    "default_reps": 30,
+    "icon_path": "workout_data/images/icons/icon_ex_high_knees.png"
+  },
+  {
+    "id": "ex_burpees",
+    "name": "Full Body Burpees",
+    "target_muscle": "Full Body",
+    "difficulty": "Advanced",
+    "instructions": [
+      "Dari posisi berdiri, jongkok dan letakkan telapak tangan di lantai.",
+      "Tendang kedua kaki ke belakang menjadi posisi push-up plank.",
+      "Lakukan satu gerakan push-up, lalu tarik kaki kembali ke depan.",
+      "Lompat ke atas secara eksplosif dengan tangan terangkat ke atas."
+    ],
+    "accessible_description": "Kombinasi jongkok, tendang ke posisi plank push-up, tarik kaki, lalu lompat ke atas.",
+    "met_value": 11.0,
+    "equipment_needed": "None",
+    "audio_cue": "Dorong tubuh secara eksplosif saat melompat dan mendarat dengan lembut.",
+    "image_path": "workout_data/images/ex_burpees.png",
+    "focus_areas": [
+      "Full Body (Dada, Kaki, Core, Bahu)",
+      "Cardiovascular Endurance"
+    ],
+    "common_mistakes": [
+      {
+        "title": "Pinggul Mengendur Saat Kaki Ditendang ke Belakang",
+        "desc": "Pinggul jatuh saat transisi plank memberi tekanan sentak pada tulang belakang. Kunci core sekencang mungkin."
+      },
+      {
+        "title": "Mendarat Keras Tanpa Meredam Sendi",
+        "desc": "Mendarat dengan lutut lurus saat melompat dapat mencederai ligamen. Selalu mendarat dengan lutut sedikit ditekuk empuk."
+      }
+    ],
+    "breathing_tips": [
+      "Tarik napas saat jongkok dan menendang kaki ke belakang.",
+      "Buang napas saat melakukan push-up dan menarik kaki kembali.",
+      "Hembuskan napas eksplosif saat melompat ke udara."
+    ],
+    "is_reps_based": true,
+    "default_reps": 10,
+    "icon_path": "workout_data/images/icons/icon_ex_burpees.png"
+  },
+  {
+    "id": "ex_leg_raises",
+    "name": "Lying Leg Raises",
+    "target_muscle": "Abs & Core",
+    "difficulty": "Intermediate",
+    "instructions": [
+      "Berbaring telentang dengan tangan di samping tubuh untuk stabilitas.",
+      "Jaga kedua kaki tetap lurus, lalu angkat ke atas hingga membentuk sudut 90 derajat.",
+      "Turunkan kaki perlahan hingga hampir menyentuh lantai tanpa membiarkan punggung bawah melengkung."
+    ],
+    "accessible_description": "Berbaring telentang lalu mengangkat kedua kaki lurus ke atas dan menurunkannya secara perlahan.",
+    "met_value": 5.5,
+    "equipment_needed": "Matras",
+    "audio_cue": "Tekan punggung bawahmu rata ke lantai sepanjang gerakan.",
+    "image_path": "workout_data/images/ex_leg_raises.png",
+    "focus_areas": [
+      "Lower Rectus Abdominis (Perut Bawah)",
+      "Hip Flexors"
+    ],
+    "common_mistakes": [
+      {
+        "title": "Punggung Bawah Melengkung Lepas dari Lantai (Arching Back)",
+        "desc": "Kesalahan paling umum yang menyebabkan sakit pinggang. Tekan punggung bawah datar rapat ke matras sepanjang waktu."
+      },
+      {
+        "title": "Mengayun Kaki dengan Cepat (Momentum)",
+        "desc": "Mengayun tanpa kontrol menghilangkan stimulasi serat otot perut. Turunkan kaki perlahan selama 2-3 detik."
+      }
+    ],
+    "breathing_tips": [
+      "Tarik napas saat menurunkan kaki mendekati lantai.",
+      "Buang napas penuh saat mengangkat kaki kembali tegak lurus.",
+      "Kencangkan perut bawah di bagian terbawah gerakan."
+    ],
+    "is_reps_based": true,
+    "default_reps": 14,
+    "icon_path": "workout_data/images/icons/icon_ex_leg_raises.png"
+  },
+  {
+    "id": "ex_russian_twists",
+    "name": "Russian Twists",
+    "target_muscle": "Abs & Core",
+    "difficulty": "Intermediate",
+    "instructions": [
+      "Duduk dengan lutut ditekuk dan condongkan torso ke belakang sekitar 45 derajat.",
+      "Angkat sedikit kaki dari lantai untuk keseimbangan (opsional).",
+      "Putar torso ke kanan secara penuh, lalu putar ke kiri secara terkontrol."
+    ],
+    "accessible_description": "Duduk condong dan memutar tubuh bagian atas dari sisi kanan ke kiri untuk melatih otot samping perut.",
+    "met_value": 6.0,
+    "equipment_needed": "Matras",
+    "audio_cue": "Fokuskan putaran dari otot perut sampingmu, bukan hanya menggerakkan tangan.",
+    "image_path": "workout_data/images/ex_russian_twists.png",
+    "focus_areas": [
+      "Obliques (Otot Perut Samping)",
+      "Transverse Abdominis",
+      "Hip Flexors"
+    ],
+    "common_mistakes": [
+      {
+        "title": "Hanya Menggerakkan Lengan Bukan Torso",
+        "desc": "Hanya mengayunkan tangan ke kiri dan kanan tidak melatih otot oblique. Putar seluruh tulang rusuk dan dada Anda dari sisi ke sisi."
+      },
+      {
+        "title": "Punggung Terlalu Membungkuk (Slouching)",
+        "desc": "Membungkuk membebani cakram tulang belakang. Buka dada dan pertahankan sudut torso 45 derajat dengan punggung lurus."
+      }
+    ],
+    "breathing_tips": [
+      "Tarik napas di posisi tengah.",
+      "Buang napas saat memutar torso ke satu sisi secara terkontrol.",
+      "Jaga ritme stabil."
+    ],
+    "is_reps_based": true,
+    "default_reps": 20,
+    "icon_path": "workout_data/images/icons/icon_ex_russian_twists.png"
+  },
+  {
+    "id": "ex_bicycle_crunches",
+    "name": "Bicycle Crunches",
+    "target_muscle": "Abs & Core",
+    "difficulty": "Advanced",
+    "instructions": [
+      "Berbaring telentang, angkat kedua kaki dengan lutut ditekuk 90 derajat.",
+      "Sentuhkan siku kanan ke lutut kiri sambil meluruskan kaki kanan ke depan.",
+      "Ganti arah secara berirama seperti mengayuh sepeda."
+    ],
+    "accessible_description": "Mengayuh kaki seperti bersepeda di udara sambil menyentuhkan siku menyilang ke lutut yang berlawanan.",
+    "met_value": 7.5,
+    "equipment_needed": "Matras",
+    "audio_cue": "Lakukan secara terkontrol dan rasakan kontraksi di setiap putaran.",
+    "image_path": "workout_data/images/ex_bicycle_crunches.png",
+    "focus_areas": [
+      "Obliques",
+      "Upper & Lower Abdominals",
+      "Hip Flexors"
+    ],
+    "common_mistakes": [
+      {
+        "title": "Gerakan Terlalu Cepat Tanpa Kontraksi",
+        "desc": "Mengayuh sepeda secara kilat mengurangi waktu di bawah ketegangan (TUT). Lakukan secara tenang dan rasakan pilinan otot samping perut."
+      },
+      {
+        "title": "Menarik Leher dengan Kedua Tangan",
+        "desc": "Fokuskan siku mendekati lutut berlawanan dengan memutar bahu, bukan menarik kepala."
+      }
+    ],
+    "breathing_tips": [
+      "Tarik napas saat berganti sisi.",
+      "Buang napas saat siku kanan menyentuh lutut kiri, dan sebaliknya."
+    ],
+    "is_reps_based": true,
+    "default_reps": 16,
+    "icon_path": "workout_data/images/icons/icon_ex_bicycle_crunches.png"
+  },
+  {
+    "id": "ex_knee_pushups",
+    "name": "Knee Push-ups",
+    "target_muscle": "Chest",
+    "difficulty": "Beginner",
+    "instructions": [
+      "Mulai dengan posisi push-up tetapi tumpukan berat tubuh bawah pada lutut.",
+      "Turunkan dada ke arah lantai hingga siku membentuk sudut 90 derajat.",
+      "Dorong tubuh kembali ke atas dengan telapak tangan."
+    ],
+    "accessible_description": "Gerakan push-up dengan lutut menempel di lantai untuk meringankan beban tubuh.",
+    "met_value": 5.0,
+    "equipment_needed": "Matras",
+    "audio_cue": "Jaga garis lurus dari lutut hingga kepala.",
+    "image_path": "workout_data/images/ex_knee_pushups.png",
+    "focus_areas": [
+      "Pectoralis Major (Dada)",
+      "Triceps",
+      "Anterior Deltoids",
+      "Core"
+    ],
+    "common_mistakes": [
+      {
+        "title": "Bokong Tertinggal di Atas (Butt Sticking Up)",
+        "desc": "Menjaga pinggul di atas membuat gerakan menyerupai dorongan bahu bukan dada. Luruskan tubuh dari lutut hingga kepala."
+      },
+      {
+        "title": "Menyilangkan Kaki Secara Berlebihan",
+        "desc": "Menyilangkan pergelangan kaki dapat menggeser posisi panggul. Biarkan ujung kaki relaks menempel lantai."
+      }
+    ],
+    "breathing_tips": [
+      "Tarik napas saat dada mendekat ke matras.",
+      "Buang napas saat mendorong tubuh naik kembali."
+    ],
+    "is_reps_based": true,
+    "default_reps": 12,
+    "icon_path": "workout_data/images/icons/icon_ex_knee_pushups.png"
+  },
+  {
+    "id": "ex_diamond_pushups",
+    "name": "Diamond Push-ups",
+    "target_muscle": "Chest",
+    "difficulty": "Advanced",
+    "instructions": [
+      "Posisikan tangan rapat di bawah dada hingga ibu jari dan telunjuk saling bersentuhan membentuk segitiga/berlian.",
+      "Turunkan dada ke arah tangan berlian, jaga siku tetap dekat dengan tubuh.",
+      "Dorong kembali ke atas menggunakan kekuatan dada bagian dalam dan trisep."
+    ],
+    "accessible_description": "Push-up intensif dengan telapak tangan dirapatkan di bawah dada membentuk segitiga.",
+    "met_value": 8.5,
+    "equipment_needed": "None",
+    "audio_cue": "Jaga stabilitas siku dan dorong kuat melalui telapak tangan.",
+    "image_path": "workout_data/images/ex_diamond_pushups.png",
+    "focus_areas": [
+      "Triceps (Fokus Utama)",
+      "Inner Chest",
+      "Shoulders",
+      "Core"
+    ],
+    "common_mistakes": [
+      {
+        "title": "Siku Terbuka Terlalu Lebar",
+        "desc": "Membuka siku ke samping memberi tekanan pergelangan dan bahu. Jaga siku tetap dekat di samping rusuk saat turun."
+      },
+      {
+        "title": "Pergelangan Tangan Tertekuk Sakit",
+        "desc": "Jika pergelangan kaku, renggangkan sedikit jarak kedua ibu jari agar tidak terlalu sempit."
+      }
+    ],
+    "breathing_tips": [
+      "Tarik napas dalam saat menurunkan dada ke arah berlian tangan.",
+      "Buang napas kuat saat mendorong dengan otot trisep."
+    ],
+    "is_reps_based": true,
+    "default_reps": 10,
+    "icon_path": "workout_data/images/icons/icon_ex_diamond_pushups.png"
+  },
+  {
+    "id": "ex_arm_circles",
+    "name": "Arm Circles",
+    "target_muscle": "Arms",
+    "difficulty": "Beginner",
+    "instructions": [
+      "Berdiri tegak dan rentangkan kedua tangan lurus ke samping sejajar bahu.",
+      "Putar lengan membentuk lingkaran kecil ke depan secara berirama.",
+      "Ubah arah putaran ke belakang setelah separuh waktu."
+    ],
+    "accessible_description": "Merentangkan kedua tangan ke samping dan memutarnya secara melingkar untuk memanaskan otot bahu.",
+    "met_value": 3.5,
+    "equipment_needed": "None",
+    "audio_cue": "Tahan tangan tetap sejajar bahu tanpa menurunkannya.",
+    "image_path": "workout_data/images/ex_arm_circles.png",
+    "focus_areas": [
+      "Deltoids (Bahu Lateral & Anterior)",
+      "Trapezius",
+      "Upper Back"
+    ],
+    "common_mistakes": [
+      {
+        "title": "Lengan Melorot di Bawah Sejajar Bahu",
+        "desc": "Menurunkan lengan mengurangi tegangan pada otot deltoid. Pertahankan kedua lengan lurus sejajar garis bahu."
+      },
+      {
+        "title": "Lingkaran Terlalu Besar dan Liar",
+        "desc": "Buat lingkaran kecil terkontrol seukuran bola basket untuk isolasi bahu maksimal."
+      }
+    ],
+    "breathing_tips": [
+      "Napas tenang dan dalam mengikuti putaran lengan."
+    ],
+    "is_reps_based": false,
+    "default_reps": 30,
+    "icon_path": "workout_data/images/icons/icon_ex_arm_circles.png"
+  },
+  {
+    "id": "ex_pike_pushups",
+    "name": "Pike Push-ups",
+    "target_muscle": "Arms",
+    "difficulty": "Advanced",
+    "instructions": [
+      "Bentuk tubuh seperti huruf V terbalik (posisi downward dog), pinggul terangkat tinggi.",
+      "Tekuk siku untuk menurunkan kepala ke arah lantai di antara kedua tangan.",
+      "Dorong kembali ke posisi V menggunakan kekuatan bahu dan trisep."
+    ],
+    "accessible_description": "Push-up bahu dari posisi V terbalik dengan pinggul tinggi, menargetkan otot deltoid bahu dan lengan atas.",
+    "met_value": 8.0,
+    "equipment_needed": "None",
+    "audio_cue": "Fokuskan dorongan pada otot bahumu dan tatap ke arah kaki.",
+    "image_path": "workout_data/images/ex_pike_pushups.png",
+    "focus_areas": [
+      "Anterior & Medial Deltoids (Bahu)",
+      "Triceps",
+      "Upper Chest",
+      "Upper Back"
+    ],
+    "common_mistakes": [
+      {
+        "title": "Pinggul Turun Menyerupai Push-up Biasa",
+        "desc": "Bentuk huruf 'V' terbalik harus dipertahankan. Angkat pinggul setinggi mungkin untuk memindahkan beban ke bahu."
+      },
+      {
+        "title": "Menurunkan Kepala Mundur di Belakang Tangan",
+        "desc": "Kepala harus turun sedikit ke depan tangan membentuk pola tripod."
+      }
+    ],
+    "breathing_tips": [
+      "Tarik napas saat menurunkan puncak kepala mendekati lantai.",
+      "Buang napas saat mendorong tubuh kembali ke posisi 'V' terbalik."
+    ],
+    "is_reps_based": true,
+    "default_reps": 10,
+    "icon_path": "workout_data/images/icons/icon_ex_pike_pushups.png"
+  },
+  {
+    "id": "ex_glute_bridges",
+    "name": "Glute Bridges",
+    "target_muscle": "Legs",
+    "difficulty": "Beginner",
+    "instructions": [
+      "Berbaring telentang, tekuk lutut dengan telapak kaki menapak kuat di lantai selebar pinggul.",
+      "Dorong melalui tumit dan kencangkan bokong untuk mengangkat pinggul ke atas.",
+      "Tahan sejenak di puncak gerakan lalu turunkan kembali secara perlahan."
+    ],
+    "accessible_description": "Berbaring telentang lalu mendorong pinggul ke atas menggunakan kekuatan otot pantat dan paha belakang.",
+    "met_value": 4.0,
+    "equipment_needed": "Matras",
+    "audio_cue": "Remas otot bokongmu di posisi atas selama 1 detik.",
+    "image_path": "workout_data/images/ex_glute_bridges.png",
+    "focus_areas": [
+      "Gluteus Maximus (Bokong)",
+      "Hamstrings",
+      "Lower Back",
+      "Core"
+    ],
+    "common_mistakes": [
+      {
+        "title": "Melengkungkan Punggung Bawah Berlebihan (Hyperextending)",
+        "desc": "Mendorong pinggul terlalu tinggi memakai lumbal memicu sakit pinggang. Angkat hingga tubuh lurus dari lutut ke bahu dan remas glutes."
+      },
+      {
+        "title": "Mendorong dengan Jari Kaki Bukan Tumit",
+        "desc": "Menumpu pada jari kaki mengaktifkan paha depan bukan bokong. Tekan kuat melalui tumit."
+      }
+    ],
+    "breathing_tips": [
+      "Tarik napas saat menurunkan pinggul menyentuh matras.",
+      "Buang napas saat mengangkat pinggul dan mengunci kontraksi bokong di atas."
+    ],
+    "is_reps_based": true,
+    "default_reps": 15,
+    "icon_path": "workout_data/images/icons/icon_ex_glute_bridges.png"
+  },
+  {
+    "id": "ex_jump_squats",
+    "name": "Explosive Jump Squats",
+    "target_muscle": "Legs",
+    "difficulty": "Advanced",
+    "instructions": [
+      "Lakukan gerakan squat hingga paha sejajar lantai.",
+      "Dorong kaki dengan kekuatan penuh untuk melompat tinggi ke udara.",
+      "Mendarat dengan lembut langsung ke posisi squat berikutnya secara halus."
+    ],
+    "accessible_description": "Gerakan squat dinamis yang diakhiri dengan lompatan eksplosif ke atas dan mendarat kembali menyerap ke squat.",
+    "met_value": 9.5,
+    "equipment_needed": "None",
+    "audio_cue": "Mendaratlah dengan lentur dan lembut pada ujung telapak kaki untuk melindungi persendian.",
+    "image_path": "workout_data/images/ex_jump_squats.png",
+    "focus_areas": [
+      "Quadriceps",
+      "Glutes",
+      "Calves",
+      "Plyometric Power"
+    ],
+    "common_mistakes": [
+      {
+        "title": "Mendarat Kaku dengan Kaki Lurus",
+        "desc": "Mendarat tanpa menekuk lutut memberi gaya impak berat pada sendi. Selalu mendarat lembut dan langsung masuk ke posisi squat berikutnya."
+      },
+      {
+        "title": "Dada Jatuh ke Depan Saat Turun",
+        "desc": "Jaga dada tetap terangkat dan tatapan ke depan untuk melindungi tulang punggung."
+      }
+    ],
+    "breathing_tips": [
+      "Tarik napas saat turun squat.",
+      "Buang napas eksplosif saat melompat ke atas."
+    ],
+    "is_reps_based": true,
+    "default_reps": 12,
+    "icon_path": "workout_data/images/icons/icon_ex_jump_squats.png"
+  },
+  {
+    "id": "ex_bird_dog",
+    "name": "Bird Dog Core & Back",
+    "target_muscle": "Back",
+    "difficulty": "Beginner",
+    "instructions": [
+      "Mulai dengan posisi merangkak (tangan di bawah bahu, lutut di bawah pinggul).",
+      "Rentangkan tangan kanan ke depan dan kaki kiri lurus ke belakang secara bersamaan.",
+      "Tahan 2 detik lalu kembali dan ulangi pada sisi berlawanan."
+    ],
+    "accessible_description": "Posisi merangkak lalu meluruskan tangan dan kaki yang berlawanan arah secara bergantian untuk kestabilan punggung.",
+    "met_value": 3.5,
+    "equipment_needed": "Matras",
+    "audio_cue": "Jaga tulang belakang tetap lurus dan seimbang tanpa miring.",
+    "image_path": "workout_data/images/ex_bird_dog.png",
+    "focus_areas": [
+      "Erector Spinae (Punggung Bawah)",
+      "Glutes",
+      "Core Stabilizers",
+      "Shoulders"
+    ],
+    "common_mistakes": [
+      {
+        "title": "Pinggul Miring ke Satu Sisi",
+        "desc": "Memiringkan panggul mengurangi stabilitas core. Jaga kedua tulang panggul tetap sejajar menghadap lantai."
+      },
+      {
+        "title": "Mengangkat Kaki dan Tangan Terlalu Tinggi Melebihi Garis Tubuh",
+        "desc": "Mengangkat terlalu tinggi memicu lengkungan berlebih pada punggung bawah. Cukup luruskan sejajar tulang punggung."
+      }
+    ],
+    "breathing_tips": [
+      "Tarik napas di posisi merangkak awal.",
+      "Buang napas saat merentangkan tangan dan kaki berlawanan.",
+      "Tahan 1 detik dan bernapas stabil."
+    ],
+    "is_reps_based": true,
+    "default_reps": 14,
+    "icon_path": "workout_data/images/icons/icon_ex_bird_dog.png"
+  },
+  {
+    "id": "ex_superman",
+    "name": "Superman Back Extension",
+    "target_muscle": "Back",
+    "difficulty": "Beginner",
+    "instructions": [
+      "Tidur tengkurap dengan tangan terentang lurus ke depan dan kaki lurus ke belakang.",
+      "Angkat lengan, dada, dan kaki secara bersamaan beberapa sentimeter dari lantai.",
+      "Tahan kontraksi di otot punggung sejenak lalu turunkan perlahan."
+    ],
+    "accessible_description": "Tengkurap di lantai lalu mengangkat dada, kedua lengan, dan kaki ke atas menyerupai posisi terbang.",
+    "met_value": 4.0,
+    "equipment_needed": "Matras",
+    "audio_cue": "Rasakan kontraksi di sepanjang punggung dan jangan menolehkan kepala ke samping.",
+    "image_path": "workout_data/images/ex_superman.png",
+    "focus_areas": [
+      "Lower & Middle Back (Erector Spinae)",
+      "Glutes",
+      "Hamstrings",
+      "Rear Deltoids"
+    ],
+    "common_mistakes": [
+      {
+        "title": "Mendongakkan Leher Berlebihan (Neck Hyperextension)",
+        "desc": "Melihat lurus ke atas memberi tekanan pada leher. Pertahankan pandangan ke arah matras agar leher sejajar punggung."
+      },
+      {
+        "title": "Gerakan Hentakan Kasar",
+        "desc": "Mengayun badan secara menyentak berisiko kejang otot. Angkat lengan dan dada secara halus dan terkontrol."
+      }
+    ],
+    "breathing_tips": [
+      "Tarik napas saat tubuh rebah di lantai.",
+      "Buang napas saat mengangkat dada, lengan, dan paha dari matras.",
+      "Tahan sejenak di atas sambil mengunci otot punggung."
+    ],
+    "is_reps_based": true,
+    "default_reps": 12,
+    "icon_path": "workout_data/images/icons/icon_ex_superman.png"
+  }
+]
