@@ -233,7 +233,7 @@ def api_health():
 # ============================================================================
 
 @app.post("/api/auth/register")
-def api_register(req: UserRegisterRequest):
+def api_register(req: UserRegisterRequest, response: Response):
     """Registers a new user and returns JWT access token + profile."""
     init_db(force=True)
     session = SessionFactory()
@@ -261,6 +261,13 @@ def api_register(req: UserRegisterRequest):
                 raise first_err
 
         token = create_access_token({"sub": user.id, "username": user.username})
+        response.set_cookie(
+            key="fitpulse_token",
+            value=token,
+            max_age=30 * 24 * 3600,
+            httponly=False,
+            samesite="lax"
+        )
         profile = service.get_profile(user_id=user.id)
         return {
             "success": True,
@@ -278,7 +285,7 @@ def api_register(req: UserRegisterRequest):
 
 
 @app.post("/api/auth/login")
-def api_login(req: UserLoginRequest):
+def api_login(req: UserLoginRequest, response: Response):
     """Logs in an existing user and returns JWT token + profile."""
     init_db(force=True)
     session = SessionFactory()
@@ -296,6 +303,13 @@ def api_login(req: UserLoginRequest):
         if not user:
             raise HTTPException(status_code=401, detail="Email/Username atau kata sandi tidak cocok.")
         token = create_access_token({"sub": user.id, "username": user.username})
+        response.set_cookie(
+            key="fitpulse_token",
+            value=token,
+            max_age=30 * 24 * 3600,
+            httponly=False,
+            samesite="lax"
+        )
         profile = service.get_profile(user_id=user.id)
         return {
             "success": True,
@@ -333,8 +347,9 @@ def api_get_me(user_id: str = Depends(get_current_user_id)):
 
 
 @app.post("/api/auth/logout")
-def api_logout():
-    """Logs out user (client removes stored token)."""
+def api_logout(response: Response):
+    """Logs out user (client removes stored token and clears auth cookie)."""
+    response.delete_cookie(key="fitpulse_token", path="/")
     return {"success": True, "message": "Berhasil keluar."}
 
 

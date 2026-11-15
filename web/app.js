@@ -277,10 +277,13 @@ class FitPulseApp {
     await this.checkAuthStatus();
 
     if (!this.currentUser) {
-      // User must log in first before accessing the app
+      // User is not logged in, prompt fullscreen login gateway
       this.openAuthModal('login');
       return;
     }
+
+    // Auto-login active session recognized: immediately close login modal and proceed!
+    this.closeAuthModal();
 
     await this.loadInitialData();
     this.setupMusclePills();
@@ -445,12 +448,32 @@ class FitPulseApp {
   // USER AUTHENTICATION & MULTI-USER CLOUD SYNC
   // ==========================================================================
   async checkAuthStatus() {
-    const token = localStorage.getItem('fitpulse_token');
+    let token = localStorage.getItem('fitpulse_token');
+    if (!token) {
+      // Fallback check from document.cookie
+      const match = document.cookie.match(/(?:^|;\s*)fitpulse_token=([^;]+)/);
+      if (match) {
+        token = decodeURIComponent(match[1]);
+        localStorage.setItem('fitpulse_token', token);
+      }
+    }
+
     if (!token) {
       this.currentUser = null;
       this.updateAuthUI();
       return null;
     }
+
+    // Restore cached user data for instant response
+    const cachedUser = localStorage.getItem('fitpulse_user');
+    const cachedProfile = localStorage.getItem('fitpulse_profile');
+    if (cachedUser) {
+      try { this.currentUser = JSON.parse(cachedUser); } catch(e) {}
+    }
+    if (cachedProfile) {
+      try { this.profile = JSON.parse(cachedProfile); } catch(e) {}
+    }
+
     try {
       const res = await fetch('/api/auth/me');
       if (res.ok) {
@@ -458,17 +481,32 @@ class FitPulseApp {
         if (authData.authenticated && authData.user) {
           this.currentUser = authData.user;
           this.profile = authData.profile || null;
+          localStorage.setItem('fitpulse_user', JSON.stringify(authData.user));
+          if (authData.profile) {
+            localStorage.setItem('fitpulse_profile', JSON.stringify(authData.profile));
+          }
         } else {
+          // Server confirmed unauthenticated / guest
           localStorage.removeItem('fitpulse_token');
+          localStorage.removeItem('fitpulse_user');
+          localStorage.removeItem('fitpulse_profile');
+          document.cookie = "fitpulse_token=; path=/; max-age=0; SameSite=Lax";
           this.currentUser = null;
         }
-      } else {
+      } else if (res.status === 401) {
+        // Specifically token expired or invalid
         localStorage.removeItem('fitpulse_token');
+        localStorage.removeItem('fitpulse_user');
+        localStorage.removeItem('fitpulse_profile');
+        document.cookie = "fitpulse_token=; path=/; max-age=0; SameSite=Lax";
         this.currentUser = null;
+      } else {
+        // Transient server or network error (e.g. 500/502) - keep local session intact
+        console.warn("Server returned status", res.status, "retaining cached session.");
       }
     } catch (e) {
       console.warn("Check auth error:", e);
-      this.currentUser = null;
+      // Offline fallback: retain cached session if available
     }
     this.updateAuthUI();
     return this.currentUser;
@@ -647,6 +685,13 @@ class FitPulseApp {
       const authToken = data.token || data.access_token;
       if (authToken) {
         localStorage.setItem('fitpulse_token', authToken);
+        document.cookie = `fitpulse_token=${encodeURIComponent(authToken)}; path=/; max-age=2592000; SameSite=Lax`;
+      }
+      if (data.user) {
+        localStorage.setItem('fitpulse_user', JSON.stringify(data.user));
+      }
+      if (data.profile) {
+        localStorage.setItem('fitpulse_profile', JSON.stringify(data.profile));
       }
       this.currentUser = data.user;
       await this.loadInitialData();
@@ -713,6 +758,13 @@ class FitPulseApp {
       const authToken = data.token || data.access_token;
       if (authToken) {
         localStorage.setItem('fitpulse_token', authToken);
+        document.cookie = `fitpulse_token=${encodeURIComponent(authToken)}; path=/; max-age=2592000; SameSite=Lax`;
+      }
+      if (data.user) {
+        localStorage.setItem('fitpulse_user', JSON.stringify(data.user));
+      }
+      if (data.profile) {
+        localStorage.setItem('fitpulse_profile', JSON.stringify(data.profile));
       }
       this.currentUser = data.user;
       await this.loadInitialData();
@@ -781,6 +833,9 @@ class FitPulseApp {
       }
 
       this.profile = data.profile;
+      if (data.profile) {
+        localStorage.setItem('fitpulse_profile', JSON.stringify(data.profile));
+      }
 
       // Close the Auth & Onboarding Modal
       this.closeAuthModal();
@@ -819,6 +874,9 @@ class FitPulseApp {
       console.warn("Logout error:", e);
     }
     localStorage.removeItem('fitpulse_token');
+    localStorage.removeItem('fitpulse_user');
+    localStorage.removeItem('fitpulse_profile');
+    document.cookie = "fitpulse_token=; path=/; max-age=0; SameSite=Lax";
     this.currentUser = null;
     this.profile = null;
     this.updateAuthUI();

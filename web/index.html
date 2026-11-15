@@ -1546,6 +1546,16 @@
   <!-- FULLSCREEN GATEWAY: AUTHENTICATION & ONBOARDING -->
   <!-- ======================================================================= -->
   <div id="modal-auth" class="fixed inset-0 z-50 bg-[#020617] flex items-center justify-center p-4 overflow-y-auto">
+    <script>
+      // Seamless Auto-Login: If active session token exists in localStorage or cookies,
+      // hide the fullscreen login modal immediately so there is no jarring flash.
+      try {
+        var hasToken = localStorage.getItem('fitpulse_token') || /(?:^|;\s*)fitpulse_token=/.test(document.cookie);
+        if (hasToken) {
+          document.getElementById('modal-auth')?.classList.add('hidden');
+        }
+      } catch (e) {}
+    </script>
     <div class="w-full max-w-lg my-auto py-6">
       
       <!-- Brand Logo & Header -->
@@ -1745,7 +1755,7 @@
   <div id="toast-container" class="fixed bottom-20 md:bottom-6 right-6 z-50 space-y-2 pointer-events-none"></div>
 
   <!-- Application Main JavaScript -->
-  <script src="/static/app.js?v=2.9.0"></script>
+  <script src="/static/app.js?v=3.0.0"></script>
 </body>
 </html>
 
