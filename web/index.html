@@ -55,20 +55,20 @@
   <!-- ======================================================================= -->
   <!-- TOP HEADER (Responsive: Desktop Full Bar + Mobile Compact Header) -->
   <!-- ======================================================================= -->
-  <header class="sticky top-0 z-40 bg-[#0F172A]/90 backdrop-blur-md border-b border-slate-800/80 px-4 py-3 sm:px-6">
-    <div class="max-w-6xl mx-auto flex items-center justify-between gap-3">
+  <header class="sticky top-0 z-40 bg-[#0F172A]/90 backdrop-blur-md border-b border-slate-800/80 px-3 py-2.5 sm:px-6 sm:py-3.5">
+    <div class="max-w-6xl mx-auto flex items-center justify-between gap-2 sm:gap-4">
       
       <!-- Brand & Title -->
-      <div class="flex items-center gap-3 cursor-pointer select-none" onclick="app.navigate('training')">
-        <div class="w-10 h-10 rounded-xl bg-gradient-to-tr from-brand-600 to-sky-400 flex items-center justify-center shadow-lg shadow-sky-500/20 text-white font-black text-xl">
+      <div class="flex items-center gap-2 sm:gap-3 cursor-pointer select-none min-w-0" onclick="app.navigate('training')">
+        <div class="w-8 h-8 sm:w-10 sm:h-10 rounded-xl bg-gradient-to-tr from-brand-600 to-sky-400 flex items-center justify-center shadow-md sm:shadow-lg text-white font-black text-base sm:text-xl flex-shrink-0">
           ⚡
         </div>
-        <div>
-          <div class="flex items-center gap-2">
-            <span class="font-extrabold text-lg sm:text-xl tracking-tight bg-gradient-to-r from-white to-slate-300 bg-clip-text text-transparent">FITPULSE</span>
-            <span class="text-[10px] font-bold px-1.5 py-0.5 rounded bg-brand-500/20 text-brand-400 border border-brand-500/30">HCI WEB</span>
+        <div class="min-w-0">
+          <div class="flex items-center gap-1.5 sm:gap-2">
+            <span class="font-black text-base sm:text-xl tracking-tight bg-gradient-to-r from-white to-slate-300 bg-clip-text text-transparent">FITPULSE</span>
+            <span class="text-[9px] sm:text-[10px] font-bold px-1.5 py-0.5 rounded bg-brand-500/20 text-brand-400 border border-brand-500/30 hidden sm:inline-block">HCI WEB</span>
           </div>
-          <p class="text-xs text-slate-400 hidden sm:block">Home Workout Companion</p>
+          <p class="text-[11px] text-slate-400 hidden sm:block">Home Workout Companion</p>
         </div>
       </div>
 
@@ -88,26 +88,26 @@
         </button>
       </nav>
 
-      <!-- Right Header Actions (Streak + Profile + Viewport Simulator) -->
-      <div class="flex items-center gap-2 sm:gap-3">
+      <!-- Right Header Actions (Streak + Profile + Logout + Viewport Simulator) -->
+      <div class="flex items-center gap-1.5 sm:gap-2.5 flex-shrink-0">
         <!-- Streak Badge -->
-        <div class="flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-orange-500/10 border border-orange-500/30 text-orange-400 text-xs sm:text-sm font-bold shadow-sm" title="Streak Latihan Aktif">
-          <span class="text-base animate-pulse">🔥</span>
+        <div class="flex items-center gap-1 px-2 py-1 sm:px-3 sm:py-1.5 rounded-full bg-orange-500/10 border border-orange-500/30 text-orange-400 text-xs sm:text-sm font-bold shadow-sm" title="Streak Latihan Aktif">
+          <span class="text-xs sm:text-base animate-pulse">🔥</span>
           <span id="header-streak-count">0</span>
         </div>
 
         <!-- User Profile & Authentication Section -->
-        <div id="header-auth-container" class="flex items-center gap-2">
+        <div id="header-auth-container" class="flex items-center gap-1.5 sm:gap-2">
           <!-- Logged-in User Badge -->
-          <div id="header-user-menu" class="flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-slate-800/80 border border-slate-700 text-xs sm:text-sm font-medium">
-            <span class="text-sm">👤</span>
-            <span id="header-user-summary" class="font-bold text-white">Teddy (64kg)</span>
+          <div id="header-user-menu" class="flex items-center gap-1 sm:gap-1.5 px-2 py-1 sm:px-3 sm:py-1.5 rounded-xl bg-slate-800/80 border border-slate-700/80 text-xs sm:text-sm font-medium shadow-sm">
+            <span class="text-xs sm:text-sm">👤</span>
+            <span id="header-user-summary" class="font-bold text-white text-xs sm:text-sm flex items-center">Teddy</span>
           </div>
 
           <!-- Direct Log Out Button -->
-          <button id="btn-header-logout" onclick="app.logout()" class="flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-red-950/60 hover:bg-red-900/80 border border-red-800/60 text-red-300 hover:text-red-200 text-xs sm:text-sm font-bold shadow-sm transition-all" title="Keluar dan kembali ke halaman Login">
-            <i data-lucide="log-out" class="w-3.5 h-3.5"></i>
-            <span class="hidden sm:inline">Keluar</span>
+          <button id="btn-header-logout" onclick="app.logout()" class="p-1.5 sm:px-3 sm:py-1.5 rounded-xl bg-red-950/60 hover:bg-red-900/80 border border-red-800/60 text-red-300 hover:text-red-200 text-xs sm:text-sm font-bold shadow-sm transition-all flex items-center justify-center gap-1.5 flex-shrink-0 cursor-pointer" title="Keluar dan kembali ke halaman Login">
+            <i data-lucide="log-out" class="w-4 h-4"></i>
+            <span class="hidden md:inline">Keluar</span>
           </button>
         </div>
 
@@ -147,50 +147,44 @@
   <!-- MAIN APP CONTAINER (With Responsive Frame for Testing Device Modes) -->
   <!-- ======================================================================= -->
   <div id="device-wrapper" class="flex-1 w-full mx-auto transition-all duration-300 flex flex-col justify-start pb-24 md:pb-12">
-    <main class="w-full max-w-6xl mx-auto px-4 sm:px-6 py-6 flex-1">
+    <main class="w-full max-w-6xl mx-auto px-3.5 sm:px-6 py-4 sm:py-6 flex-1">
       
       <!-- =================================================================== -->
       <!-- VIEW 1: TRAINING HUB (BERANDA / LATIHAN) -->
       <!-- =================================================================== -->
-      <section id="view-training" class="app-view space-y-6">
+      <section id="view-training" class="app-view space-y-5 sm:space-y-6">
         
-        <!-- Search and Filter Bar -->
-        <div class="flex flex-col sm:flex-row gap-3 items-stretch sm:items-center justify-between">
+        <!-- Search and Action Buttons Bar (Sleek Mobile Layout) -->
+        <div class="flex flex-col sm:flex-row gap-2.5 sm:gap-3 items-stretch sm:items-center justify-between">
           <div class="relative flex-1">
             <i data-lucide="search" class="w-4 h-4 absolute left-3.5 top-3.5 text-slate-400"></i>
             <input 
               type="text" 
               id="search-input" 
               placeholder="Cari program latihan, gerakan, atau otot..." 
-              class="w-full bg-slate-900/90 border border-slate-800 rounded-xl pl-10 pr-10 py-2.5 text-sm placeholder-slate-500 focus:outline-none focus:border-brand-500 focus:ring-1 focus:ring-brand-500 transition-colors"
+              class="w-full bg-slate-900/90 border border-slate-800 rounded-xl pl-10 pr-10 py-2.5 text-sm placeholder-slate-500 focus:outline-none focus:border-brand-500 focus:ring-1 focus:ring-brand-500 transition-colors shadow-inner"
               oninput="app.onSearchInput(this.value)"
             />
-            <button id="search-clear-btn" onclick="app.clearSearch()" class="hidden absolute right-3 top-3 text-slate-400 hover:text-white">
+            <button id="search-clear-btn" onclick="app.clearSearch()" class="hidden absolute right-3 top-3 text-slate-400 hover:text-white cursor-pointer">
               <i data-lucide="x" class="w-4 h-4"></i>
             </button>
           </div>
 
-          <div class="flex items-center gap-2">
-            <button onclick="app.openScheduleModal()" class="px-3.5 py-2.5 rounded-xl bg-slate-800 hover:bg-slate-700 border border-slate-700 text-xs sm:text-sm font-semibold flex items-center gap-1.5 transition-colors">
-              <i data-lucide="calendar" class="w-4 h-4 text-brand-400"></i>
-              <span>Jadwal Mingguan</span>
+          <!-- Action Buttons: Jadwal Mingguan & Buat Kustom (Balanced 2-Col Grid on Mobile, Flex on Desktop) -->
+          <div class="grid grid-cols-2 gap-2 sm:flex sm:items-center sm:gap-2.5">
+            <button onclick="app.openScheduleModal()" class="py-2.5 px-3 rounded-xl bg-slate-900/90 hover:bg-slate-800 border border-slate-800 hover:border-slate-700 text-slate-200 hover:text-white text-xs sm:text-sm font-bold flex items-center justify-center gap-2 shadow-sm transition-all cursor-pointer">
+              <i data-lucide="calendar" class="w-4 h-4 text-brand-400 flex-shrink-0"></i>
+              <span class="truncate">Jadwal Mingguan</span>
             </button>
-            <button onclick="app.openCustomBuilderModal()" class="px-3.5 py-2.5 rounded-xl bg-brand-600 hover:bg-brand-500 text-white text-xs sm:text-sm font-semibold flex items-center gap-1.5 transition-colors shadow-lg shadow-brand-600/20">
-              <i data-lucide="plus-circle" class="w-4 h-4"></i>
-              <span>Buat Kustom</span>
+            <button onclick="app.openCustomBuilderModal()" class="py-2.5 px-3 rounded-xl bg-gradient-to-r from-brand-600 to-blue-600 hover:from-brand-500 hover:to-blue-500 text-white text-xs sm:text-sm font-bold flex items-center justify-center gap-2 shadow-md shadow-brand-600/25 transition-all cursor-pointer">
+              <i data-lucide="plus-circle" class="w-4 h-4 flex-shrink-0"></i>
+              <span class="truncate">Buat Kustom</span>
             </button>
-          </div>
-        </div>
-
-        <!-- Body Focus Filter Pills (Scrollable on Mobile) -->
-        <div class="overflow-x-auto no-scrollbar py-1 -mx-4 px-4 sm:mx-0 sm:px-0">
-          <div class="flex items-center gap-2 min-w-max" id="muscle-filter-pills">
-            <!-- Populated via JS -->
           </div>
         </div>
 
         <!-- Weekly Goal 7-Day Strip Card -->
-        <div class="bg-gradient-to-br from-slate-900 to-slate-800/80 border border-slate-800 rounded-2xl p-5 shadow-xl">
+        <div class="bg-gradient-to-br from-slate-900 to-slate-800/80 border border-slate-800 rounded-2xl p-4 sm:p-5 shadow-xl">
           <div class="flex items-center justify-between mb-4">
             <div class="flex items-center gap-2">
               <span class="text-xl">🎯</span>
@@ -199,27 +193,27 @@
                 <p class="text-xs text-slate-400">Menyesuaikan dengan jadwal mingguan yang Anda pilih</p>
               </div>
             </div>
-            <button onclick="app.openScheduleModal()" title="Ubah Jadwal Mingguan" class="flex items-center gap-2 px-3 py-1.5 rounded-full bg-brand-500/10 hover:bg-brand-500/20 text-brand-400 border border-brand-500/30 text-xs font-bold transition-all">
+            <button onclick="app.openScheduleModal()" title="Ubah Jadwal Mingguan" class="flex items-center gap-2 px-3 py-1.5 rounded-full bg-brand-500/10 hover:bg-brand-500/20 text-brand-400 border border-brand-500/30 text-xs font-bold transition-all cursor-pointer">
               <span id="weekly-goal-status">0/0 Hari</span>
               <span class="text-[11px] text-slate-400 font-normal">✏️ Atur</span>
             </button>
           </div>
 
           <!-- 7-Day Dots Strip -->
-          <div class="grid grid-cols-7 gap-2 text-center" id="weekly-days-strip">
+          <div class="grid grid-cols-7 gap-1.5 sm:gap-2 text-center" id="weekly-days-strip">
             <!-- Populated via JS -->
           </div>
         </div>
 
         <!-- 28-Day Challenge Banner -->
-        <div class="relative overflow-hidden rounded-2xl bg-gradient-to-r from-blue-900/60 via-indigo-900/40 to-slate-900 border border-blue-800/40 p-5 sm:p-6 shadow-xl">
+        <div class="relative overflow-hidden rounded-2xl bg-gradient-to-r from-blue-900/60 via-indigo-900/40 to-slate-900 border border-blue-800/40 p-4 sm:p-6 shadow-xl">
           <div class="relative z-10 max-w-lg">
             <div class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-md bg-blue-500/20 border border-blue-400/30 text-blue-300 text-xs font-bold mb-2">
               <span>🔥 TANTANGAN SPESIAL</span>
             </div>
-            <h2 class="text-lg sm:text-xl font-extrabold text-white mb-1">Tantangan 28 Hari Transformasi Tubuh</h2>
-            <p class="text-xs sm:text-sm text-slate-300 mb-4">Program progresif berbasis sains untuk membakar lemak & membentuk massa otot tanpa alat apapun.</p>
-            <button onclick="app.startQuickStart()" class="px-5 py-2.5 rounded-xl bg-gradient-to-r from-brand-500 to-blue-600 hover:from-brand-400 hover:to-blue-500 text-white font-bold text-xs sm:text-sm shadow-lg shadow-blue-500/30 flex items-center gap-2 transition-all">
+            <h2 class="text-base sm:text-xl font-extrabold text-white mb-1">Tantangan 28 Hari Transformasi Tubuh</h2>
+            <p class="text-xs sm:text-sm text-slate-300 mb-3.5">Program progresif berbasis sains untuk membakar lemak & membentuk massa otot tanpa alat apapun.</p>
+            <button onclick="app.startQuickStart()" class="px-5 py-2.5 rounded-xl bg-gradient-to-r from-brand-500 to-blue-600 hover:from-brand-400 hover:to-blue-500 text-white font-bold text-xs sm:text-sm shadow-lg shadow-blue-500/30 flex items-center gap-2 transition-all cursor-pointer">
               <i data-lucide="play" class="w-4 h-4 fill-white"></i>
               <span>Mulai Tantangan Hari Ini</span>
             </button>
@@ -239,14 +233,24 @@
           <!-- Populated dynamically via JS if there are incomplete sessions -->
         </div>
 
-        <!-- Section: Routines List Header -->
-        <div class="flex items-center justify-between pt-2">
-          <div>
-            <h2 class="text-base sm:text-lg font-bold text-white flex items-center gap-2">
-              <span>Program Latihan</span>
-              <span id="routines-count-badge" class="text-xs px-2 py-0.5 rounded-full bg-slate-800 text-slate-400">6</span>
-            </h2>
-            <p class="text-xs text-slate-400">Pilih program yang sesuai dengan target otot Anda</p>
+        <!-- SECTION: PROGRAM LATIHAN DENGAN PEMILIHAN KATEGORI OTOT (DI BAWAH KEGIATAN HARI INI) -->
+        <div class="space-y-3 pt-1">
+          <!-- Section Header -->
+          <div class="flex items-center justify-between">
+            <div>
+              <h2 class="text-base sm:text-lg font-bold text-white flex items-center gap-2">
+                <span>Program Latihan</span>
+                <span id="routines-count-badge" class="text-xs px-2 py-0.5 rounded-full bg-slate-800 text-brand-400 font-bold border border-slate-700">6</span>
+              </h2>
+              <p class="text-xs text-slate-400">Pilih program latihan sesuai fokus otot yang ingin dilatih</p>
+            </div>
+          </div>
+
+          <!-- Body Focus Filter Pills (Scrollable on Mobile, Placed Directly Above Workout Programs) -->
+          <div class="overflow-x-auto no-scrollbar py-1 -mx-3.5 px-3.5 sm:mx-0 sm:px-0">
+            <div class="flex items-center gap-2 min-w-max" id="muscle-filter-pills">
+              <!-- Populated via JS -->
+            </div>
           </div>
         </div>
 
@@ -1734,7 +1738,7 @@
   <div id="toast-container" class="fixed bottom-20 md:bottom-6 right-6 z-50 space-y-2 pointer-events-none"></div>
 
   <!-- Application Main JavaScript -->
-  <script src="/static/app.js?v=2.6.0"></script>
+  <script src="/static/app.js?v=2.7.0"></script>
 </body>
 </html>
 

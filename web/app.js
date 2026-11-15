@@ -433,7 +433,9 @@ class FitPulseApp {
       ? (this.currentUser.name || this.currentUser.username)
       : (todayData.user_name || "Tamu");
     const weightDisplay = Math.round(todayData.weight_kg || (this.profile ? this.profile.weight_kg : 65));
-    if (userEl) userEl.innerText = `${displayName} (${weightDisplay}kg)`;
+    if (userEl) {
+      userEl.innerHTML = `<span class="truncate max-w-[65px] sm:max-w-[120px] inline-block align-bottom font-bold text-white">${displayName}</span><span class="text-slate-400 text-[11px] font-normal hidden sm:inline ml-1">(${weightDisplay}kg)</span>`;
+    }
 
     this.updateAuthUI();
   }
@@ -488,7 +490,7 @@ class FitPulseApp {
       if (userSummary) {
         const displayName = this.profile?.name || this.currentUser.name || this.currentUser.username;
         const w = Math.round(this.profile ? this.profile.weight_kg : 65);
-        userSummary.innerText = `${displayName} (${w}kg)`;
+        userSummary.innerHTML = `<span class="truncate max-w-[65px] sm:max-w-[120px] inline-block align-bottom font-bold text-white">${displayName}</span><span class="text-slate-400 text-[11px] font-normal hidden sm:inline ml-1">(${w}kg)</span>`;
       }
 
       if (statusBadge) {
