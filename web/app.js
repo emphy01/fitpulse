@@ -451,7 +451,14 @@ class FitPulseApp {
     try {
       const res = await fetch('/api/auth/me');
       if (res.ok) {
-        this.currentUser = await res.json();
+        const authData = await res.json();
+        if (authData.authenticated && authData.user) {
+          this.currentUser = authData.user;
+          this.profile = authData.profile || null;
+        } else {
+          localStorage.removeItem('fitpulse_token');
+          this.currentUser = null;
+        }
       } else {
         localStorage.removeItem('fitpulse_token');
         this.currentUser = null;
@@ -568,15 +575,27 @@ class FitPulseApp {
     const formReg = document.getElementById('form-register');
 
     if (tab === 'login') {
-      if (tabLogin) tabLogin.className = "flex-1 py-2.5 rounded-lg text-xs font-bold transition-all bg-brand-600 text-white shadow-sm";
-      if (tabReg) tabReg.className = "flex-1 py-2.5 rounded-lg text-xs font-bold transition-all text-slate-400 hover:text-white";
-      if (formLogin) formLogin.classList.remove('hidden');
-      if (formReg) formReg.classList.add('hidden');
+      if (tabLogin) tabLogin.className = "flex-1 py-2.5 rounded-lg text-xs font-bold transition-all cursor-pointer bg-brand-600 text-white shadow-sm";
+      if (tabReg) tabReg.className = "flex-1 py-2.5 rounded-lg text-xs font-bold transition-all cursor-pointer text-slate-400 hover:text-white";
+      if (formLogin) {
+        formLogin.classList.remove('hidden');
+        formLogin.style.display = 'block';
+      }
+      if (formReg) {
+        formReg.classList.add('hidden');
+        formReg.style.display = 'none';
+      }
     } else {
-      if (tabLogin) tabLogin.className = "flex-1 py-2.5 rounded-lg text-xs font-bold transition-all text-slate-400 hover:text-white";
-      if (tabReg) tabReg.className = "flex-1 py-2.5 rounded-lg text-xs font-bold transition-all bg-emerald-600 text-white shadow-sm";
-      if (formLogin) formLogin.classList.add('hidden');
-      if (formReg) formReg.classList.remove('hidden');
+      if (tabLogin) tabLogin.className = "flex-1 py-2.5 rounded-lg text-xs font-bold transition-all cursor-pointer text-slate-400 hover:text-white";
+      if (tabReg) tabReg.className = "flex-1 py-2.5 rounded-lg text-xs font-bold transition-all cursor-pointer bg-emerald-600 text-white shadow-sm";
+      if (formLogin) {
+        formLogin.classList.add('hidden');
+        formLogin.style.display = 'none';
+      }
+      if (formReg) {
+        formReg.classList.remove('hidden');
+        formReg.style.display = 'block';
+      }
     }
 
     if (window.lucide) {
@@ -622,7 +641,10 @@ class FitPulseApp {
         throw new Error(data.detail || "Login gagal.");
       }
 
-      localStorage.setItem('fitpulse_token', data.access_token);
+      const authToken = data.token || data.access_token;
+      if (authToken) {
+        localStorage.setItem('fitpulse_token', authToken);
+      }
       this.currentUser = data.user;
       await this.loadInitialData();
 
@@ -685,7 +707,10 @@ class FitPulseApp {
         throw new Error(data.detail || "Pendaftaran gagal.");
       }
 
-      localStorage.setItem('fitpulse_token', data.access_token);
+      const authToken = data.token || data.access_token;
+      if (authToken) {
+        localStorage.setItem('fitpulse_token', authToken);
+      }
       this.currentUser = data.user;
       await this.loadInitialData();
 
@@ -700,7 +725,7 @@ class FitPulseApp {
     } finally {
       if (btnSubmit) {
         btnSubmit.disabled = false;
-        btnSubmit.innerHTML = '<span>Lanjut ke Pengisian Profil</span><i data-lucide="arrow-right" class="w-4 h-4"></i>';
+        btnSubmit.innerHTML = '<span>Daftar Akun Baru & Lanjut</span><i data-lucide="arrow-right" class="w-4 h-4"></i>';
         if (window.lucide) window.lucide.createIcons();
       }
     }
@@ -798,7 +823,6 @@ class FitPulseApp {
 
     // Automatically return to Fullscreen Login Gate!
     this.openAuthModal('login');
-  }
   }
 
   renderTodayActivity() {
