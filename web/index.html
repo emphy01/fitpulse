@@ -1500,9 +1500,9 @@
     </div>
 
     <!-- Center Slide Area -->
-    <div class="flex-1 flex flex-col items-center justify-center w-full max-w-5xl my-auto py-2 pointer-events-none">
-      <div class="relative rounded-2xl overflow-hidden border border-slate-700/80 shadow-2xl bg-black/50 max-h-[68vh] sm:max-h-[74vh]">
-        <img id="guide-overlay-img" src="/workout_data/images/panduan1.png" alt="Panduan Pengguna FitPulse" class="max-w-full max-h-[66vh] sm:max-h-[72vh] w-auto h-auto object-contain transition-all duration-200" />
+    <div class="flex-1 flex flex-col items-center justify-center w-full max-w-5xl my-auto py-1 sm:py-2 pointer-events-none">
+      <div class="relative rounded-2xl overflow-hidden border border-slate-700/80 shadow-2xl bg-black/50 max-h-[74vh] sm:max-h-[80vh] flex items-center justify-center">
+        <img id="guide-overlay-img" src="/workout_data/images/panduan1.png" alt="Panduan Pengguna FitPulse" class="max-w-full max-h-[72vh] sm:max-h-[78vh] w-auto h-auto object-contain transition-all duration-200 shadow-inner" />
       </div>
 
       <!-- Pulsing Instruction Text: "tap anywhere to continue" -->
@@ -1550,6 +1550,11 @@
       // Seamless Auto-Login: If active session token exists in localStorage or cookies,
       // hide the fullscreen login modal immediately so there is no jarring flash.
       try {
+        var urlParams = new URLSearchParams(window.location.search);
+        var qToken = urlParams.get('auth_token');
+        if (qToken) {
+          localStorage.setItem('fitpulse_token', qToken);
+        }
         var hasToken = localStorage.getItem('fitpulse_token') || /(?:^|;\s*)fitpulse_token=/.test(document.cookie);
         if (hasToken) {
           document.getElementById('modal-auth')?.classList.add('hidden');
@@ -1755,7 +1760,7 @@
   <div id="toast-container" class="fixed bottom-20 md:bottom-6 right-6 z-50 space-y-2 pointer-events-none"></div>
 
   <!-- Application Main JavaScript -->
-  <script src="/static/app.js?v=3.1.0"></script>
+  <script src="/static/app.js?v=3.2.0"></script>
 </body>
 </html>
 

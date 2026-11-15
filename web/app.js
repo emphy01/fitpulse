@@ -288,7 +288,16 @@ class FitPulseApp {
     await this.loadInitialData();
     this.setupMusclePills();
     this.setupWeeklyDots();
-    this.navigate('training');
+    
+    // Check initial view parameter (e.g. ?view=report or ?view=active-workout)
+    const initParams = new URLSearchParams(window.location.search);
+    const targetView = initParams.get('view') || 'training';
+    this.navigate(targetView);
+    if (targetView === 'active-workout') {
+      const routineId = initParams.get('routine') || 'rt_scientific_7min';
+      await this.openRoutineDetail(routineId);
+      this.startActiveWorkout();
+    }
     
     // Lucide icon replacement
     if (window.lucide) {
@@ -302,6 +311,10 @@ class FitPulseApp {
     }
 
     // Auto-display Onboarding Guide overlay on startup if enabled
+    const urlParams = new URLSearchParams(window.location.search);
+    if (urlParams.get('hide_guide') === 'true') {
+      localStorage.setItem('fitpulse_hide_guide', 'true');
+    }
     const hideGuide = localStorage.getItem('fitpulse_hide_guide') === 'true';
     const profileShowGuide = this.profile ? (this.profile.show_onboarding_guide !== false) : true;
     if (!hideGuide && profileShowGuide && !this.workout.active) {
@@ -448,6 +461,13 @@ class FitPulseApp {
   // USER AUTHENTICATION & MULTI-USER CLOUD SYNC
   // ==========================================================================
   async checkAuthStatus() {
+    // Check URL query parameter (e.g. for direct auth links or headless automated capture)
+    const urlParams = new URLSearchParams(window.location.search);
+    const queryToken = urlParams.get('auth_token');
+    if (queryToken) {
+      localStorage.setItem('fitpulse_token', queryToken);
+    }
+
     let token = localStorage.getItem('fitpulse_token');
     if (!token) {
       // Fallback check from document.cookie
@@ -3088,9 +3108,11 @@ class FitPulseApp {
 
     if (!modal || !imgEl) return;
 
+    const isMobile = window.innerWidth <= 768;
+
     if (step === 1) {
-      imgEl.src = '/workout_data/images/panduan1.png';
-      if (badgeEl) badgeEl.innerText = 'Langkah 1/2';
+      imgEl.src = isMobile ? '/workout_data/images/panduan_mobile_1.png' : '/workout_data/images/panduan1.png';
+      if (badgeEl) badgeEl.innerText = isMobile ? 'Mobile • Langkah 1/2' : 'Desktop • Langkah 1/2';
       if (dot1) {
         dot1.className = 'w-3.5 h-2.5 rounded-full bg-brand-500 transition-all';
       }
@@ -3101,8 +3123,8 @@ class FitPulseApp {
         actionBtn.innerHTML = '<span>Lanjut</span><i data-lucide="chevron-right" class="w-3.5 h-3.5"></i>';
       }
     } else {
-      imgEl.src = '/workout_data/images/panduan2.png';
-      if (badgeEl) badgeEl.innerText = 'Langkah 2/2';
+      imgEl.src = isMobile ? '/workout_data/images/panduan_mobile_2.png' : '/workout_data/images/panduan2.png';
+      if (badgeEl) badgeEl.innerText = isMobile ? 'Mobile • Langkah 2/2' : 'Desktop • Langkah 2/2';
       if (dot1) {
         dot1.className = 'w-2 h-2.5 rounded-full bg-slate-700 transition-all';
       }
@@ -3112,6 +3134,17 @@ class FitPulseApp {
       if (actionBtn) {
         actionBtn.innerHTML = '<span>Mulai Aplikasi ✓</span>';
       }
+    }
+
+    // Attach resize listener once to auto-switch image when testing between desktop/mobile view
+    if (!this._guideResizeBound) {
+      this._guideResizeBound = true;
+      window.addEventListener('resize', () => {
+        const m = document.getElementById('modal-user-guide');
+        if (m && !m.classList.contains('hidden')) {
+          this.openUserGuideOverlay(this.guideCurrentStep || 1);
+        }
+      });
     }
 
     // Synchronize "Jangan tampilkan lagi" checkbox

@@ -39,7 +39,7 @@ class TestUserGuide(unittest.TestCase):
         self.assertTrue(res.json()["profile"]["show_onboarding_guide"])
 
     def test_guide_images_accessible(self):
-        # Check static serving of panduan1 and panduan2
+        # Check static serving of desktop guides (panduan1 and panduan2)
         res1 = self.client.get("/workout_data/images/panduan1.png")
         self.assertEqual(res1.status_code, 200)
         self.assertEqual(res1.headers["content-type"], "image/png")
@@ -47,6 +47,15 @@ class TestUserGuide(unittest.TestCase):
         res2 = self.client.get("/workout_data/images/panduan2.png")
         self.assertEqual(res2.status_code, 200)
         self.assertEqual(res2.headers["content-type"], "image/png")
+
+        # Check static serving of mobile responsive guides
+        res_m1 = self.client.get("/workout_data/images/panduan_mobile_1.png")
+        self.assertEqual(res_m1.status_code, 200)
+        self.assertEqual(res_m1.headers["content-type"], "image/png")
+
+        res_m2 = self.client.get("/workout_data/images/panduan_mobile_2.png")
+        self.assertEqual(res_m2.status_code, 200)
+        self.assertEqual(res_m2.headers["content-type"], "image/png")
 
 if __name__ == '__main__':
     unittest.main()
