@@ -34,3 +34,4 @@ for fname, win_size, url in targets:
     print(f'Capturing {fname} ({win_size})...')
     res = subprocess.run(cmd, capture_output=True, timeout=25)
     print(f'Captured {fname}: exists={os.path.exists(out_p)}')
+

@@ -162,10 +162,15 @@ def build_all():
     p1y = 135
     c1.paste(phone1, (p1x, p1y), phone1)
 
+    # Highlight box around Muscle Category Pills on mobile
+    d1.rounded_rectangle([p1x + 28, p1y + 492, p1x + 416, p1y + 532], radius=10, outline=(16, 185, 129), width=2)
+    draw_badge(d1, 'KATEGORI OTOT', (p1x + 36, p1y + 476), get_font(FONT_BOLD_PATH, 8), (16, 185, 129), (255, 255, 255), pad_x=5, pad_y=2, radius=4)
+
+    # Pins
     draw_pin(d1, '1', (p1x + 360, p1y + 55), size=30, bg_color=(2, 132, 199))
-    draw_pin(d1, '2', (p1x + 100, p1y + 155), size=30, bg_color=(14, 165, 233))
-    draw_pin(d1, '3', (p1x + 100, p1y + 205), size=30, bg_color=(16, 185, 129))
-    draw_pin(d1, '4', (p1x + 100, p1y + 285), size=30, bg_color=(245, 158, 11))
+    draw_pin(d1, '2', (p1x + 90, p1y + 160), size=30, bg_color=(14, 165, 233))
+    draw_pin(d1, '4', (p1x + 90, p1y + 310), size=30, bg_color=(245, 158, 11))
+    draw_pin(d1, '3', (p1x + 24, p1y + 512), size=32, bg_color=(16, 185, 129))
     draw_pin(d1, '5', (p1x + 220, p1y + 865), size=30, bg_color=(168, 85, 247))
 
     draw_card(d1, (30, 1065), (374, 175), '1', 'Profil & Streak Harian', 'Pantau hari beruntun, berat badan, serta status sinkronisasi akun pengguna aktif.', tag='AKUN', accent=(2, 132, 199))
@@ -229,10 +234,21 @@ def build_all():
     w1x, w1y = 50, 140
     c3.paste(win1, (w1x, w1y), win1)
 
-    draw_pin(d3, '1', (w1x + 1150, w1y + 80), size=34, bg_color=(2, 132, 199))
-    draw_pin(d3, '2', (w1x + 230, w1y + 215), size=34, bg_color=(14, 165, 233))
-    draw_pin(d3, '3', (w1x + 230, w1y + 275), size=34, bg_color=(16, 185, 129))
-    draw_pin(d3, '4', (w1x + 450, w1y + 460), size=34, bg_color=(245, 158, 11))
+    # Glowing highlight box around Muscle Filter Pills ([Semua], [Full Body], [Dada], [Perut], etc.)
+    d3.rounded_rectangle([256, 630, 848, 696], radius=12, outline=(16, 185, 129), width=2)
+    draw_badge(d3, 'FILTER KATEGORI OTOT AKTIF', (264, 614), get_font(FONT_BOLD_PATH, 9), (16, 185, 129), (255, 255, 255), pad_x=6, pad_y=2, radius=4)
+
+    # Pin 1: Header / Profil Pengguna & Streak
+    draw_pin(d3, '1', (1040, 215), size=34, bg_color=(2, 132, 199))
+
+    # Pin 2: Tombol Jadwal Mingguan & Buat Kustom
+    draw_pin(d3, '2', (348, 315), size=34, bg_color=(14, 165, 233))
+
+    # Pin 4: Target Latihan Mingguan & Tantangan 28 Hari
+    draw_pin(d3, '4', (348, 430), size=34, bg_color=(245, 158, 11))
+
+    # Pin 3: Filter Kategori Otot (Tepat di baris tombol kategori otot)
+    draw_pin(d3, '3', (240, 663), size=36, bg_color=(16, 185, 129))
 
     cx = 1350
     cw = 520
