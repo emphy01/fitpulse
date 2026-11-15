@@ -275,6 +275,13 @@ class FitPulseApp {
   async init() {
     console.log("Initializing FitPulse Web App...");
     await this.checkAuthStatus();
+
+    if (!this.currentUser) {
+      // User must log in first before accessing the app
+      this.openAuthModal('login');
+      return;
+    }
+
     await this.loadInitialData();
     this.setupMusclePills();
     this.setupWeeklyDots();
@@ -285,6 +292,12 @@ class FitPulseApp {
       window.lucide.createIcons();
     }
 
+    // Check if user has completed the onboarding profile setup
+    if (this.profile && !this.profile.is_profile_completed) {
+      this.openOnboardingProfileStep();
+      return;
+    }
+
     // Auto-display Onboarding Guide overlay on startup if enabled
     const hideGuide = localStorage.getItem('fitpulse_hide_guide') === 'true';
     const profileShowGuide = this.profile ? (this.profile.show_onboarding_guide !== false) : true;
@@ -293,15 +306,6 @@ class FitPulseApp {
         this.openUserGuideOverlay(1);
       }, 400);
     }
-
-    // Close user dropdown when clicking outside
-    document.addEventListener('click', (e) => {
-      const userMenu = document.getElementById('header-user-menu');
-      const dropdown = document.getElementById('header-user-dropdown');
-      if (userMenu && dropdown && !userMenu.contains(e.target)) {
-        dropdown.classList.add('hidden');
-      }
-    });
   }
 
   // ==========================================================================
@@ -461,10 +465,9 @@ class FitPulseApp {
   }
 
   updateAuthUI() {
-    const btnLogin = document.getElementById('btn-header-login');
     const userMenu = document.getElementById('header-user-menu');
     const userSummary = document.getElementById('header-user-summary');
-    const dropdownUsername = document.getElementById('dropdown-username');
+    const btnLogout = document.getElementById('btn-header-logout');
 
     // Settings view elements
     const statusBadge = document.getElementById('account-status-badge');
@@ -473,14 +476,12 @@ class FitPulseApp {
     const btnAction = document.getElementById('btn-account-action');
 
     if (this.currentUser) {
-      if (btnLogin) btnLogin.classList.add('hidden');
       if (userMenu) userMenu.classList.remove('hidden');
+      if (btnLogout) btnLogout.classList.remove('hidden');
       if (userSummary) {
+        const displayName = this.profile?.name || this.currentUser.name || this.currentUser.username;
         const w = Math.round(this.profile ? this.profile.weight_kg : 65);
-        userSummary.innerText = `${this.currentUser.name || this.currentUser.username} (${w}kg)`;
-      }
-      if (dropdownUsername) {
-        dropdownUsername.innerText = `${this.currentUser.username} (${this.currentUser.email || 'Cloud'})`;
+        userSummary.innerText = `${displayName} (${w}kg)`;
       }
 
       if (statusBadge) {
@@ -488,7 +489,7 @@ class FitPulseApp {
         statusBadge.innerText = "Terhubung Cloud";
       }
       if (statusTitle) {
-        statusTitle.innerText = `Akun: ${this.currentUser.name || this.currentUser.username}`;
+        statusTitle.innerText = `Akun: ${this.profile?.name || this.currentUser.name || this.currentUser.username}`;
       }
       if (statusDesc) {
         statusDesc.innerText = `Email: ${this.currentUser.email || '-'} • Data tersimpan aman di database cloud.`;
@@ -499,24 +500,8 @@ class FitPulseApp {
         btnAction.className = "px-4 py-2 rounded-xl bg-red-950/60 hover:bg-red-900/80 text-red-300 border border-red-800/60 font-bold text-xs transition-all shadow-md flex items-center justify-center gap-1.5 whitespace-nowrap";
       }
     } else {
-      if (btnLogin) btnLogin.classList.remove('hidden');
       if (userMenu) userMenu.classList.add('hidden');
-
-      if (statusBadge) {
-        statusBadge.className = "text-xs font-semibold px-2.5 py-0.5 rounded-full bg-slate-800 text-slate-400 border border-slate-700";
-        statusBadge.innerText = "Mode Tamu";
-      }
-      if (statusTitle) {
-        statusTitle.innerText = "Belum Masuk";
-      }
-      if (statusDesc) {
-        statusDesc.innerText = "Masuk atau daftar untuk menyimpan riwayat latihan Anda secara online di cloud.";
-      }
-      if (btnAction) {
-        btnAction.onclick = () => this.openAuthModal('login');
-        btnAction.innerHTML = '<i data-lucide="log-in" class="w-3.5 h-3.5"></i><span>Masuk / Daftar</span>';
-        btnAction.className = "px-4 py-2 rounded-xl bg-brand-600 hover:bg-brand-500 text-white font-bold text-xs transition-all shadow-md flex items-center justify-center gap-1.5 whitespace-nowrap";
-      }
+      if (btnLogout) btnLogout.classList.add('hidden');
     }
 
     if (window.lucide) {
@@ -524,28 +509,15 @@ class FitPulseApp {
     }
   }
 
-  toggleUserMenu(event) {
-    if (event) event.stopPropagation();
-    const dropdown = document.getElementById('header-user-dropdown');
-    if (dropdown) {
-      dropdown.classList.toggle('hidden');
-    }
-  }
-
-  hideUserDropdown() {
-    const dropdown = document.getElementById('header-user-dropdown');
-    if (dropdown) {
-      dropdown.classList.add('hidden');
-    }
-  }
-
   openAuthModal(tab = 'login') {
     const modal = document.getElementById('modal-auth');
     if (modal) {
       modal.classList.remove('hidden');
+      document.getElementById('auth-step-credentials')?.classList.remove('hidden');
+      document.getElementById('auth-step-profile')?.classList.add('hidden');
       this.switchAuthTab(tab);
-      this.hideUserDropdown();
     }
+    if (window.lucide) window.lucide.createIcons();
   }
 
   closeAuthModal() {
@@ -555,8 +527,38 @@ class FitPulseApp {
     }
     const loginErr = document.getElementById('login-error-msg');
     const regErr = document.getElementById('register-error-msg');
+    const onbErr = document.getElementById('onboard-error-msg');
     if (loginErr) { loginErr.classList.add('hidden'); loginErr.innerText = ''; }
     if (regErr) { regErr.classList.add('hidden'); regErr.innerText = ''; }
+    if (onbErr) { onbErr.classList.add('hidden'); onbErr.innerText = ''; }
+  }
+
+  openOnboardingProfileStep() {
+    const modal = document.getElementById('modal-auth');
+    if (modal) {
+      modal.classList.remove('hidden');
+      document.getElementById('auth-step-credentials')?.classList.add('hidden');
+      document.getElementById('auth-step-profile')?.classList.remove('hidden');
+
+      // Pre-fill fields with current user data or sensible defaults
+      const nameInput = document.getElementById('onboard-name');
+      if (nameInput) {
+        nameInput.value = this.profile?.name || (this.currentUser ? (this.currentUser.name || this.currentUser.username) : '');
+      }
+      const ageInput = document.getElementById('onboard-age');
+      if (ageInput) ageInput.value = this.profile?.age || 22;
+      const genderSelect = document.getElementById('onboard-gender');
+      if (genderSelect) genderSelect.value = this.profile?.gender || 'pria';
+      const heightInput = document.getElementById('onboard-height');
+      if (heightInput) heightInput.value = this.profile?.height_cm || 170;
+      const weightInput = document.getElementById('onboard-weight');
+      if (weightInput) weightInput.value = this.profile?.weight_kg || 65;
+      const fitnessSelect = document.getElementById('onboard-fitness-level');
+      if (fitnessSelect) fitnessSelect.value = this.profile?.fitness_level || 'Beginner';
+      const focusSelect = document.getElementById('onboard-target-focus');
+      if (focusSelect) focusSelect.value = this.profile?.target_focus || 'Full Body';
+    }
+    if (window.lucide) window.lucide.createIcons();
   }
 
   switchAuthTab(tab) {
@@ -564,20 +566,17 @@ class FitPulseApp {
     const tabReg = document.getElementById('auth-tab-register');
     const formLogin = document.getElementById('form-login');
     const formReg = document.getElementById('form-register');
-    const title = document.getElementById('auth-modal-title');
 
     if (tab === 'login') {
-      if (tabLogin) tabLogin.className = "flex-1 py-2 rounded-lg text-xs font-bold transition-all bg-brand-600 text-white shadow-sm";
-      if (tabReg) tabReg.className = "flex-1 py-2 rounded-lg text-xs font-bold transition-all text-slate-400 hover:text-white";
+      if (tabLogin) tabLogin.className = "flex-1 py-2.5 rounded-lg text-xs font-bold transition-all bg-brand-600 text-white shadow-sm";
+      if (tabReg) tabReg.className = "flex-1 py-2.5 rounded-lg text-xs font-bold transition-all text-slate-400 hover:text-white";
       if (formLogin) formLogin.classList.remove('hidden');
       if (formReg) formReg.classList.add('hidden');
-      if (title) title.innerText = "Masuk ke FitPulse";
     } else {
-      if (tabLogin) tabLogin.className = "flex-1 py-2 rounded-lg text-xs font-bold transition-all text-slate-400 hover:text-white";
-      if (tabReg) tabReg.className = "flex-1 py-2 rounded-lg text-xs font-bold transition-all bg-emerald-600 text-white shadow-sm";
+      if (tabLogin) tabLogin.className = "flex-1 py-2.5 rounded-lg text-xs font-bold transition-all text-slate-400 hover:text-white";
+      if (tabReg) tabReg.className = "flex-1 py-2.5 rounded-lg text-xs font-bold transition-all bg-emerald-600 text-white shadow-sm";
       if (formLogin) formLogin.classList.add('hidden');
       if (formReg) formReg.classList.remove('hidden');
-      if (title) title.innerText = "Daftar Akun FitPulse";
     }
 
     if (window.lucide) {
@@ -609,7 +608,7 @@ class FitPulseApp {
     if (errEl) errEl.classList.add('hidden');
     if (btnSubmit) {
       btnSubmit.disabled = true;
-      btnSubmit.innerHTML = '<span>Memproses...</span>';
+      btnSubmit.innerHTML = '<span>Memverifikasi Akun...</span>';
     }
 
     try {
@@ -625,10 +624,19 @@ class FitPulseApp {
 
       localStorage.setItem('fitpulse_token', data.access_token);
       this.currentUser = data.user;
-      this.closeAuthModal();
       await this.loadInitialData();
-      this.updateAuthUI();
-      this.showToast(`Selamat datang kembali, ${data.user.name || data.user.username}!`, "success");
+
+      // Check if user has already completed the onboarding profile setup
+      if (this.profile && !this.profile.is_profile_completed) {
+        this.openOnboardingProfileStep();
+      } else {
+        this.closeAuthModal();
+        this.updateAuthUI();
+        this.setupMusclePills();
+        this.setupWeeklyDots();
+        this.navigate('training');
+        this.showToast(`Selamat datang kembali, ${this.profile?.name || data.user.name || data.user.username}!`, "success");
+      }
     } catch (err) {
       if (errEl) {
         errEl.innerText = err.message || "Login gagal. Periksa kembali akun Anda.";
@@ -663,7 +671,7 @@ class FitPulseApp {
     if (errEl) errEl.classList.add('hidden');
     if (btnSubmit) {
       btnSubmit.disabled = true;
-      btnSubmit.innerHTML = '<span>Mendaftarkan...</span>';
+      btnSubmit.innerHTML = '<span>Mendaftarkan Akun...</span>';
     }
 
     try {
@@ -679,10 +687,11 @@ class FitPulseApp {
 
       localStorage.setItem('fitpulse_token', data.access_token);
       this.currentUser = data.user;
-      this.closeAuthModal();
       await this.loadInitialData();
-      this.updateAuthUI();
-      this.showToast(`Akun berhasil dibuat! Selamat datang, ${data.user.name || data.user.username}!`, "success");
+
+      // Immediately proceed to Step 2: Onboarding Profile Form
+      this.openOnboardingProfileStep();
+      this.showToast(`Akun berhasil dibuat! Silakan lengkapi profil kebugaran Anda.`, "success");
     } catch (err) {
       if (errEl) {
         errEl.innerText = err.message || "Gagal membuat akun.";
@@ -691,7 +700,85 @@ class FitPulseApp {
     } finally {
       if (btnSubmit) {
         btnSubmit.disabled = false;
-        btnSubmit.innerHTML = '<span>Daftar Akun Baru</span><i data-lucide="check" class="w-4 h-4"></i>';
+        btnSubmit.innerHTML = '<span>Lanjut ke Pengisian Profil</span><i data-lucide="arrow-right" class="w-4 h-4"></i>';
+        if (window.lucide) window.lucide.createIcons();
+      }
+    }
+  }
+
+  async submitOnboardingProfile(event) {
+    if (event) event.preventDefault();
+    const name = document.getElementById('onboard-name')?.value.trim();
+    const age = parseInt(document.getElementById('onboard-age')?.value) || 22;
+    const gender = document.getElementById('onboard-gender')?.value || 'pria';
+    const height_cm = parseFloat(document.getElementById('onboard-height')?.value) || 170;
+    const weight_kg = parseFloat(document.getElementById('onboard-weight')?.value) || 65;
+    const fitness_level = document.getElementById('onboard-fitness-level')?.value || 'Beginner';
+    const target_focus = document.getElementById('onboard-target-focus')?.value || 'Full Body';
+    const errEl = document.getElementById('onboard-error-msg');
+    const btnSubmit = document.getElementById('btn-submit-onboard');
+
+    if (!name) {
+      if (errEl) {
+        errEl.innerText = "Nama lengkap wajib diisi.";
+        errEl.classList.remove('hidden');
+      }
+      return;
+    }
+
+    if (errEl) errEl.classList.add('hidden');
+    if (btnSubmit) {
+      btnSubmit.disabled = true;
+      btnSubmit.innerHTML = '<span>Menyimpan Profil...</span>';
+    }
+
+    try {
+      const res = await fetch('/api/profile', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          name,
+          age,
+          gender,
+          height_cm,
+          weight_kg,
+          fitness_level,
+          target_focus,
+          is_profile_completed: true
+        })
+      });
+      const data = await res.json();
+      if (!res.ok) {
+        throw new Error(data.detail || "Gagal menyimpan data profil.");
+      }
+
+      this.profile = data.profile;
+
+      // Close the Auth & Onboarding Modal
+      this.closeAuthModal();
+
+      // Refresh app data and state
+      await this.loadInitialData();
+      this.setupMusclePills();
+      this.setupWeeklyDots();
+      this.navigate('training');
+      this.updateAuthUI();
+
+      // Now automatically trigger the User Guide overlay!
+      setTimeout(() => {
+        this.openUserGuideOverlay(1);
+      }, 350);
+
+      this.showToast(`Profil berhasil disimpan! Selamat datang, ${name}!`, "success");
+    } catch (err) {
+      if (errEl) {
+        errEl.innerText = err.message || "Gagal menyimpan data ke server.";
+        errEl.classList.remove('hidden');
+      }
+    } finally {
+      if (btnSubmit) {
+        btnSubmit.disabled = false;
+        btnSubmit.innerHTML = '<span>Simpan & Buka Panduan Pengguna</span><i data-lucide="arrow-right" class="w-4 h-4"></i>';
         if (window.lucide) window.lucide.createIcons();
       }
     }
@@ -705,10 +792,13 @@ class FitPulseApp {
     }
     localStorage.removeItem('fitpulse_token');
     this.currentUser = null;
-    this.hideUserDropdown();
-    await this.loadInitialData();
+    this.profile = null;
     this.updateAuthUI();
-    this.showToast("Anda telah keluar dari akun. Berpindah ke mode Tamu.", "info");
+    this.showToast("Anda telah keluar. Silakan masuk kembali.", "info");
+
+    // Automatically return to Fullscreen Login Gate!
+    this.openAuthModal('login');
+  }
   }
 
   renderTodayActivity() {
@@ -1880,9 +1970,12 @@ class FitPulseApp {
   renderSettingsView() {
     if (!this.profile) return;
     document.getElementById('setting-name').value = this.profile.name || '';
+    if (document.getElementById('setting-age')) document.getElementById('setting-age').value = this.profile.age || 22;
+    if (document.getElementById('setting-gender')) document.getElementById('setting-gender').value = this.profile.gender || 'pria';
     document.getElementById('setting-weight').value = this.profile.weight_kg || 65.0;
     document.getElementById('setting-height').value = this.profile.height_cm || 170.0;
     document.getElementById('setting-fitness-level').value = this.profile.fitness_level || 'Beginner';
+    if (document.getElementById('setting-target-focus')) document.getElementById('setting-target-focus').value = this.profile.target_focus || 'Full Body';
 
     document.getElementById('setting-rest-slider').value = this.profile.default_rest_seconds || 15;
     document.getElementById('setting-rest-val').innerText = `${this.profile.default_rest_seconds || 15} Detik`;
@@ -1901,22 +1994,26 @@ class FitPulseApp {
 
   async saveProfileSettings() {
     const name = document.getElementById('setting-name').value.trim();
+    const age = parseInt(document.getElementById('setting-age')?.value) || 22;
+    const gender = document.getElementById('setting-gender')?.value || 'pria';
     const weight_kg = parseFloat(document.getElementById('setting-weight').value);
     const height_cm = parseFloat(document.getElementById('setting-height').value);
     const fitness_level = document.getElementById('setting-fitness-level').value;
+    const target_focus = document.getElementById('setting-target-focus')?.value || 'Full Body';
 
     try {
       const res = await fetch('/api/profile', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ name, weight_kg, height_cm, fitness_level })
+        body: JSON.stringify({ name, age, gender, weight_kg, height_cm, fitness_level, target_focus, is_profile_completed: true })
       });
       const data = await res.json();
       if (!res.ok) throw new Error(data.detail || "Gagal menyimpan");
 
       this.profile = data.profile;
       this.showToast("Profil berhasil diperbarui! 🎉", "success");
-      this.loadInitialData();
+      await this.loadInitialData();
+      this.updateAuthUI();
     } catch (e) {
       this.showToast(e.message, "error");
     }

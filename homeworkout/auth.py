@@ -108,14 +108,18 @@ def register_user(
     profile = DBUserProfile(
         user_id=new_user.id,
         name=user_name,
+        age=25,
+        gender="pria",
         weight_kg=65.0,
         height_cm=170.0,
         fitness_level="Beginner",
+        target_focus="Full Body",
         default_rest_seconds=15,
         sound_enabled=True,
         voice_cues_enabled=True,
         high_contrast_mode=False,
-        show_onboarding_guide=True
+        show_onboarding_guide=True,
+        is_profile_completed=False
     )
     db.add(profile)
 
@@ -195,14 +199,18 @@ def ensure_guest_or_default_user(db: Session) -> User:
         profile = DBUserProfile(
             user_id=default_id,
             name="Tamu FitPulse",
+            age=25,
+            gender="pria",
             weight_kg=65.0,
             height_cm=170.0,
             fitness_level="Beginner",
+            target_focus="Full Body",
             default_rest_seconds=15,
             sound_enabled=True,
             voice_cues_enabled=True,
             high_contrast_mode=False,
-            show_onboarding_guide=True
+            show_onboarding_guide=True,
+            is_profile_completed=True
         )
         db.add(profile)
 

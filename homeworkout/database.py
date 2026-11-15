@@ -145,14 +145,18 @@ class DBUserProfile(Base):
 
     user_id = Column(String(36), ForeignKey("users.id"), primary_key=True)
     name = Column(String(100), default="Athlete")
+    age = Column(Integer, default=25, nullable=True)
+    gender = Column(String(20), default="pria", nullable=True)
     weight_kg = Column(Float, default=65.0)
     height_cm = Column(Float, default=170.0)
     fitness_level = Column(String(30), default="Beginner")
+    target_focus = Column(String(50), default="Full Body", nullable=True)
     default_rest_seconds = Column(Integer, default=15)
     sound_enabled = Column(Boolean, default=True)
     voice_cues_enabled = Column(Boolean, default=True)
     high_contrast_mode = Column(Boolean, default=False)
     show_onboarding_guide = Column(Boolean, default=True)
+    is_profile_completed = Column(Boolean, default=False, nullable=True)
     updated_at = Column(DateTime, default=datetime.utcnow, onupdate=datetime.utcnow)
 
     user = relationship("User", back_populates="profile")
@@ -161,14 +165,18 @@ class DBUserProfile(Base):
         return {
             "user_id": self.user_id,
             "name": self.name,
+            "age": self.age if self.age is not None else 25,
+            "gender": self.gender or "pria",
             "weight_kg": self.weight_kg,
             "height_cm": self.height_cm,
             "fitness_level": self.fitness_level,
+            "target_focus": self.target_focus or "Full Body",
             "default_rest_seconds": self.default_rest_seconds,
             "sound_enabled": self.sound_enabled,
             "voice_cues_enabled": self.voice_cues_enabled,
             "high_contrast_mode": self.high_contrast_mode,
-            "show_onboarding_guide": self.show_onboarding_guide
+            "show_onboarding_guide": self.show_onboarding_guide,
+            "is_profile_completed": bool(self.is_profile_completed)
         }
 
 
@@ -318,6 +326,40 @@ def init_db():
         Base.metadata.create_all(bind=engine)
         _tables_initialized = True
         print("✅ Database tables verified & initialized.")
+
+        # Safe schema migration for new columns on SQLite & MySQL / TiDB Cloud
+        try:
+            from sqlalchemy import text
+            with engine.connect() as conn:
+                driver = getattr(engine.url, 'drivername', '')
+                if 'mysql' in driver:
+                    for col_sql in [
+                        "ALTER TABLE user_profiles ADD COLUMN IF NOT EXISTS age INT DEFAULT 25",
+                        "ALTER TABLE user_profiles ADD COLUMN IF NOT EXISTS gender VARCHAR(20) DEFAULT 'pria'",
+                        "ALTER TABLE user_profiles ADD COLUMN IF NOT EXISTS target_focus VARCHAR(50) DEFAULT 'Full Body'",
+                        "ALTER TABLE user_profiles ADD COLUMN IF NOT EXISTS is_profile_completed TINYINT(1) DEFAULT 0"
+                    ]:
+                        try:
+                            conn.execute(text(col_sql))
+                        except Exception:
+                            pass
+                    conn.commit()
+                elif 'sqlite' in driver:
+                    result = conn.execute(text("PRAGMA table_info(user_profiles)")).fetchall()
+                    existing_cols = [row[1] for row in result]
+                    if existing_cols:
+                        if 'age' not in existing_cols:
+                            conn.execute(text("ALTER TABLE user_profiles ADD COLUMN age INTEGER DEFAULT 25"))
+                        if 'gender' not in existing_cols:
+                            conn.execute(text("ALTER TABLE user_profiles ADD COLUMN gender VARCHAR(20) DEFAULT 'pria'"))
+                        if 'target_focus' not in existing_cols:
+                            conn.execute(text("ALTER TABLE user_profiles ADD COLUMN target_focus VARCHAR(50) DEFAULT 'Full Body'"))
+                        if 'is_profile_completed' not in existing_cols:
+                            conn.execute(text("ALTER TABLE user_profiles ADD COLUMN is_profile_completed BOOLEAN DEFAULT 0"))
+                        conn.commit()
+        except Exception:
+            pass
+
     except Exception as e:
         print(f"⚠️ Database init_db error: {e}")
 

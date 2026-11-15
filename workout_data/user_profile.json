@@ -1,12 +1,16 @@
 {
   "user_id": "default_user",
   "name": "wowi",
+  "age": 25,
+  "gender": "pria",
   "weight_kg": 65.0,
   "height_cm": 168.0,
   "fitness_level": "Intermediate",
+  "target_focus": "Full Body",
   "default_rest_seconds": 15,
   "sound_enabled": true,
   "high_contrast_mode": false,
   "voice_cues_enabled": true,
-  "show_onboarding_guide": true
+  "show_onboarding_guide": true,
+  "is_profile_completed": false
 }

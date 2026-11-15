@@ -195,14 +195,18 @@ class UserProfile:
     """
     user_id: str = "default_user"
     name: str = "Athlete"
+    age: int = 25
+    gender: str = "pria"
     weight_kg: float = 65.0
     height_cm: float = 170.0
     fitness_level: DifficultyLevel = DifficultyLevel.BEGINNER
+    target_focus: str = "Full Body"
     default_rest_seconds: int = 15
     sound_enabled: bool = True
     high_contrast_mode: bool = False
     voice_cues_enabled: bool = True
     show_onboarding_guide: bool = True
+    is_profile_completed: bool = False
 
     def to_dict(self) -> Dict[str, Any]:
         data = asdict(self)
@@ -214,14 +218,18 @@ class UserProfile:
         return cls(
             user_id=data.get('user_id', 'default_user'),
             name=data.get('name', 'Athlete'),
+            age=int(data.get('age', 25)),
+            gender=data.get('gender', 'pria'),
             weight_kg=float(data.get('weight_kg', 65.0)),
             height_cm=float(data.get('height_cm', 170.0)),
             fitness_level=DifficultyLevel(data.get('fitness_level', DifficultyLevel.BEGINNER.value)),
+            target_focus=data.get('target_focus', 'Full Body'),
             default_rest_seconds=int(data.get('default_rest_seconds', 15)),
             sound_enabled=bool(data.get('sound_enabled', True)),
             high_contrast_mode=bool(data.get('high_contrast_mode', False)),
             voice_cues_enabled=bool(data.get('voice_cues_enabled', True)),
-            show_onboarding_guide=bool(data.get('show_onboarding_guide', True))
+            show_onboarding_guide=bool(data.get('show_onboarding_guide', True)),
+            is_profile_completed=bool(data.get('is_profile_completed', False))
         )
 
 

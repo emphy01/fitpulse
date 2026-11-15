@@ -197,14 +197,18 @@ class StorageManager:
                 return UserProfile(
                     user_id=db_p.user_id,
                     name=db_p.name,
+                    age=getattr(db_p, 'age', 25) or 25,
+                    gender=getattr(db_p, 'gender', 'pria') or 'pria',
                     weight_kg=db_p.weight_kg,
                     height_cm=db_p.height_cm,
-                    fitness_level=DifficultyLevel(db_p.fitness_level),
+                    fitness_level=DifficultyLevel(db_p.fitness_level) if db_p.fitness_level in [d.value for d in DifficultyLevel] else DifficultyLevel.BEGINNER,
+                    target_focus=getattr(db_p, 'target_focus', 'Full Body') or 'Full Body',
                     default_rest_seconds=db_p.default_rest_seconds,
                     sound_enabled=db_p.sound_enabled,
                     high_contrast_mode=db_p.high_contrast_mode,
                     voice_cues_enabled=db_p.voice_cues_enabled,
-                    show_onboarding_guide=db_p.show_onboarding_guide
+                    show_onboarding_guide=db_p.show_onboarding_guide,
+                    is_profile_completed=bool(getattr(db_p, 'is_profile_completed', False))
                 )
         except Exception:
             pass
@@ -227,14 +231,18 @@ class StorageManager:
                 db_p = DBUserProfile(user_id=user_id)
                 session.add(db_p)
             db_p.name = profile.name
+            if hasattr(db_p, 'age'): db_p.age = profile.age
+            if hasattr(db_p, 'gender'): db_p.gender = profile.gender
             db_p.weight_kg = profile.weight_kg
             db_p.height_cm = profile.height_cm
             db_p.fitness_level = profile.fitness_level.value if hasattr(profile.fitness_level, 'value') else str(profile.fitness_level)
+            if hasattr(db_p, 'target_focus'): db_p.target_focus = profile.target_focus
             db_p.default_rest_seconds = profile.default_rest_seconds
             db_p.sound_enabled = profile.sound_enabled
             db_p.voice_cues_enabled = profile.voice_cues_enabled
             db_p.high_contrast_mode = profile.high_contrast_mode
             db_p.show_onboarding_guide = profile.show_onboarding_guide
+            if hasattr(db_p, 'is_profile_completed'): db_p.is_profile_completed = profile.is_profile_completed
             session.commit()
             db_success = True
         except Exception as e:

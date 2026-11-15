@@ -115,14 +115,18 @@ class UserLoginRequest(BaseModel):
 
 class ProfileUpdateRequest(BaseModel):
     name: Optional[str] = None
+    age: Optional[int] = None
+    gender: Optional[str] = None
     weight_kg: Optional[float] = None
     height_cm: Optional[float] = None
     fitness_level: Optional[str] = None
+    target_focus: Optional[str] = None
     default_rest_seconds: Optional[int] = None
     sound_enabled: Optional[bool] = None
     voice_cues_enabled: Optional[bool] = None
     high_contrast_mode: Optional[bool] = None
     show_onboarding_guide: Optional[bool] = None
+    is_profile_completed: Optional[bool] = None
 
 
 class ScheduleUpdateRequest(BaseModel):

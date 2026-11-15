@@ -97,34 +97,18 @@
         </div>
 
         <!-- User Profile & Authentication Section -->
-        <div id="header-auth-container" class="flex items-center">
-          <!-- Unauthenticated Button -->
-          <button id="btn-header-login" onclick="app.openAuthModal('login')" class="flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-gradient-to-r from-brand-600 to-blue-600 hover:from-brand-500 hover:to-blue-500 text-white text-xs sm:text-sm font-bold shadow-md shadow-brand-600/30 transition-all">
-            <i data-lucide="log-in" class="w-3.5 h-3.5"></i>
-            <span>Masuk / Daftar</span>
-          </button>
-
-          <!-- Authenticated User Menu Dropdown -->
-          <div id="header-user-menu" class="relative hidden">
-            <button onclick="app.toggleUserMenu(event)" class="flex items-center gap-2 px-3 py-1.5 rounded-xl bg-slate-800/80 hover:bg-slate-700/80 border border-slate-700 text-xs sm:text-sm font-medium transition-colors" title="Menu Akun">
-              <span class="text-sm">👤</span>
-              <span id="header-user-summary" class="hidden sm:inline font-semibold">Teddy (64kg)</span>
-              <i data-lucide="chevron-down" class="w-3 h-3 text-slate-400"></i>
-            </button>
-            <div id="header-user-dropdown" class="absolute right-0 mt-2 w-48 bg-slate-900 border border-slate-700 rounded-xl shadow-2xl p-1.5 hidden z-50">
-              <div class="px-3 py-1.5 border-b border-slate-800 text-[11px] text-slate-400">
-                Masuk sebagai <strong id="dropdown-username" class="text-brand-400 block font-bold truncate">user</strong>
-              </div>
-              <button onclick="app.navigate('settings'); app.hideUserDropdown();" class="w-full text-left px-3 py-2 rounded-lg text-xs hover:bg-slate-800 flex items-center gap-2 text-slate-200 hover:text-white transition-colors">
-                <i data-lucide="user" class="w-3.5 h-3.5 text-slate-400"></i>
-                <span>Profil & Pengaturan</span>
-              </button>
-              <button onclick="app.logout(); app.hideUserDropdown();" class="w-full text-left px-3 py-2 rounded-lg text-xs hover:bg-red-950/40 text-red-400 hover:text-red-300 flex items-center gap-2 transition-colors">
-                <i data-lucide="log-out" class="w-3.5 h-3.5 text-red-400"></i>
-                <span>Keluar (Logout)</span>
-              </button>
-            </div>
+        <div id="header-auth-container" class="flex items-center gap-2">
+          <!-- Logged-in User Badge -->
+          <div id="header-user-menu" class="flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-slate-800/80 border border-slate-700 text-xs sm:text-sm font-medium">
+            <span class="text-sm">👤</span>
+            <span id="header-user-summary" class="font-bold text-white">Teddy (64kg)</span>
           </div>
+
+          <!-- Direct Log Out Button -->
+          <button id="btn-header-logout" onclick="app.logout()" class="flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-red-950/60 hover:bg-red-900/80 border border-red-800/60 text-red-300 hover:text-red-200 text-xs sm:text-sm font-bold shadow-sm transition-all" title="Keluar dan kembali ke halaman Login">
+            <i data-lucide="log-out" class="w-3.5 h-3.5"></i>
+            <span class="hidden sm:inline">Keluar</span>
+          </button>
         </div>
 
         <!-- Device Preview Simulator (HCI Demonstration Feature) -->
@@ -795,6 +779,20 @@
 
             <div class="grid grid-cols-2 gap-3">
               <div>
+                <label class="block text-xs font-semibold text-slate-300 mb-1">Usia (Tahun)</label>
+                <input type="number" id="setting-age" min="10" max="100" class="w-full bg-slate-950 border border-slate-800 rounded-xl px-3.5 py-2.5 text-sm text-white focus:outline-none focus:border-brand-500" />
+              </div>
+              <div>
+                <label class="block text-xs font-semibold text-slate-300 mb-1">Jenis Kelamin</label>
+                <select id="setting-gender" class="w-full bg-slate-950 border border-slate-800 rounded-xl px-3.5 py-2.5 text-sm text-white focus:outline-none focus:border-brand-500">
+                  <option value="pria">Pria</option>
+                  <option value="wanita">Wanita</option>
+                </select>
+              </div>
+            </div>
+
+            <div class="grid grid-cols-2 gap-3">
+              <div>
                 <label class="block text-xs font-semibold text-slate-300 mb-1">Berat Badan (kg)</label>
                 <input type="number" step="0.5" id="setting-weight" class="w-full bg-slate-950 border border-slate-800 rounded-xl px-3.5 py-2.5 text-sm text-white focus:outline-none focus:border-brand-500" />
               </div>
@@ -804,13 +802,25 @@
               </div>
             </div>
 
-            <div>
-              <label class="block text-xs font-semibold text-slate-300 mb-1">Tingkat Kebugaran</label>
-              <select id="setting-fitness-level" class="w-full bg-slate-950 border border-slate-800 rounded-xl px-3.5 py-2.5 text-sm text-white focus:outline-none focus:border-brand-500">
-                <option value="Beginner">Beginner (Pemula)</option>
-                <option value="Intermediate">Intermediate (Menengah)</option>
-                <option value="Advanced">Advanced (Mahir)</option>
-              </select>
+            <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
+              <div>
+                <label class="block text-xs font-semibold text-slate-300 mb-1">Tingkat Kebugaran</label>
+                <select id="setting-fitness-level" class="w-full bg-slate-950 border border-slate-800 rounded-xl px-3.5 py-2.5 text-sm text-white focus:outline-none focus:border-brand-500">
+                  <option value="Beginner">Beginner (Pemula)</option>
+                  <option value="Intermediate">Intermediate (Menengah)</option>
+                  <option value="Advanced">Advanced (Mahir)</option>
+                </select>
+              </div>
+              <div>
+                <label class="block text-xs font-semibold text-slate-300 mb-1">Target Fokus Latihan</label>
+                <select id="setting-target-focus" class="w-full bg-slate-950 border border-slate-800 rounded-xl px-3.5 py-2.5 text-sm text-white focus:outline-none focus:border-brand-500">
+                  <option value="Full Body">Full Body (Seluruh Tubuh)</option>
+                  <option value="Abs & Core">Perut & Core</option>
+                  <option value="Chest">Dada (Chest)</option>
+                  <option value="Arms">Lengan & Bahu</option>
+                  <option value="Legs">Kaki & Bokong</option>
+                </select>
+              </div>
             </div>
 
             <button onclick="app.saveProfileSettings()" class="w-full py-2.5 rounded-xl bg-brand-600 hover:bg-brand-500 text-white font-bold text-xs sm:text-sm transition-all shadow-md">
@@ -1522,116 +1532,181 @@
   </div>
 
   <!-- ======================================================================= -->
-  <!-- MODAL: USER AUTHENTICATION (LOGIN / REGISTER) -->
+  <!-- FULLSCREEN GATEWAY: AUTHENTICATION & ONBOARDING -->
   <!-- ======================================================================= -->
-  <div id="modal-auth" class="fixed inset-0 z-50 bg-black/80 backdrop-blur-sm hidden flex items-center justify-center p-4">
-    <div class="bg-slate-900 border border-slate-800 rounded-3xl w-full max-w-md p-6 sm:p-7 space-y-5 shadow-2xl relative" onclick="event.stopPropagation()">
+  <div id="modal-auth" class="fixed inset-0 z-50 bg-[#020617] flex items-center justify-center p-4 overflow-y-auto">
+    <div class="w-full max-w-lg my-auto py-6">
       
-      <!-- Close button -->
-      <button onclick="app.closeAuthModal()" class="absolute top-5 right-5 p-2 rounded-xl text-slate-400 hover:text-white hover:bg-slate-800 transition-colors">
-        <i data-lucide="x" class="w-5 h-5"></i>
-      </button>
-
-      <!-- Header Icon & Title -->
-      <div class="text-center space-y-1.5">
-        <div class="w-12 h-12 mx-auto rounded-2xl bg-gradient-to-tr from-brand-600 to-blue-500 flex items-center justify-center shadow-lg shadow-brand-600/30">
-          <i data-lucide="dumbbell" class="w-6 h-6 text-white"></i>
+      <!-- Brand Logo & Header -->
+      <div class="text-center space-y-2 mb-5">
+        <div class="w-14 h-14 mx-auto rounded-2xl bg-gradient-to-tr from-brand-600 to-blue-500 flex items-center justify-center shadow-xl shadow-brand-500/20 border border-brand-400/30">
+          <i data-lucide="dumbbell" class="w-7 h-7 text-white"></i>
         </div>
-        <h3 id="auth-modal-title" class="text-xl font-black text-white tracking-tight">Akun FitPulse</h3>
-        <p class="text-xs text-slate-400">Simpan riwayat latihan, streak, dan jadwal Anda di cloud.</p>
+        <h1 class="text-2xl sm:text-3xl font-black text-white tracking-tight">FITPULSE</h1>
+        <p id="auth-gate-subtitle" class="text-xs sm:text-sm text-slate-400">Home Workout Companion • Mulai Perjalanan Sehat Anda</p>
       </div>
 
-      <!-- Auth Tabs: Masuk / Daftar -->
-      <div class="flex bg-slate-950 p-1 rounded-xl border border-slate-800/80">
-        <button id="auth-tab-login" onclick="app.switchAuthTab('login')" class="flex-1 py-2 rounded-lg text-xs font-bold transition-all bg-brand-600 text-white shadow-sm">
-          Masuk (Login)
-        </button>
-        <button id="auth-tab-register" onclick="app.switchAuthTab('register')" class="flex-1 py-2 rounded-lg text-xs font-bold transition-all text-slate-400 hover:text-white">
-          Daftar Akun Baru
-        </button>
-      </div>
-
-      <!-- FORM: LOGIN -->
-      <form id="form-login" onsubmit="app.submitLogin(event)" class="space-y-3.5">
-        <div>
-          <label class="block text-xs font-semibold text-slate-300 mb-1">Email atau Username</label>
-          <div class="relative">
-            <i data-lucide="user" class="w-4 h-4 absolute left-3.5 top-3 text-slate-500"></i>
-            <input type="text" id="login-identifier" required placeholder="Masukkan email atau username" class="w-full bg-slate-950 border border-slate-800 rounded-xl pl-10 pr-3.5 py-2.5 text-xs sm:text-sm text-white focus:outline-none focus:border-brand-500" />
-          </div>
-        </div>
-
-        <div>
-          <label class="block text-xs font-semibold text-slate-300 mb-1">Kata Sandi (Password)</label>
-          <div class="relative">
-            <i data-lucide="lock" class="w-4 h-4 absolute left-3.5 top-3 text-slate-500"></i>
-            <input type="password" id="login-password" required placeholder="••••••••" class="w-full bg-slate-950 border border-slate-800 rounded-xl pl-10 pr-10 py-2.5 text-xs sm:text-sm text-white focus:outline-none focus:border-brand-500" />
-            <button type="button" onclick="app.togglePasswordVisibility('login-password')" class="absolute right-3.5 top-3 text-slate-500 hover:text-white">
-              <i data-lucide="eye" class="w-4 h-4"></i>
+      <!-- Card Container -->
+      <div class="bg-slate-900 border border-slate-800 rounded-3xl p-6 sm:p-8 shadow-2xl space-y-5">
+        
+        <!-- STEP 1: AUTH TABS & FORMS (LOGIN & REGISTER) -->
+        <div id="auth-step-credentials" class="space-y-5">
+          <!-- Auth Tabs: Masuk / Daftar -->
+          <div class="flex bg-slate-950 p-1 rounded-xl border border-slate-800/80">
+            <button id="auth-tab-login" onclick="app.switchAuthTab('login')" class="flex-1 py-2.5 rounded-lg text-xs font-bold transition-all bg-brand-600 text-white shadow-sm">
+              Masuk (Login)
+            </button>
+            <button id="auth-tab-register" onclick="app.switchAuthTab('register')" class="flex-1 py-2.5 rounded-lg text-xs font-bold transition-all text-slate-400 hover:text-white">
+              Daftar Akun Baru
             </button>
           </div>
-        </div>
 
-        <div id="login-error-msg" class="hidden text-xs text-red-400 bg-red-950/40 border border-red-900/50 p-2.5 rounded-xl"></div>
+          <!-- FORM: LOGIN -->
+          <form id="form-login" onsubmit="app.submitLogin(event)" class="space-y-4">
+            <div>
+              <label class="block text-xs font-semibold text-slate-300 mb-1">Email atau Username</label>
+              <div class="relative">
+                <i data-lucide="user" class="w-4 h-4 absolute left-3.5 top-3.5 text-slate-500"></i>
+                <input type="text" id="login-identifier" required placeholder="Masukkan username atau email" class="w-full bg-slate-950 border border-slate-800 rounded-xl pl-10 pr-3.5 py-3 text-sm text-white focus:outline-none focus:border-brand-500" />
+              </div>
+            </div>
 
-        <button type="submit" id="btn-submit-login" class="w-full py-3 rounded-xl bg-gradient-to-r from-brand-600 to-blue-600 hover:from-brand-500 hover:to-blue-500 text-white font-bold text-xs sm:text-sm transition-all shadow-lg shadow-brand-600/30 flex items-center justify-center gap-2">
-          <span>Masuk Sekarang</span>
-          <i data-lucide="arrow-right" class="w-4 h-4"></i>
-        </button>
-      </form>
+            <div>
+              <label class="block text-xs font-semibold text-slate-300 mb-1">Kata Sandi (Password)</label>
+              <div class="relative">
+                <i data-lucide="lock" class="w-4 h-4 absolute left-3.5 top-3.5 text-slate-500"></i>
+                <input type="password" id="login-password" required placeholder="••••••••" class="w-full bg-slate-950 border border-slate-800 rounded-xl pl-10 pr-10 py-3 text-sm text-white focus:outline-none focus:border-brand-500" />
+                <button type="button" onclick="app.togglePasswordVisibility('login-password')" class="absolute right-3.5 top-3.5 text-slate-500 hover:text-white">
+                  <i data-lucide="eye" class="w-4 h-4"></i>
+                </button>
+              </div>
+            </div>
 
-      <!-- FORM: REGISTER -->
-      <form id="form-register" onsubmit="app.submitRegister(event)" class="space-y-3 hidden">
-        <div>
-          <label class="block text-xs font-semibold text-slate-300 mb-1">Nama Lengkap / Panggilan</label>
-          <div class="relative">
-            <i data-lucide="smile" class="w-4 h-4 absolute left-3.5 top-3 text-slate-500"></i>
-            <input type="text" id="reg-name" placeholder="Misal: Teddy Prasetyo" class="w-full bg-slate-950 border border-slate-800 rounded-xl pl-10 pr-3.5 py-2.5 text-xs sm:text-sm text-white focus:outline-none focus:border-brand-500" />
-          </div>
-        </div>
+            <div id="login-error-msg" class="hidden text-xs text-red-400 bg-red-950/40 border border-red-900/50 p-3 rounded-xl"></div>
 
-        <div>
-          <label class="block text-xs font-semibold text-slate-300 mb-1">Username (unik)</label>
-          <div class="relative">
-            <i data-lucide="at-sign" class="w-4 h-4 absolute left-3.5 top-3 text-slate-500"></i>
-            <input type="text" id="reg-username" required placeholder="teddy123" class="w-full bg-slate-950 border border-slate-800 rounded-xl pl-10 pr-3.5 py-2.5 text-xs sm:text-sm text-white focus:outline-none focus:border-brand-500" />
-          </div>
-        </div>
-
-        <div>
-          <label class="block text-xs font-semibold text-slate-300 mb-1">Alamat Email</label>
-          <div class="relative">
-            <i data-lucide="mail" class="w-4 h-4 absolute left-3.5 top-3 text-slate-500"></i>
-            <input type="email" id="reg-email" required placeholder="teddy@gmail.com" class="w-full bg-slate-950 border border-slate-800 rounded-xl pl-10 pr-3.5 py-2.5 text-xs sm:text-sm text-white focus:outline-none focus:border-brand-500" />
-          </div>
-        </div>
-
-        <div>
-          <label class="block text-xs font-semibold text-slate-300 mb-1">Kata Sandi (minimal 6 karakter)</label>
-          <div class="relative">
-            <i data-lucide="lock" class="w-4 h-4 absolute left-3.5 top-3 text-slate-500"></i>
-            <input type="password" id="reg-password" required minlength="6" placeholder="••••••••" class="w-full bg-slate-950 border border-slate-800 rounded-xl pl-10 pr-10 py-2.5 text-xs sm:text-sm text-white focus:outline-none focus:border-brand-500" />
-            <button type="button" onclick="app.togglePasswordVisibility('reg-password')" class="absolute right-3.5 top-3 text-slate-500 hover:text-white">
-              <i data-lucide="eye" class="w-4 h-4"></i>
+            <button type="submit" id="btn-submit-login" class="w-full py-3.5 rounded-xl bg-gradient-to-r from-brand-600 to-blue-600 hover:from-brand-500 hover:to-blue-500 text-white font-bold text-sm transition-all shadow-lg shadow-brand-600/30 flex items-center justify-center gap-2">
+              <span>Masuk Sekarang</span>
+              <i data-lucide="arrow-right" class="w-4 h-4"></i>
             </button>
-          </div>
+          </form>
+
+          <!-- FORM: REGISTER -->
+          <form id="form-register" onsubmit="app.submitRegister(event)" class="space-y-3.5 hidden">
+            <div>
+              <label class="block text-xs font-semibold text-slate-300 mb-1">Nama Lengkap / Panggilan</label>
+              <div class="relative">
+                <i data-lucide="smile" class="w-4 h-4 absolute left-3.5 top-3 text-slate-500"></i>
+                <input type="text" id="reg-name" required placeholder="Misal: Budi Santoso" class="w-full bg-slate-950 border border-slate-800 rounded-xl pl-10 pr-3.5 py-2.5 text-sm text-white focus:outline-none focus:border-brand-500" />
+              </div>
+            </div>
+
+            <div>
+              <label class="block text-xs font-semibold text-slate-300 mb-1">Username Unik</label>
+              <div class="relative">
+                <i data-lucide="at-sign" class="w-4 h-4 absolute left-3.5 top-3 text-slate-500"></i>
+                <input type="text" id="reg-username" required placeholder="budi123" class="w-full bg-slate-950 border border-slate-800 rounded-xl pl-10 pr-3.5 py-2.5 text-sm text-white focus:outline-none focus:border-brand-500" />
+              </div>
+            </div>
+
+            <div>
+              <label class="block text-xs font-semibold text-slate-300 mb-1">Alamat Email</label>
+              <div class="relative">
+                <i data-lucide="mail" class="w-4 h-4 absolute left-3.5 top-3 text-slate-500"></i>
+                <input type="email" id="reg-email" required placeholder="budi@gmail.com" class="w-full bg-slate-950 border border-slate-800 rounded-xl pl-10 pr-3.5 py-2.5 text-sm text-white focus:outline-none focus:border-brand-500" />
+              </div>
+            </div>
+
+            <div>
+              <label class="block text-xs font-semibold text-slate-300 mb-1">Kata Sandi (minimal 6 karakter)</label>
+              <div class="relative">
+                <i data-lucide="lock" class="w-4 h-4 absolute left-3.5 top-3 text-slate-500"></i>
+                <input type="password" id="reg-password" required minlength="6" placeholder="••••••••" class="w-full bg-slate-950 border border-slate-800 rounded-xl pl-10 pr-10 py-2.5 text-sm text-white focus:outline-none focus:border-brand-500" />
+                <button type="button" onclick="app.togglePasswordVisibility('reg-password')" class="absolute right-3.5 top-3 text-slate-500 hover:text-white">
+                  <i data-lucide="eye" class="w-4 h-4"></i>
+                </button>
+              </div>
+            </div>
+
+            <div id="register-error-msg" class="hidden text-xs text-red-400 bg-red-950/40 border border-red-900/50 p-2.5 rounded-xl"></div>
+
+            <button type="submit" id="btn-submit-register" class="w-full py-3.5 rounded-xl bg-gradient-to-r from-emerald-600 to-teal-600 hover:from-emerald-500 hover:to-teal-500 text-white font-bold text-sm transition-all shadow-lg shadow-emerald-600/30 flex items-center justify-center gap-2">
+              <span>Lanjut ke Pengisian Profil</span>
+              <i data-lucide="arrow-right" class="w-4 h-4"></i>
+            </button>
+          </form>
         </div>
 
-        <div id="register-error-msg" class="hidden text-xs text-red-400 bg-red-950/40 border border-red-900/50 p-2.5 rounded-xl"></div>
+        <!-- STEP 2: FORM PENGISIAN DATA PROFIL PENGGUNA (ONBOARDING) -->
+        <div id="auth-step-profile" class="space-y-4 hidden">
+          <div class="border-b border-slate-800 pb-3">
+            <div class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full bg-brand-500/10 text-brand-400 border border-brand-500/20 text-xs font-bold mb-1">
+              <span>Langkah 2 dari 3</span>
+            </div>
+            <h3 class="text-lg font-black text-white">Lengkapi Data Kebugaran</h3>
+            <p class="text-xs text-slate-400">Data fisik ini digunakan untuk kalibrasi target mingguan & penghitungan kalori.</p>
+          </div>
 
-        <button type="submit" id="btn-submit-register" class="w-full py-3 rounded-xl bg-gradient-to-r from-emerald-600 to-teal-600 hover:from-emerald-500 hover:to-teal-500 text-white font-bold text-xs sm:text-sm transition-all shadow-lg shadow-emerald-600/30 flex items-center justify-center gap-2">
-          <span>Daftar Akun Baru</span>
-          <i data-lucide="check" class="w-4 h-4"></i>
-        </button>
-      </form>
+          <form id="form-onboarding-profile" onsubmit="app.submitOnboardingProfile(event)" class="space-y-3.5">
+            <div>
+              <label class="block text-xs font-semibold text-slate-300 mb-1">Nama Lengkap</label>
+              <input type="text" id="onboard-name" required placeholder="Nama Anda" class="w-full bg-slate-950 border border-slate-800 rounded-xl px-3.5 py-2.5 text-sm text-white focus:outline-none focus:border-brand-500" />
+            </div>
 
-      <!-- Guest / Offline Option -->
-      <div class="text-center pt-1 border-t border-slate-800/80">
-        <button type="button" onclick="app.closeAuthModal()" class="text-xs text-slate-400 hover:text-slate-200 transition-colors">
-          Tetap gunakan mode Tamu / Offline →
-        </button>
+            <div class="grid grid-cols-2 gap-3">
+              <div>
+                <label class="block text-xs font-semibold text-slate-300 mb-1">Usia (Tahun)</label>
+                <input type="number" id="onboard-age" required min="10" max="100" value="22" class="w-full bg-slate-950 border border-slate-800 rounded-xl px-3.5 py-2.5 text-sm text-white focus:outline-none focus:border-brand-500" />
+              </div>
+              <div>
+                <label class="block text-xs font-semibold text-slate-300 mb-1">Jenis Kelamin</label>
+                <select id="onboard-gender" class="w-full bg-slate-950 border border-slate-800 rounded-xl px-3 py-2.5 text-sm text-white focus:outline-none focus:border-brand-500">
+                  <option value="pria">Pria</option>
+                  <option value="wanita">Wanita</option>
+                </select>
+              </div>
+            </div>
+
+            <div class="grid grid-cols-2 gap-3">
+              <div>
+                <label class="block text-xs font-semibold text-slate-300 mb-1">Tinggi Badan (cm)</label>
+                <input type="number" id="onboard-height" required min="100" max="250" value="170" class="w-full bg-slate-950 border border-slate-800 rounded-xl px-3.5 py-2.5 text-sm text-white focus:outline-none focus:border-brand-500" />
+              </div>
+              <div>
+                <label class="block text-xs font-semibold text-slate-300 mb-1">Berat Badan (kg)</label>
+                <input type="number" id="onboard-weight" required step="0.5" min="30" max="250" value="65" class="w-full bg-slate-950 border border-slate-800 rounded-xl px-3.5 py-2.5 text-sm text-white focus:outline-none focus:border-brand-500" />
+              </div>
+            </div>
+
+            <div>
+              <label class="block text-xs font-semibold text-slate-300 mb-1">Tingkat Kebugaran Saat Ini</label>
+              <select id="onboard-fitness-level" class="w-full bg-slate-950 border border-slate-800 rounded-xl px-3 py-2.5 text-sm text-white focus:outline-none focus:border-brand-500">
+                <option value="Beginner">Pemula (Baru memulai olahraga)</option>
+                <option value="Intermediate">Menengah (Cukup sering latihan)</option>
+                <option value="Advanced">Mahir (Rutin & intens)</option>
+              </select>
+            </div>
+
+            <div>
+              <label class="block text-xs font-semibold text-slate-300 mb-1">Target Fokus Utama</label>
+              <select id="onboard-target-focus" class="w-full bg-slate-950 border border-slate-800 rounded-xl px-3 py-2.5 text-sm text-white focus:outline-none focus:border-brand-500">
+                <option value="Full Body">Full Body (Seluruh Tubuh)</option>
+                <option value="Abs & Core">Perut & Core (Six-Pack / Rata)</option>
+                <option value="Chest">Dada (Chest Power)</option>
+                <option value="Arms">Lengan & Bahu</option>
+                <option value="Legs">Kaki & Bokong (Legs & Glutes)</option>
+              </select>
+            </div>
+
+            <div id="onboard-error-msg" class="hidden text-xs text-red-400 bg-red-950/40 border border-red-900/50 p-2.5 rounded-xl"></div>
+
+            <button type="submit" id="btn-submit-onboard" class="w-full py-3.5 rounded-xl bg-gradient-to-r from-brand-600 to-blue-600 hover:from-brand-500 hover:to-blue-500 text-white font-bold text-sm transition-all shadow-lg shadow-brand-600/30 flex items-center justify-center gap-2">
+              <span>Simpan & Buka Panduan Pengguna</span>
+              <i data-lucide="arrow-right" class="w-4 h-4"></i>
+            </button>
+          </form>
+        </div>
+
       </div>
-
     </div>
   </div>
 

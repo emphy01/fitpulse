@@ -76,6 +76,21 @@ class WorkoutAppService:
         if "show_onboarding_guide" in kwargs:
             profile.show_onboarding_guide = bool(kwargs["show_onboarding_guide"])
 
+        if "age" in kwargs:
+            val = int(kwargs["age"])
+            if val < 5 or val > 120:
+                raise ValueError("Usia harus berada di antara 5 sampai 120 tahun.")
+            profile.age = val
+
+        if "gender" in kwargs:
+            profile.gender = str(kwargs["gender"]).strip().lower()
+
+        if "target_focus" in kwargs:
+            profile.target_focus = str(kwargs["target_focus"]).strip()
+
+        if "is_profile_completed" in kwargs:
+            profile.is_profile_completed = bool(kwargs["is_profile_completed"])
+
         self.storage.save_profile(profile, user_id=user_id)
         return profile
 
