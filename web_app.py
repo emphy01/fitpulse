@@ -235,16 +235,31 @@ def api_health():
 @app.post("/api/auth/register")
 def api_register(req: UserRegisterRequest):
     """Registers a new user and returns JWT access token + profile."""
-    init_db()
+    init_db(force=True)
     session = SessionFactory()
     try:
-        user = register_user(
-            session,
-            username=req.username,
-            email=req.email,
-            password=req.password,
-            name=req.name
-        )
+        try:
+            user = register_user(
+                session,
+                username=req.username,
+                email=req.email,
+                password=req.password,
+                name=req.name
+            )
+        except Exception as first_err:
+            if "doesn't exist" in str(first_err).lower() or "no such table" in str(first_err).lower():
+                init_db(force=True)
+                session.rollback()
+                user = register_user(
+                    session,
+                    username=req.username,
+                    email=req.email,
+                    password=req.password,
+                    name=req.name
+                )
+            else:
+                raise first_err
+
         token = create_access_token({"sub": user.id, "username": user.username})
         profile = service.get_profile(user_id=user.id)
         return {
@@ -265,10 +280,19 @@ def api_register(req: UserRegisterRequest):
 @app.post("/api/auth/login")
 def api_login(req: UserLoginRequest):
     """Logs in an existing user and returns JWT token + profile."""
-    init_db()
+    init_db(force=True)
     session = SessionFactory()
     try:
-        user = authenticate_user(session, identifier=req.identifier, password=req.password)
+        try:
+            user = authenticate_user(session, identifier=req.identifier, password=req.password)
+        except Exception as first_err:
+            if "doesn't exist" in str(first_err).lower() or "no such table" in str(first_err).lower():
+                init_db(force=True)
+                session.rollback()
+                user = authenticate_user(session, identifier=req.identifier, password=req.password)
+            else:
+                raise first_err
+
         if not user:
             raise HTTPException(status_code=401, detail="Email/Username atau kata sandi tidak cocok.")
         token = create_access_token({"sub": user.id, "username": user.username})
@@ -280,6 +304,10 @@ def api_login(req: UserLoginRequest):
             "profile": profile.to_dict(),
             "message": f"Halo {user.username}, Anda berhasil masuk!"
         }
+    except HTTPException:
+        raise
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=f"Gagal masuk: {e}")
     finally:
         session.close()
 

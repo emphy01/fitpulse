@@ -314,25 +314,145 @@ class DBWeightLog(Base):
 # Database Setup & Initialization
 # -----------------------------------------------------------------------------
 
+MYSQL_TABLE_DEFINITIONS = [
+    """
+    CREATE TABLE IF NOT EXISTS users (
+        id VARCHAR(36) PRIMARY KEY,
+        username VARCHAR(50) NOT NULL UNIQUE,
+        email VARCHAR(120) NOT NULL UNIQUE,
+        password_hash VARCHAR(255) NOT NULL,
+        created_at DATETIME DEFAULT CURRENT_TIMESTAMP
+    ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+    """,
+    """
+    CREATE TABLE IF NOT EXISTS user_profiles (
+        user_id VARCHAR(36) PRIMARY KEY,
+        name VARCHAR(100) DEFAULT 'Athlete',
+        age INT DEFAULT 25,
+        gender VARCHAR(20) DEFAULT 'pria',
+        weight_kg FLOAT DEFAULT 65.0,
+        height_cm FLOAT DEFAULT 170.0,
+        fitness_level VARCHAR(30) DEFAULT 'Beginner',
+        target_focus VARCHAR(50) DEFAULT 'Full Body',
+        default_rest_seconds INT DEFAULT 15,
+        sound_enabled TINYINT(1) DEFAULT 1,
+        voice_cues_enabled TINYINT(1) DEFAULT 1,
+        high_contrast_mode TINYINT(1) DEFAULT 0,
+        show_onboarding_guide TINYINT(1) DEFAULT 1,
+        is_profile_completed TINYINT(1) DEFAULT 0,
+        updated_at DATETIME DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+        FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE
+    ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+    """,
+    """
+    CREATE TABLE IF NOT EXISTS workout_logs (
+        log_id VARCHAR(36) PRIMARY KEY,
+        user_id VARCHAR(36) NOT NULL,
+        routine_id VARCHAR(100) NOT NULL,
+        routine_title VARCHAR(255) NOT NULL,
+        timestamp VARCHAR(50),
+        duration_spent_seconds INT DEFAULT 0,
+        total_routine_duration_seconds INT DEFAULT 0,
+        calories_burned FLOAT DEFAULT 0.0,
+        completed_steps_count INT DEFAULT 0,
+        total_steps_count INT DEFAULT 0,
+        status VARCHAR(20) DEFAULT 'COMPLETED',
+        user_feedback VARCHAR(50),
+        recommendation_given TEXT,
+        FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE,
+        INDEX idx_workout_logs_user (user_id)
+    ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+    """,
+    """
+    CREATE TABLE IF NOT EXISTS weekly_schedules (
+        id VARCHAR(36) PRIMARY KEY,
+        user_id VARCHAR(36) NOT NULL,
+        day_name VARCHAR(20) NOT NULL,
+        routine_id VARCHAR(100),
+        is_rest_day TINYINT(1) DEFAULT 0,
+        scheduled_time VARCHAR(10) DEFAULT '07:00',
+        reminder_enabled TINYINT(1) DEFAULT 1,
+        FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE,
+        INDEX idx_weekly_schedules_user (user_id)
+    ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+    """,
+    """
+    CREATE TABLE IF NOT EXISTS pending_workouts (
+        pending_id VARCHAR(36) PRIMARY KEY,
+        user_id VARCHAR(36) NOT NULL,
+        routine_id VARCHAR(100) NOT NULL,
+        routine_title VARCHAR(255) NOT NULL,
+        current_step_index INT DEFAULT 0,
+        total_steps_count INT DEFAULT 0,
+        duration_spent_seconds INT DEFAULT 0,
+        calories_burned FLOAT DEFAULT 0.0,
+        timestamp VARCHAR(50),
+        FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE,
+        INDEX idx_pending_workouts_user (user_id)
+    ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+    """,
+    """
+    CREATE TABLE IF NOT EXISTS custom_routines (
+        id VARCHAR(100) PRIMARY KEY,
+        user_id VARCHAR(36),
+        title VARCHAR(255) NOT NULL,
+        description TEXT,
+        target_muscle VARCHAR(50) DEFAULT 'Full Body',
+        difficulty VARCHAR(30) DEFAULT 'Beginner',
+        tags_json TEXT,
+        steps_json TEXT,
+        cover_image VARCHAR(255) DEFAULT 'workout_data/images/covers/cover_default_custom.png',
+        created_at VARCHAR(50),
+        FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE,
+        INDEX idx_custom_routines_user (user_id)
+    ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+    """,
+    """
+    CREATE TABLE IF NOT EXISTS weight_logs (
+        id VARCHAR(36) PRIMARY KEY,
+        user_id VARCHAR(36) NOT NULL,
+        weight_kg FLOAT NOT NULL,
+        timestamp VARCHAR(50),
+        FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE,
+        INDEX idx_weight_logs_user (user_id)
+    ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+    """
+]
+
 _tables_initialized = False
 
-def init_db():
+def init_db(force: bool = False):
     """
     Creates all tables in TiDB Cloud / MySQL / SQLite if they do not exist.
     Safe to call repeatedly on startup.
     """
     global _tables_initialized
+    if _tables_initialized and not force:
+        return
+
     try:
+        from sqlalchemy import text
+        driver = getattr(engine.url, 'drivername', '')
+        
+        # 1. Direct DDL execution for MySQL / TiDB Cloud
+        if 'mysql' in driver or 'pymysql' in driver:
+            with engine.connect() as conn:
+                for sql_stmt in MYSQL_TABLE_DEFINITIONS:
+                    try:
+                        conn.execute(text(sql_stmt))
+                    except Exception as e_sql:
+                        print(f"⚠️ DDL error executing table statement: {e_sql}")
+                conn.commit()
+
+        # 2. Base metadata create_all for SQLite & general safety
         Base.metadata.create_all(bind=engine)
         _tables_initialized = True
         print("✅ Database tables verified & initialized.")
 
-        # Safe schema migration for new columns on SQLite & MySQL / TiDB Cloud
+        # 3. Schema column migrations
         try:
-            from sqlalchemy import text
             with engine.connect() as conn:
-                driver = getattr(engine.url, 'drivername', '')
-                if 'mysql' in driver:
+                if 'mysql' in driver or 'pymysql' in driver:
                     for col_sql in [
                         "ALTER TABLE user_profiles ADD COLUMN IF NOT EXISTS age INT DEFAULT 25",
                         "ALTER TABLE user_profiles ADD COLUMN IF NOT EXISTS gender VARCHAR(20) DEFAULT 'pria'",
@@ -357,8 +477,8 @@ def init_db():
                         if 'is_profile_completed' not in existing_cols:
                             conn.execute(text("ALTER TABLE user_profiles ADD COLUMN is_profile_completed BOOLEAN DEFAULT 0"))
                         conn.commit()
-        except Exception:
-            pass
+        except Exception as mig_err:
+            print(f"⚠️ Column migration warning: {mig_err}")
 
     except Exception as e:
         print(f"⚠️ Database init_db error: {e}")

@@ -404,11 +404,12 @@ class FitPulseApp {
                   <span>Mulai Ulang</span>
                 </button>
                 <button 
-                  onclick="app.deletePendingWorkout('${item.pending_id}')"
-                  class="p-2.5 rounded-xl bg-slate-800 hover:bg-red-950/60 text-slate-400 hover:text-red-400 text-xs transition-colors"
+                  type="button"
+                  onclick="event.stopPropagation(); app.deletePendingWorkout('${item.pending_id}')"
+                  class="p-2.5 rounded-xl bg-slate-800 hover:bg-red-950/60 text-slate-400 hover:text-red-400 text-xs transition-colors cursor-pointer"
                   title="Hapus Sesi Tertunda"
                 >
-                  <i data-lucide="trash-2" class="w-3.5 h-3.5"></i>
+                  <i data-lucide="trash-2" class="w-3.5 h-3.5 pointer-events-none"></i>
                 </button>
               </div>
             </div>
@@ -927,8 +928,11 @@ class FitPulseApp {
     // Trigger View-specific Refresh
     if (viewName === 'training') {
       this.renderRoutines();
+      this.renderHomePendingBanner();
+      this.renderTodayActivity();
     } else if (viewName === 'report') {
       this.renderReportView();
+      this.renderPendingWorkouts();
     } else if (viewName === 'settings') {
       this.renderSettingsView();
     }
@@ -1701,7 +1705,11 @@ class FitPulseApp {
       });
       if (!res.ok) throw new Error("Gagal menyimpan ke server");
       this.showToast(`Latihan disimpan ke 'Pelatihan Tertunda'. Kalori terbakar saat ini: ${pendingData.calories_burned} kkal.`, "success");
-      await this.loadInitialData();
+      await Promise.all([
+        this.renderHomePendingBanner(),
+        this.renderPendingWorkouts(),
+        this.loadInitialData()
+      ]);
     } catch (e) {
       console.error(e);
       this.showToast("Gagal menyimpan pelatihan tertunda: " + e.message, "error");
@@ -1817,11 +1825,12 @@ class FitPulseApp {
                   <span>Mulai Ulang</span>
                 </button>
                 <button 
-                  onclick="app.deletePendingWorkout('${item.pending_id}')"
-                  class="p-1 rounded-lg bg-slate-800 hover:bg-red-950/60 text-slate-400 hover:text-red-400 text-[11px] transition-colors"
+                  type="button"
+                  onclick="event.stopPropagation(); app.deletePendingWorkout('${item.pending_id}')"
+                  class="p-1 rounded-lg bg-slate-800 hover:bg-red-950/60 text-slate-400 hover:text-red-400 text-[11px] transition-colors cursor-pointer"
                   title="Hapus"
                 >
-                  <i data-lucide="trash-2" class="w-3 h-3"></i>
+                  <i data-lucide="trash-2" class="w-3 h-3 pointer-events-none"></i>
                 </button>
               </div>
             </div>
@@ -1847,6 +1856,8 @@ class FitPulseApp {
       const routine = await rRes.json();
 
       await fetch(`/api/pending_workouts/${pendingId}`, { method: 'DELETE' });
+      this.renderHomePendingBanner();
+      this.renderPendingWorkouts();
 
       this.selectedRoutine = routine;
       this.workout.active = true;
@@ -1877,6 +1888,8 @@ class FitPulseApp {
       if (!item) throw new Error("Data sesi tertunda tidak ditemukan.");
 
       await fetch(`/api/pending_workouts/${pendingId}`, { method: 'DELETE' });
+      this.renderHomePendingBanner();
+      this.renderPendingWorkouts();
 
       await this.openRoutineDetail(item.routine_id);
       this.startActiveWorkout();
@@ -1886,13 +1899,21 @@ class FitPulseApp {
   }
 
   async deletePendingWorkout(pendingId) {
+    if (!pendingId) return;
     try {
-      await fetch(`/api/pending_workouts/${pendingId}`, { method: 'DELETE' });
-      this.showToast("Pelatihan tertunda dihapus.", "info");
-      await this.renderPendingWorkouts();
-      await this.renderHomePendingBanner();
+      const res = await fetch(`/api/pending_workouts/${pendingId}`, { 
+        method: 'DELETE',
+        headers: { 'Content-Type': 'application/json' }
+      });
+      if (!res.ok) throw new Error("Gagal menghapus sesi dari server.");
+      this.showToast("Pelatihan tertunda berhasil dihapus.", "info");
+      await Promise.all([
+        this.renderPendingWorkouts(),
+        this.renderHomePendingBanner()
+      ]);
     } catch (e) {
-      this.showToast("Gagal menghapus.", "error");
+      console.error("Delete pending workout error:", e);
+      this.showToast("Gagal menghapus: " + e.message, "error");
     }
   }
 

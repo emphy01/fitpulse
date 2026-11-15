@@ -615,20 +615,29 @@ class StorageManager:
     def load_pending_workouts(self, user_id: str = "default_user") -> List[Dict[str, Any]]:
         session = self._get_session()
         try:
-            db_pendings = session.query(DBPendingWorkout).filter(
-                DBPendingWorkout.user_id == user_id
-            ).order_by(DBPendingWorkout.timestamp.desc()).all()
+            query = session.query(DBPendingWorkout)
+            if user_id != "default_user":
+                query = query.filter((DBPendingWorkout.user_id == user_id) | (DBPendingWorkout.user_id == "default_user"))
+            else:
+                query = query.filter(DBPendingWorkout.user_id == "default_user")
+            db_pendings = query.order_by(DBPendingWorkout.timestamp.desc()).all()
             if db_pendings:
-                return [p.to_dict() for p in db_pendings]
+                seen_routines = set()
+                result = []
+                for p in db_pendings:
+                    p_dict = p.to_dict()
+                    r_id = p_dict.get("routine_id")
+                    if r_id and r_id not in seen_routines:
+                        seen_routines.add(r_id)
+                        result.append(p_dict)
+                return result
         except Exception:
             pass
         finally:
             session.close()
 
-        if user_id == "default_user":
-            data = self._safe_read_json(self.pending_file, [])
-            return data if isinstance(data, list) else []
-        return []
+        data = self._safe_read_json(self.pending_file, [])
+        return data if isinstance(data, list) else []
 
     def save_pending_workout(self, item: Dict[str, Any], user_id: str = "default_user") -> Dict[str, Any]:
         pending_id = item.get("pending_id") or str(uuid.uuid4())[:8]
@@ -640,9 +649,9 @@ class StorageManager:
         try:
             # Remove any pending workout with same pending_id or routine_id for this user
             session.query(DBPendingWorkout).filter(
-                DBPendingWorkout.user_id == user_id,
+                (DBPendingWorkout.user_id == user_id) | (DBPendingWorkout.user_id == "default_user"),
                 (DBPendingWorkout.pending_id == pending_id) | (DBPendingWorkout.routine_id == item.get("routine_id"))
-            ).delete()
+            ).delete(synchronize_session=False)
             db_p = DBPendingWorkout(
                 pending_id=pending_id,
                 user_id=user_id,
@@ -661,11 +670,11 @@ class StorageManager:
         finally:
             session.close()
 
-        if user_id == "default_user":
-            pendings = self._safe_read_json(self.pending_file, [])
-            pendings = [p for p in pendings if p.get("pending_id") != pending_id and p.get("routine_id") != item.get("routine_id")]
-            pendings.insert(0, item)
-            self._safe_write_json(self.pending_file, pendings)
+        # Always update local JSON file fallback as well
+        pendings = self._safe_read_json(self.pending_file, [])
+        pendings = [p for p in pendings if str(p.get("pending_id")) != str(pending_id) and p.get("routine_id") != item.get("routine_id")]
+        pendings.insert(0, item)
+        self._safe_write_json(self.pending_file, pendings)
 
         return item
 
@@ -673,25 +682,27 @@ class StorageManager:
         session = self._get_session()
         db_deleted = False
         try:
-            res = session.query(DBPendingWorkout).filter(
-                DBPendingWorkout.user_id == user_id,
+            q = session.query(DBPendingWorkout).filter(
                 DBPendingWorkout.pending_id == pending_id
-            ).delete()
+            )
+            if user_id != "default_user":
+                q = q.filter((DBPendingWorkout.user_id == user_id) | (DBPendingWorkout.user_id == "default_user"))
+            deleted_count = q.delete(synchronize_session=False)
             session.commit()
-            db_deleted = (res > 0)
+            db_deleted = (deleted_count > 0)
         except Exception:
             session.rollback()
         finally:
             session.close()
 
-        if user_id == "default_user":
-            pendings = self._safe_read_json(self.pending_file, [])
-            initial_len = len(pendings)
-            pendings = [p for p in pendings if p.get("pending_id") != pending_id]
-            self._safe_write_json(self.pending_file, pendings)
-            return (len(pendings) < initial_len) or db_deleted
+        # Always purge from JSON file fallback as well
+        pendings = self._safe_read_json(self.pending_file, [])
+        initial_len = len(pendings)
+        pendings = [p for p in pendings if str(p.get("pending_id")) != str(pending_id)]
+        self._safe_write_json(self.pending_file, pendings)
+        file_deleted = (len(pendings) < initial_len)
 
-        return db_deleted
+        return db_deleted or file_deleted
 
     # =========================================================================
     # RESET ALL USER DATA
