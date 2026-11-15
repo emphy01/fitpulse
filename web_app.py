@@ -198,6 +198,7 @@ class PendingWorkoutRequest(BaseModel):
 def api_health():
     """Health check endpoint for Vercel, TiDB Cloud, and deployment verification."""
     from sqlalchemy import text
+    init_db()
     driver_name = getattr(engine.url, 'drivername', 'unknown')
     db_type = "TiDB Cloud Serverless (MySQL)" if "mysql" in driver_name else ("SQLite" if "sqlite" in driver_name else driver_name)
     db_connected = False
@@ -230,6 +231,7 @@ def api_health():
 @app.post("/api/auth/register")
 def api_register(req: UserRegisterRequest):
     """Registers a new user and returns JWT access token + profile."""
+    init_db()
     session = SessionFactory()
     try:
         user = register_user(
@@ -259,6 +261,7 @@ def api_register(req: UserRegisterRequest):
 @app.post("/api/auth/login")
 def api_login(req: UserLoginRequest):
     """Logs in an existing user and returns JWT token + profile."""
+    init_db()
     session = SessionFactory()
     try:
         user = authenticate_user(session, identifier=req.identifier, password=req.password)

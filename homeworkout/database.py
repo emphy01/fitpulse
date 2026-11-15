@@ -306,17 +306,27 @@ class DBWeightLog(Base):
 # Database Setup & Initialization
 # -----------------------------------------------------------------------------
 
+_tables_initialized = False
+
 def init_db():
     """
     Creates all tables in TiDB Cloud / MySQL / SQLite if they do not exist.
     Safe to call repeatedly on startup.
     """
-    Base.metadata.create_all(bind=engine)
-    print("✅ Database tables verified & initialized.")
+    global _tables_initialized
+    try:
+        Base.metadata.create_all(bind=engine)
+        _tables_initialized = True
+        print("✅ Database tables verified & initialized.")
+    except Exception as e:
+        print(f"⚠️ Database init_db error: {e}")
 
 
 def get_db():
     """FastAPI dependency for obtaining a database session."""
+    global _tables_initialized
+    if not _tables_initialized:
+        init_db()
     session = SessionFactory()
     try:
         yield session
