@@ -289,9 +289,36 @@ class FitPulseApp {
     this.setupMusclePills();
     this.setupWeeklyDots();
     
-    // Check initial view parameter (e.g. ?view=report or ?view=active-workout)
+    // Check initial view parameter (e.g. ?view=report or ?view=active-workout or ?view=user-guide)
     const initParams = new URLSearchParams(window.location.search);
-    const targetView = initParams.get('view') || 'training';
+    const queryView = initParams.get('view');
+    if (initParams.get('hide_guide') === 'true') {
+      localStorage.setItem('fitpulse_hide_guide', 'true');
+      localStorage.setItem('fitpulse_has_seen_guide', 'true');
+    }
+
+    // Check if user has completed the onboarding profile setup
+    if (this.profile && !this.profile.is_profile_completed) {
+      this.openOnboardingProfileStep();
+      return;
+    }
+
+    let targetView = queryView;
+    if (!targetView) {
+      const hasSeenGuide = localStorage.getItem('fitpulse_has_seen_guide') === 'true' || localStorage.getItem('fitpulse_hide_guide') === 'true';
+      const userStartupPref = localStorage.getItem('fitpulse_show_guide_on_startup') === 'true';
+      const profileShowGuide = this.profile ? (this.profile.show_onboarding_guide === true) : false;
+
+      // Guide opens on startup ONLY if it's the user's first time, OR explicitly turned ON in settings
+      const shouldShowGuide = !hasSeenGuide || (userStartupPref && profileShowGuide);
+
+      if (shouldShowGuide && !this.workout.active) {
+        targetView = 'user-guide';
+      } else {
+        targetView = 'training';
+      }
+    }
+
     this.navigate(targetView);
     if (targetView === 'active-workout') {
       const routineId = initParams.get('routine') || 'rt_scientific_7min';
@@ -302,25 +329,6 @@ class FitPulseApp {
     // Lucide icon replacement
     if (window.lucide) {
       window.lucide.createIcons();
-    }
-
-    // Check if user has completed the onboarding profile setup
-    if (this.profile && !this.profile.is_profile_completed) {
-      this.openOnboardingProfileStep();
-      return;
-    }
-
-    // Auto-display Onboarding Guide overlay on startup if enabled
-    const urlParams = new URLSearchParams(window.location.search);
-    if (urlParams.get('hide_guide') === 'true') {
-      localStorage.setItem('fitpulse_hide_guide', 'true');
-    }
-    const hideGuide = localStorage.getItem('fitpulse_hide_guide') === 'true';
-    const profileShowGuide = this.profile ? (this.profile.show_onboarding_guide !== false) : true;
-    if (!hideGuide && profileShowGuide && !this.workout.active) {
-      setTimeout(() => {
-        this.openUserGuideOverlay(1);
-      }, 400);
     }
   }
 
@@ -864,13 +872,10 @@ class FitPulseApp {
       await this.loadInitialData();
       this.setupMusclePills();
       this.setupWeeklyDots();
-      this.navigate('training');
       this.updateAuthUI();
 
-      // Now automatically trigger the User Guide overlay!
-      setTimeout(() => {
-        this.openUserGuideOverlay(1);
-      }, 350);
+      // Navigate directly to the User Guide page for this new user!
+      this.navigate('user-guide');
 
       this.showToast(`Profil berhasil disimpan! Selamat datang, ${name}!`, "success");
     } catch (err) {
@@ -1013,6 +1018,8 @@ class FitPulseApp {
       this.renderPendingWorkouts();
     } else if (viewName === 'settings') {
       this.renderSettingsView();
+    } else if (viewName === 'user-guide') {
+      this.renderUserGuideView(this.guideCurrentStep || 1);
     }
 
     // Refresh icons
@@ -2175,12 +2182,12 @@ class FitPulseApp {
     document.getElementById('setting-sound-toggle').checked = Boolean(this.profile.sound_enabled);
     document.getElementById('setting-voice-toggle').checked = Boolean(this.profile.voice_cues_enabled);
 
-    // Sync Onboarding Guide startup toggle
-    const hideGuide = localStorage.getItem('fitpulse_hide_guide') === 'true';
-    const profileShowGuide = this.profile ? (this.profile.show_onboarding_guide !== false) : true;
+    // Sync Onboarding Guide startup toggle in Settings
+    const userStartupPref = localStorage.getItem('fitpulse_show_guide_on_startup') === 'true';
+    const profileShowGuide = this.profile ? (this.profile.show_onboarding_guide === true) : false;
     const guideToggle = document.getElementById('setting-guide-startup-toggle');
     if (guideToggle) {
-      guideToggle.checked = !hideGuide && profileShowGuide;
+      guideToggle.checked = userStartupPref && profileShowGuide;
     }
   }
 
@@ -3094,116 +3101,152 @@ class FitPulseApp {
   }
 
   // ==========================================================================
-  // ONBOARDING USER GUIDE OVERLAY (PANDUAN PENGGUNA)
+  // VIEW: PANDUAN PENGGUNA (DEDICATED USER GUIDE PAGE)
   // ==========================================================================
-  openUserGuideOverlay(step = 1) {
+  renderUserGuideView(step = 1) {
+    this.setPageGuideStep(step);
+  }
+
+  setPageGuideStep(step = 1) {
     this.guideCurrentStep = step;
-    const modal = document.getElementById('modal-user-guide');
-    const imgEl = document.getElementById('guide-overlay-img');
-    const badgeEl = document.getElementById('guide-step-badge');
-    const dot1 = document.getElementById('guide-dot-1');
-    const dot2 = document.getElementById('guide-dot-2');
-    const actionBtn = document.getElementById('guide-btn-action');
-    const checkDontShow = document.getElementById('guide-checkbox-dont-show');
-
-    if (!modal || !imgEl) return;
-
     const isMobile = window.innerWidth <= 768;
 
+    const imgEl = document.getElementById('page-guide-img');
+    const badgeEl = document.getElementById('page-guide-step-badge');
+    const deviceBadgeEl = document.getElementById('page-guide-device-badge');
+    const tab1 = document.getElementById('page-guide-tab-1');
+    const tab2 = document.getElementById('page-guide-tab-2');
+    const btnPrev = document.getElementById('page-guide-btn-prev');
+    const btnNext = document.getElementById('page-guide-btn-next');
+    const descStep1 = document.getElementById('page-guide-desc-step-1');
+    const descStep2 = document.getElementById('page-guide-desc-step-2');
+    const dot1 = document.getElementById('page-guide-dot-1');
+    const dot2 = document.getElementById('page-guide-dot-2');
+    const startupCheckbox = document.getElementById('page-guide-checkbox-startup');
+
+    if (deviceBadgeEl) {
+      deviceBadgeEl.innerHTML = isMobile 
+        ? '<i data-lucide="smartphone" class="w-3.5 h-3.5"></i><span>Tampilan Mobile</span>' 
+        : '<i data-lucide="monitor" class="w-3.5 h-3.5"></i><span>Tampilan Desktop</span>';
+    }
+
     if (step === 1) {
-      imgEl.src = isMobile ? '/workout_data/images/panduan_mobile_1.png' : '/workout_data/images/panduan1.png';
-      if (badgeEl) badgeEl.innerText = isMobile ? 'Mobile • Langkah 1/2' : 'Desktop • Langkah 1/2';
-      if (dot1) {
-        dot1.className = 'w-3.5 h-2.5 rounded-full bg-brand-500 transition-all';
+      if (imgEl) {
+        imgEl.src = isMobile ? '/workout_data/images/panduan_mobile_1.png' : '/workout_data/images/panduan1.png';
       }
-      if (dot2) {
-        dot2.className = 'w-2 h-2.5 rounded-full bg-slate-700 transition-all';
+      if (badgeEl) badgeEl.innerText = 'Langkah 1 dari 2: Navigasi & Beranda';
+      if (tab1) {
+        tab1.className = 'flex-1 py-2.5 px-3 rounded-xl text-xs sm:text-sm font-bold bg-brand-600 text-white shadow-lg shadow-brand-600/30 border border-brand-400 transition-all text-center flex items-center justify-center gap-2 cursor-pointer';
       }
-      if (actionBtn) {
-        actionBtn.innerHTML = '<span>Lanjut</span><i data-lucide="chevron-right" class="w-3.5 h-3.5"></i>';
+      if (tab2) {
+        tab2.className = 'flex-1 py-2.5 px-3 rounded-xl text-xs sm:text-sm font-semibold bg-slate-900 text-slate-400 hover:text-white border border-slate-800 transition-all text-center flex items-center justify-center gap-2 cursor-pointer';
+      }
+      if (dot1) dot1.className = 'w-3 h-2.5 rounded-full bg-brand-500 transition-all';
+      if (dot2) dot2.className = 'w-2 h-2.5 rounded-full bg-slate-700 transition-all';
+      if (descStep1) descStep1.classList.remove('hidden');
+      if (descStep2) descStep2.classList.add('hidden');
+      if (btnPrev) {
+        btnPrev.disabled = true;
+        btnPrev.className = 'px-4 py-2 rounded-xl bg-slate-800 text-slate-500 text-xs sm:text-sm font-semibold border border-slate-800 transition-all opacity-40 cursor-not-allowed flex items-center gap-1.5';
+      }
+      if (btnNext) {
+        btnNext.className = 'px-5 py-2 rounded-xl bg-brand-600 hover:bg-brand-500 text-white text-xs sm:text-sm font-bold transition-all shadow-md flex items-center gap-1.5 cursor-pointer';
+        btnNext.innerHTML = '<span>Lanjut ke Langkah 2</span><i data-lucide="chevron-right" class="w-4 h-4"></i>';
+        btnNext.onclick = () => this.setPageGuideStep(2);
       }
     } else {
-      imgEl.src = isMobile ? '/workout_data/images/panduan_mobile_2.png' : '/workout_data/images/panduan2.png';
-      if (badgeEl) badgeEl.innerText = isMobile ? 'Mobile • Langkah 2/2' : 'Desktop • Langkah 2/2';
-      if (dot1) {
-        dot1.className = 'w-2 h-2.5 rounded-full bg-slate-700 transition-all';
+      if (imgEl) {
+        imgEl.src = isMobile ? '/workout_data/images/panduan_mobile_2.png' : '/workout_data/images/panduan2.png';
       }
-      if (dot2) {
-        dot2.className = 'w-3.5 h-2.5 rounded-full bg-brand-500 transition-all';
+      if (badgeEl) badgeEl.innerText = 'Langkah 2 dari 2: Sesi Latihan & Laporan';
+      if (tab1) {
+        tab1.className = 'flex-1 py-2.5 px-3 rounded-xl text-xs sm:text-sm font-semibold bg-slate-900 text-slate-400 hover:text-white border border-slate-800 transition-all text-center flex items-center justify-center gap-2 cursor-pointer';
       }
-      if (actionBtn) {
-        actionBtn.innerHTML = '<span>Mulai Aplikasi ✓</span>';
+      if (tab2) {
+        tab2.className = 'flex-1 py-2.5 px-3 rounded-xl text-xs sm:text-sm font-bold bg-brand-600 text-white shadow-lg shadow-brand-600/30 border border-brand-400 transition-all text-center flex items-center justify-center gap-2 cursor-pointer';
+      }
+      if (dot1) dot1.className = 'w-2 h-2.5 rounded-full bg-slate-700 transition-all';
+      if (dot2) dot2.className = 'w-3 h-2.5 rounded-full bg-brand-500 transition-all';
+      if (descStep1) descStep1.classList.add('hidden');
+      if (descStep2) descStep2.classList.remove('hidden');
+      if (btnPrev) {
+        btnPrev.disabled = false;
+        btnPrev.className = 'px-4 py-2 rounded-xl bg-slate-800 hover:bg-slate-700 text-slate-300 text-xs sm:text-sm font-semibold border border-slate-700 transition-all cursor-pointer flex items-center gap-1.5';
+        btnPrev.onclick = () => this.setPageGuideStep(1);
+      }
+      if (btnNext) {
+        btnNext.className = 'px-5 py-2 rounded-xl bg-gradient-to-r from-emerald-600 to-teal-600 hover:from-emerald-500 hover:to-teal-500 text-white text-xs sm:text-sm font-bold transition-all shadow-lg shadow-emerald-600/30 flex items-center gap-1.5 cursor-pointer';
+        btnNext.innerHTML = '<span>Selesai & Masuk ke Beranda ✓</span>';
+        btnNext.onclick = () => this.finishUserGuide('training');
       }
     }
 
-    // Attach resize listener once to auto-switch image when testing between desktop/mobile view
-    if (!this._guideResizeBound) {
-      this._guideResizeBound = true;
+    // Synchronize startup guide checkbox with settings
+    if (startupCheckbox) {
+      const userStartupPref = localStorage.getItem('fitpulse_show_guide_on_startup') === 'true';
+      const profileShowGuide = this.profile ? (this.profile.show_onboarding_guide === true) : false;
+      startupCheckbox.checked = userStartupPref && profileShowGuide;
+    }
+
+    // Attach resize listener once to switch responsive guide images
+    if (!this._guidePageResizeBound) {
+      this._guidePageResizeBound = true;
       window.addEventListener('resize', () => {
-        const m = document.getElementById('modal-user-guide');
-        if (m && !m.classList.contains('hidden')) {
-          this.openUserGuideOverlay(this.guideCurrentStep || 1);
+        if (this.currentView === 'user-guide') {
+          this.setPageGuideStep(this.guideCurrentStep || 1);
         }
       });
     }
 
-    // Synchronize "Jangan tampilkan lagi" checkbox
-    const hideGuide = localStorage.getItem('fitpulse_hide_guide') === 'true';
-    if (checkDontShow) {
-      checkDontShow.checked = hideGuide;
-    }
-
-    modal.classList.remove('hidden');
-    document.body.style.overflow = 'hidden';
     if (window.lucide) window.lucide.createIcons();
   }
 
-  advanceUserGuide() {
-    if (this.guideCurrentStep === 1) {
-      this.openUserGuideOverlay(2);
-    } else {
-      this.closeUserGuideOverlay();
-    }
-  }
+  finishUserGuide(targetView = 'training') {
+    // Record that the user has seen the guide so it will never pop up or auto-open again on its own
+    localStorage.setItem('fitpulse_has_seen_guide', 'true');
 
-  closeUserGuideOverlay() {
-    const modal = document.getElementById('modal-user-guide');
-    if (modal) {
-      modal.classList.add('hidden');
-      document.body.style.overflow = '';
-    }
-  }
+    const startupCheckbox = document.getElementById('page-guide-checkbox-startup');
+    const wantsStartup = startupCheckbox ? startupCheckbox.checked : false;
 
-  onGuideDontShowAgainChanged(isChecked) {
-    localStorage.setItem('fitpulse_hide_guide', isChecked ? 'true' : 'false');
-    const settingToggle = document.getElementById('setting-guide-startup-toggle');
-    if (settingToggle) {
-      settingToggle.checked = !isChecked;
+    if (!wantsStartup) {
+      localStorage.setItem('fitpulse_show_guide_on_startup', 'false');
+      localStorage.setItem('fitpulse_hide_guide', 'true');
+      if (this.profile) {
+        this.profile.show_onboarding_guide = false;
+      }
+      // Persist to database profile
+      fetch('/api/profile', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ show_onboarding_guide: false })
+      }).catch(e => console.warn("Failed saving guide preference:", e));
     }
 
-    // Background sync to backend profile
-    fetch('/api/profile', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ show_onboarding_guide: !isChecked })
-    }).catch(e => console.warn("Failed syncing guide preference to profile:", e));
-
-    if (isChecked) {
-      this.showToast("Panduan otomatis dinonaktifkan. Anda dapat membukanya kembali dari menu Pengaturan.", "info");
-    } else {
-      this.showToast("Panduan otomatis diaktifkan saat aplikasi dibuka.", "info");
-    }
+    this.navigate(targetView);
   }
 
   toggleGuideStartupFromSettings(isChecked) {
-    const hideGuide = !isChecked;
-    localStorage.setItem('fitpulse_hide_guide', hideGuide ? 'true' : 'false');
-    const checkDontShow = document.getElementById('guide-checkbox-dont-show');
-    if (checkDontShow) {
-      checkDontShow.checked = hideGuide;
+    localStorage.setItem('fitpulse_show_guide_on_startup', isChecked ? 'true' : 'false');
+    localStorage.setItem('fitpulse_hide_guide', isChecked ? 'false' : 'true');
+    if (isChecked) {
+      localStorage.removeItem('fitpulse_has_seen_guide');
+    } else {
+      localStorage.setItem('fitpulse_has_seen_guide', 'true');
     }
 
-    // Background sync to backend profile
+    const settingToggle = document.getElementById('setting-guide-startup-toggle');
+    if (settingToggle && settingToggle.checked !== isChecked) {
+      settingToggle.checked = isChecked;
+    }
+    const pageCheckbox = document.getElementById('page-guide-checkbox-startup');
+    if (pageCheckbox && pageCheckbox.checked !== isChecked) {
+      pageCheckbox.checked = isChecked;
+    }
+
+    // Sync to backend user profile
+    if (this.profile) {
+      this.profile.show_onboarding_guide = isChecked;
+    }
     fetch('/api/profile', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
@@ -3211,10 +3254,28 @@ class FitPulseApp {
     }).catch(e => console.warn("Failed syncing guide preference to profile:", e));
 
     if (isChecked) {
-      this.showToast("Panduan akan otomatis muncul saat aplikasi dibuka.", "success");
+      this.showToast("Halaman panduan akan otomatis terbuka setiap kali aplikasi dibuka.", "success");
     } else {
-      this.showToast("Panduan otomatis dinonaktifkan saat aplikasi dibuka.", "info");
+      this.showToast("Panduan otomatis dinonaktifkan saat aplikasi dibuka (hanya muncul pertama kali).", "info");
     }
+  }
+
+  // Backward compatibility aliases
+  openUserGuideOverlay(step = 1) {
+    this.setPageGuideStep(step);
+    this.navigate('user-guide');
+  }
+
+  advanceUserGuide() {
+    this.setPageGuideStep(this.guideCurrentStep === 1 ? 2 : 1);
+  }
+
+  closeUserGuideOverlay() {
+    this.finishUserGuide('training');
+  }
+
+  onGuideDontShowAgainChanged(isChecked) {
+    this.toggleGuideStartupFromSettings(!isChecked);
   }
 
   // ==========================================================================
